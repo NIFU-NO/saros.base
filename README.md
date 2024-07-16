@@ -1,0 +1,194 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# saros: Semi-Automatic Reporting of Ordinary Surveys
+
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Codecov test
+coverage](https://codecov.io/gh/NIFU-NO/saros/branch/main/graph/badge.svg)](https://app.codecov.io/gh/NIFU-NO/saros?branch=main)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/saros)](https://CRAN.R-project.org/package=saros)
+[![CRAN
+release](https://www.r-pkg.org/badges/version-ago/saros)](https://CRAN.R-project.org/package=saros)
+[![CRAN total
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/saros)](https://CRAN.R-project.org/package=saros)
+[![R-CMD-check](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+## Introduction
+
+{saros} (Semi-Automatic Reporting of Ordinary Surveys) is an R package
+designed to handle repeating surveys within the same project that occur
+annually or biannually. It aims to automate the process of summarizing
+and reporting on survey data, helping researchers save time and maintain
+consistency across survey iterations. Specifically, {saros} produces
+highly customizable figures, text, analyses and reports for a batch of
+possible dependent-independent relations of possible interest.
+
+### Connection to the Astronomical concept of Saros
+
+The term “saros” also refers to a cyclical phenomenon in astronomy known
+as the Saros cycle, which represents a period of approximately 18 years,
+11 days, and 8 hours. After one Saros cycle, the Sun, Earth, and Moon
+return to approximately the same relative positions, leading to a
+similar eclipse.
+
+- Cyclical occurrences: In the case of this R package, cyclical events
+  relates to surveys that are repeated annually or biannually, while in
+  astronomy, cyclical events refers to the recurring pattern of
+  eclipses.
+
+- Consistency: The saros R package aims to maintain consistency in
+  reporting and analysis across survey iterations, just as the
+  astronomical Saros cycle represents a predictable pattern in the
+  occurrence of solar and lunar eclipses.
+
+- Time-saving: The saros R package is designed to automate and
+  streamline the process of summarizing and reporting on survey data,
+  saving researchers time and effort. Similarly, the Saros cycle is a
+  useful tool for astronomers to predict and plan for future eclipses,
+  making it easier to study these events without having to make complex
+  calculations each time.
+
+## Installation
+
+The development version from [GitHub](https://github.com/) with:
+
+``` r
+install.packages("pak")
+pak::pak("sda030/saros")
+```
+
+## Draft a report
+
+``` r
+# Define temporary folder for storing the elements
+library(saros)
+output_index_qmd <-
+  draft_report(chapter_overview = ex_survey_ch_overview, 
+             data = ex_survey, 
+             mesos_var = "f_uni",
+             path = tempdir()
+             )
+#> Refining chapter_overview...Not using the following variables in `data`: `x2_human`, `a_7`, `a_8`, and
+#> `resp_status`.                             Generating for chapter Introduction: 1_Introduction                                                    Generating for chapter Ambivalence: 2_Ambivalence                                                  Generating for chapter Big mysteries: 3_Big_mysterie                                                     Generating for chapter Confidence: 4_Confidence                                                Generating for chapter Doubt: 5_Doubt                                      
+#> 200.06 28.83 275.59 NA NA
+quarto::quarto_render(output_index_qmd, as_job = FALSE)
+#> pandoc 
+#>   to: html
+#>   output-file: index.html
+#>   standalone: true
+#>   section-divs: true
+#>   html-math-method: mathjax
+#>   wrap: none
+#>   default-image-extension: png
+#>   
+#> metadata
+#>   document-css: false
+#>   link-citations: true
+#>   date-format: long
+#>   lang: en
+#>   authors:
+#>     - Ernst Hemmingway
+#>     - Agatha Christie
+#>     - Mark Twain
+#>     - Stephen King
+#>     - .na.character
+#>   
+#> Output created: index.html
+if(interactive()) {
+  browseURL(output_index_qmd)
+  browseURL(fs::path(tempdir(), "index.html"))
+}
+```
+
+``` r
+library(saros)
+output_index_qmd <-
+  draft_report(chapter_overview = 
+                 dplyr::mutate(ex_survey_ch_overview, 
+                               indep = ifelse(.data$indep == "x1_sex",
+                                              "x1_sex,x2_human", 
+                                              .data$indep)),
+              data = ex_survey[ex_survey$f_uni %in% c("Uni of A", "Uni of B"), ], 
+               title = "My first report - ",
+               mesos_var = "f_uni",
+               label_separator = " - ",
+               name_separator = "_",
+              organize_by = c("chapter", ".element_name", ".variable_label_prefix_dep", ".variable_label_prefix_indep"),
+               index_filename = "main_index.qmd",
+               data_label = "percentage_bare",
+               always_show_bi_for_indep = "x1_sex",
+               totals = TRUE,
+               hide_label_if_prop_below = .05, 
+               hide_test_if_n_below = 10,
+               mesos_first = TRUE,
+               digits = 0,
+               data_label_decimal_symbol = ",",
+             path = tempdir())
+#> Refining chapter_overview...Not using the following variables in `data`: `a_7`,
+#> `a_8`, and `resp_status`. Generating for chapter Introduction: 1_Introduction
+#> Generating for chapter Ambivalence: 2_Ambivalence Generating for chapter Big
+#> mysteries: 3_Big_mysterie Generating for chapter Confidence: 4_Confidence
+#> Generating for chapter Doubt: 5_Doubt
+#> 216.97 32.25 296.64 NA NA
+```
+
+``` r
+system.time( # 519 sec
+  for(file in output_index_qmd) {
+    quarto::quarto_render(file, as_job = TRUE)
+  }
+  )
+#> pandoc 
+#>   to: html
+#>   output-file: main_index.html
+#>   standalone: true
+#>   section-divs: true
+#>   html-math-method: mathjax
+#>   wrap: none
+#>   default-image-extension: png
+#>   
+#> metadata
+#>   document-css: false
+#>   link-citations: true
+#>   date-format: long
+#>   lang: en
+#>   authors:
+#>     - Ernst Hemmingway
+#>     - Agatha Christie
+#>     - Mark Twain
+#>     - Stephen King
+#>     - .na.character
+#>   
+#> Output created: main_index.html
+#>    user  system elapsed 
+#>    0.00    0.00    6.02
+if(interactive()) {
+  browseURL(fs::path(tempdir(), "Uni of C", "Uni of C_main_index.html"))
+}
+```
+
+## Documentation
+
+Please see the [documentation](https://NIFU-NO.github.io/saros/).
+
+## IMPORTANT: saros is free, except in Norway
+
+Outside of Norway, this package can be used in accordance with the MIT
+license. However, persons affiliated with Norwegian non-profit or
+profit/commercial organizations must have the explicit written
+permission from the author for use. Simply put, if your
+department/organization competes with NIFU on commissioned or open
+research calls within Norway, you are probably not going to get
+permission unfortunately.
+
+## Code of Conduct
+
+Please note that the saros project is released with a [Contributor Code
+of
+Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

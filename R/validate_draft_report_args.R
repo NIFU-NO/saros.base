@@ -1,0 +1,98 @@
+validate_draft_report_args <- function(params) {
+
+  unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
+  if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+
+  env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args], eval)
+  check_and_set_default <- function(target,
+                                    param_name,
+                                    validation_fun) {
+
+    if (!validation_fun(target[[param_name]])) {
+      default <- env[[param_name]]
+      cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
+      default
+    } else target[[param_name]]
+  }
+  is_scalar_finite_doubleish <- function(x) {
+    is.numeric(x) && length(x) == 1 && is.finite(x)
+  }
+  is_bool <- function(x) is.logical(x) && length(x) == 1 && !is.na(x)
+
+
+  arg_params <-
+    list(
+      # Data frames
+      data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
+      chapter_structure = list(fun = function(x) validate_chapter_structure(x)),
+
+      # Character vectors (not enums)
+      mesos_var = list(fun = function(x) is.null(x) || is_string(x)),
+      auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+      path = list(fun = function(x) is_string(x)),
+
+      chapter_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      index_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      report_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      chapter_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      chapter_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      index_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      index_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      report_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      report_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+      index_filename = list(fun = function(x) is_string(x) || is.null(x)),
+      report_filename = list(fun = function(x) is_string(x) || is.null(x)),
+
+      log_file = list(fun = function(x) is.null(x) || is_string(x)),
+
+
+      # Boolean
+      attach_chapter_dataset = list(fun = is_bool),
+      require_common_categories = list(fun = is_bool),
+      combined_report = list(fun = is_bool),
+
+      # Numeric and integer
+      # hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
+
+      # Enums
+      tabular_format = list(fun = function(x) is.character(x) && any(env$tabular_format == x[1])),
+      serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1]))
+
+    )
+
+  for(par in names(arg_params)) {
+
+    params[[par]] <-
+      check_and_set_default(target = params,
+                            param_name = par,
+                            validation_fun = arg_params[[par]]$fun)
+  }
+
+  params$tabular_format <- params$tabular_format[1]
+  params$serialized_format <- params$serialized_format[1]
+
+  if(is_string(params$mesos_var)) {
+    if(!any(colnames(params$data) == params$mesos_var)) {
+      cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
+    }
+    if(all(is.na(params$data[[params$mesos_var]]))) {
+      cli::cli_abort("{.arg mesos_var}: All mesos_var entries are NA.")
+    }
+  }
+
+
+
+
+  pkg <- switch(params$tabular_format,
+                "delim" = "utils",
+                "xlsx" = "openxlsx",
+                "csv" = "readr",
+                "tsv" = "readr",
+                "sav" = "haven",
+                "dta" = "haven")
+  if(!requireNamespace(pkg, quietly = TRUE)) {
+    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg tabular_format}={params$tabular_format}: {.run [install.packages(pkg)](install.packages())}")
+  }
+
+  params
+}
