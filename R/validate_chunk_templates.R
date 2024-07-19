@@ -7,7 +7,7 @@ validate_chunk_templates <-
     if(!inherits(chunk_templates, "data.frame")) {
       cli::cli_abort("{.arg chunk_templates} must be a data.frame, not {.obj_type_friendly {chunk_templates}}.")
     }
-    core_columns <- c("name", "template", "variable_type_dep")
+    core_columns <- c(".template_name", ".template", ".variable_type_dep")
     for(col in core_columns) {
       if(!col %in% core_columns) {
         cli::cli_abort("{.arg chunk_templates} must contain {.var {col}}.")

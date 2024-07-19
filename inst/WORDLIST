@@ -1,3 +1,4 @@
+Bool
 CMD
 Codecov
 Lifecycle
@@ -11,13 +12,13 @@ Saros
 Sharepoint
 SurveyXact
 YAML
+barchart
 chr
 customizable
 datetime
 delim
 dep
 filepath
-folderpaths
 ggplot
 indep
 maintainer's
@@ -27,6 +28,7 @@ qmd
 rowwise
 saros
 sarosverse
+sig
 srvyr
 tibble
 unicode

@@ -222,6 +222,10 @@ Mostly useful when hide_bi_entry_if_sig_above < 1}
 
 This column is used to group variables that are part of the same bivariate analysis.}
 
+\item{n_range_glue_template_1, n_range_glue_template_2}{\verb{scalar<string>} // \emph{default:} \verb{"\{n\}" and "[\{n[1]\}, \{n[2]\}]} (\code{optional})
+
+Glue templates for the n_range columns to be created.}
+
 \item{log_file}{\emph{Path to log file}
 
 \verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})

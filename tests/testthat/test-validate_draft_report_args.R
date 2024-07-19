@@ -1,4 +1,4 @@
-testthat::test_that("validate_draft_report_args function", {
+testthat::test_that("validate_draft_report_args", {
 
   args <-
     formals(saros.base::draft_report)
@@ -8,13 +8,13 @@ testthat::test_that("validate_draft_report_args function", {
     utils::modifyList(keep.null = TRUE,
                       val =
                         list(data = data.frame(a = 1),
-                             chapter_structure = saros.base::refine_chapter_overview(data.frame(chapter = "Chapter 1", dep=NA),
+                             chapter_structure = saros.base::refine_chapter_overview(chapter_overview=data.frame(chapter = c("Ch1", "Ch2"), dep=c(NA, "a_1")),
                                                                                      data=saros.base::ex_survey),
                              path = "test"))
 
    args |>
     saros.base:::validate_draft_report_args() |>
-     testthat::expect_silence()
+     testthat::expect_silent()
 
     # Test Case 2: Invalid argument
    args |>
@@ -40,30 +40,4 @@ testthat::test_that("validate_draft_report_args function", {
      saros.base:::validate_draft_report_args() |>
      testthat::expect_warning(regexp = "`data` is invalid")
 
-   # Test Case 5: 'chunk_templates' not a character vector
-   args |>
-     utils::modifyList(keep.null = TRUE,
-                       val = list(chunk_templates = 123)) |>
-     saros.base:::validate_draft_report_args() |>
-     testthat::expect_warning(regexp = "`chunk_templates` is invalid \\(it is a number, and specified as 123\\)")
-
-   # Test Case 15: 'chunk_templates' contains non-existent elements
-   args |>
-     utils::modifyList(keep.null = TRUE,
-                       val = list(chunk_templates = c("nonexistent_element"))) |>
-     saros.base:::validate_draft_report_args() |>
-     testthat::expect_warning(regexp = "`chunk_templates` is invalid \\(it is a string, and specified as nonexistent_element\\).")
-
-   # Test Case 16: 'showNA' not one of the allowed values
-   args |>
-     utils::modifyList(keep.null = TRUE,
-                       val = list(showNA = "invalid_value")) |>
-     saros.base:::validate_draft_report_args() |>
-     testthat::expect_warning(regexp = "`showNA` is invalid \\(it is a string, and specified as invalid_value\\)\\. Using default: never, always, and ifany")
-
-   args |>
-     utils::modifyList(keep.null = TRUE,
-                       val = list(descend = NA)) |>
-     saros.base:::validate_draft_report_args() |>
-     testthat::expect_warning("`descend` is invalid \\(it is `NA`, and specified as NA\\)\\. Using default: TRUE")
-  })
+})

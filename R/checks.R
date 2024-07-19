@@ -35,8 +35,10 @@ check_integerish <- function(x, min=-Inf, max=Inf,
   }
 }
 
-check_double <- function(x, min=-Inf, max=Inf, call = rlang::caller_env(),
+check_double <- function(x, min=-Inf, max=Inf, null_allowed = FALSE,
+                         call = rlang::caller_env(),
                          arg = rlang::caller_arg(x)) {
+  if(isTRUE(null_allowed) && is.null(x)) return()
   pos_str <- if(min==0) " positive" else ""
   max_str <- if(!max==Inf) stringi::stri_c(ignore_null=TRUE, " (max=", max, ")") else ""
   min_str <- if(!min==-Inf) stringi::stri_c(ignore_null=TRUE, " (min=", min, ")") else ""
@@ -46,7 +48,18 @@ check_double <- function(x, min=-Inf, max=Inf, call = rlang::caller_env(),
   }
 }
 
-is_string <- function(x) is.character(x) && length(x) == 1
+#' Is x A String?
+#'
+#' Returns TRUE if object is a character of length 1.
+#'
+#' @param x Object
+#'
+#' @return Bool
+#' @export
+#'
+is_string <- function(x) {
+  is.character(x) && length(x) == 1
+}
 
 check_string <- function(x, null.ok = FALSE, n = 1,
                          call = rlang::caller_env(),
@@ -111,19 +124,6 @@ check_summary_data_cols <- function(x, call = rlang::caller_env(),
   }
 }
 
-check_multiple_indep <-
-  function(data, indep,
-           call = rlang::caller_env()) {
-
-    indep_call <- rlang::expr_deparse(rlang::enquo(indep))
-
-    if(ncol(dplyr::select(.data = data, {{indep}})) > 1L) {
-      cli::cli_abort(c("Too many columns provided for {.arg indep}.",
-                       x = "Only 1 indep-column is currently allowed.",
-                       i = "You provided indep = {indep_call}"), call = call)
-    }
-  }
-
 
 check_multiple_dep_and_one_indep <-
   function(data, dep, indep,
@@ -141,29 +141,7 @@ check_multiple_dep_and_one_indep <-
   }
 
 
-check_sort_by <- function(x, sort_by = NULL,
-                          call = rlang::caller_env()) {
 
-  set_options <- c(.saros.env$summary_data_sort1,
-                   .saros.env$summary_data_sort2)
-  categories_in_data <- as.character(x)
-
-  if(!is.null(sort_by)) {
-    if(
-      (is.character(sort_by) &&
-       length(sort_by) == 1 &&
-       sort_by %in% set_options) ||
-      (is.character(sort_by) &&
-       all(sort_by %in% categories_in_data)) ) {
-
-      return()
-
-    }
-    cli::cli_abort(c(x="{.arg sort_by} must be either NULL (no sorting), a single string from the set options {.var {set_options}} or all valid categories in the data frame.",
-                     i="You supplied {.var {sort_by}}."),
-                   call = call)
-  }
-}
 
 
 

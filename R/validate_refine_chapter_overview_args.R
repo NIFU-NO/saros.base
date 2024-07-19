@@ -25,7 +25,8 @@ validate_refine_chapter_overview_args <- function(params) {
     list(
       # Data frames
       chapter_overview = list(fun = function(x) inherits(x, "data.frame") && nrow(x)>0),
-      data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
+      data = list(fun = function(x) is.null(x) || inherits(x, "data.frame") || inherits(x, "survey")),
+      chunk_templates = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
       # Character vectors (not enums)
       label_separator = list(fun = function(x) is.null(x) || is.character(x)),
@@ -75,6 +76,8 @@ validate_refine_chapter_overview_args <- function(params) {
   }
 
 
+  params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
+
   if(is_string(params$mesos_var)) {
     if(!any(colnames(params$data) == params$mesos_var)) {
       cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
@@ -99,7 +102,7 @@ validate_refine_chapter_overview_args <- function(params) {
                      i = "You provided {.arg {params$arrange_section_by}}."))
   }
 
-  params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
+  # params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
 
 
   if(all(.saros.env$core_chapter_structure_cols %in% names(params$chapter_overview))) {

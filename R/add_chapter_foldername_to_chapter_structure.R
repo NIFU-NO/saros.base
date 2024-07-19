@@ -1,12 +1,9 @@
-add_chapter_info_to_chapter_structure <-
+add_chapter_foldername_to_chapter_structure <-
   function(chapter_overview,
            chapter_structure,
            max_clean_folder_name = 64)  {
 
     if(!is.null(chapter_structure$chapter)) {
-      chapter_structure$chapter <-
-        factor(chapter_structure$chapter,
-               levels = unique(chapter_overview$chapter))
       chapter_structure$.chapter_number <- as.integer(chapter_structure$chapter)
 
       digits <- floor(log10(length(unique(chapter_structure$chapter))))+1

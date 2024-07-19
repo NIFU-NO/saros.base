@@ -149,32 +149,6 @@ testthat::test_that("check_data_frame", {
 
 
 
-testthat::test_that("check_multiple_indep", {
-
-  data <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20, e = 21:25)
-
-  # Test 1: One column provided for 'indep', expect no error
-  testthat::expect_no_error(
-    object = saros.base:::check_multiple_indep(data, a)
-  )
-
-  # Test 2: Two columns provided for 'indep', expect an error
-  testthat::expect_error(
-    object = saros.base:::check_multiple_indep(data, c(a, b)),
-    regexp = "Too many columns provided for `indep`"
-  )
-
-  # Test 3: Empty data frame, expect no error here.
-  data_no_col <- data.frame()
-  testthat::expect_no_error(
-    object = saros.base:::check_multiple_indep(data_no_col, NULL)
-  )
-
-  # Test 4: Select no column, expect no error
-  testthat::expect_no_error(
-    object = saros.base:::check_multiple_indep(data, NULL))
-
-})
 
 
 testthat::test_that("check_multiple_dep_and_one_indep", {
@@ -194,47 +168,3 @@ testthat::test_that("check_multiple_dep_and_one_indep", {
 
 })
 
-testthat::test_that("check_sort_by tests", {
-  # Test 1: Valid single set option
-  sort_by_test_1 <- ".upper"
-  testthat::expect_no_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                             sort_by = sort_by_test_1))
-
-  # Test 2: Valid all categories in the data frame
-  sort_by_test_2 <- c("Not at all", "A bit", "A lot")
-  testthat::expect_no_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                             sort_by = sort_by_test_2))
-
-  # Test 2: Valid all categories in the data frame
-  sort_by_test_2 <- c("Not at all", "A bit")
-  testthat::expect_no_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                                 sort_by = sort_by_test_2))
-
-  # Test 2: Error on not all categories in the data frame
-  sort_by_test_2 <- c("Not at all", "A bit", "A lot")
-  testthat::expect_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit"),
-                                 sort_by = sort_by_test_2))
-
-
-  # Test 3: Invalid single set option
-  sort_by_test_3 <- ".invalid_option"
-  testthat::expect_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                             sort_by = sort_by_test_3))
-
-  # Test 4: Invalid character vector with mixed valid and invalid categories
-  sort_by_test_4 <- c("Not at all", "A bit", "Invalid")
-  testthat::expect_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                             sort_by = sort_by_test_4))
-
-  # Test 5: NULL sort_by (default)
-  sort_by_test_5 <- NULL
-  testthat::expect_no_error(
-    saros.base:::check_sort_by(x = c("Not at all", "A bit", "A lot"),
-                             sort_by = sort_by_test_5))
-})
