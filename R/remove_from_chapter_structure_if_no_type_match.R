@@ -1,6 +1,7 @@
 remove_from_chapter_structure_if_no_type_match <-
   function(chapter_structure) {
 
+
     out <-
       chapter_structure |>
       tidyr::separate_wider_delim(cols = tidyselect::starts_with(".template_variable_type_dep"),

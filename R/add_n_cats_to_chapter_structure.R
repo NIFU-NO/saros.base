@@ -14,8 +14,9 @@ add_n_cats_to_chapter_structure <-
     dplyr::group_map(.keep = TRUE,
         .f = ~{
           if(all(!is.na(as.character(.x[[target_variable]])))) {
+
             out <-
-              get_common_levels(data, col_pos = .x[[target_variable]])
+              get_common_levels(data, col_pos = as.character(.x[[target_variable]]))
             if(isTRUE(drop_na)) out <- out[!is.na(out)]
 
             .x[[variable_name_n_cats]] <- length(out)

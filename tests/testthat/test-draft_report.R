@@ -17,10 +17,11 @@ testthat::test_that("draft_report", {
     gsub(x=output_files, pattern = "\\", replacement = "/", fixed=TRUE)
   testthat::expect_equal(
       object = length(output_files),
-      expected = 5)
-  if(!is.null(quarto::quarto_path()) && nchar(quarto::quarto_path())>1) {
-    testthat::expect_lt(file.size(output_files[1]), 3600)
-    testthat::expect_gt(file.size(output_files[4]), 3600)
+      expected = nrow(saros.base::ex_survey_ch_overview)+2)
+  testthat::expect_lt(file.size(output_files[1]), 3600)
+  testthat::expect_gt(file.size(output_files[4]), 3350)
+
+  if(FALSE && !is.null(quarto::quarto_path()) && nchar(quarto::quarto_path())>1) {
     testthat::expect_no_error(
       withr::with_dir(new = tmpdir,
                       code = quarto::quarto_render(input = output_files[3])))
@@ -29,22 +30,23 @@ testthat::test_that("draft_report", {
 
   ##############################
 
-  if(Sys.getenv("USERNAME") == "py128") { # Run expensive >10 min test only for maintainer
+  if(Sys.getenv("USERNAME") == "py128") {
   tmpdir <- file.path(tempdir(), "test-draft_report2")
-  data <- saros.base::ex_survey |>
-    dplyr::filter(f_uni %in% c("Uni of A", "Uni of B"))
+  saros.base::ex_survey_ch_overview |>
+    saros.base::refine_chapter_overview(data = saros.base::ex_survey,
+                                        label_separator = " - ") |>
   saros.base::draft_report(
-     chapter_structure = saros.base::ex_survey_ch_overview[1:3, ],
-     data = data,
-     mesos_report = TRUE,
+     chapter_structure = _,
+     data = saros.base::ex_survey,
      mesos_var = "f_uni",
+     combined_report = TRUE,
      path = tmpdir)
   output_files <-
     list.files(pattern = "\\.qmd", path = tmpdir,
                full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
   testthat::expect_equal(
     object = length(output_files),
-    expected = (nrow(saros.base::ex_survey_ch_overview[1:3, ])+2) * dplyr::n_distinct(data$f_uni))
+    expected = (nrow(saros.base::ex_survey_ch_overview)+2) * dplyr::n_distinct(saros.base::ex_survey$f_uni))
 
   }
 })

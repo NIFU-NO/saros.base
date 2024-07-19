@@ -186,6 +186,12 @@
 #'
 #'   Path to log file. Set to NULL to disable logging.
 #'
+#' @param n_range_glue_template_1,n_range_glue_template_2
+#'
+#'   `scalar<string>` // *default:* `"{n}" and "[{n[1]}, {n[2]}]` (`optional`)
+#'
+#'   Glue templates for the n_range columns to be created.
+#'
 #' @return Grouped tibble.
 #' @export
 #'
@@ -267,7 +273,6 @@ refine_chapter_overview <-
         chapter_structure = out,
         data = data)
 
-
       out <- remove_from_chapter_structure_if_all_na(
         chapter_structure = out,
         data = data,
@@ -288,167 +293,181 @@ refine_chapter_overview <-
                                                name_separator = name_separator),
                            by = dplyr::join_by(".variable_position", ".variable_name"))
 
-
+        # if(!is.factor(out$.variable_name_dep)) browser()
 
         out <-
           trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
         out <-
           validate_labels(out)
+
+        out <-
+          add_indep_to_chapter_structure(out)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+
+        out <-
+          remove_from_chapter_structure_if_non_significant(
+            chapter_structure = out,
+            data = data,
+            hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
+            always_show_bi_for_indep = always_show_bi_for_indep,
+            progress = progress)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+
+        out <-
+          add_chunk_templates_to_chapter_structure(
+            chapter_structure = out,
+            chunk_templates = chunk_templates)
+        out <- remove_from_chapter_structure_if_no_type_match(out)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+
+        out <-
+          dplyr::distinct(out, dplyr::pick(tidyselect::everything()), .keep_all = TRUE)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+
+        validate_chapter_structure_has_not_chapter_with_all_vars(out, data = data)
+
+
+        log_unused_variables(chapter_structure = out,
+                             data = data,
+                             auxiliary_variables = auxiliary_variables,
+                             mesos_var = mesos_var,
+                             log_file = log_file)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+
+        out <-
+          set_chapter_structure_cols_as_factor_with_na(
+            chapter_structure = out,
+            data = data,
+            chunk_template_names = chunk_templates$name)
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+        out <-
+          add_group_id_to_chapter_structure(out,
+                                            grouping_vars = organize_by[organize_by %in% colnames(out)])
+
+        # if(!is.factor(out$.variable_name_dep)) browser()
+
+        out <-
+          split_chapter_structure_groups_if_single_y_bivariates(
+            chapter_structure = out,
+            data = data,
+            single_y_bivariates_if_indep_cats_above = single_y_bivariates_if_indep_cats_above,
+            single_y_bivariates_if_deps_above = single_y_bivariates_if_deps_above,
+            variable_group_dep = variable_group_dep,
+            organize_by = organize_by)
+
+
       }
 
-      out <- # TASK: SIMPLIFY INDEP IN data_overview
-        add_indep_to_chapter_structure(out)
-
-
-      out <- # TASK: SIMPLIFY INDEP IN data_overview
-        remove_from_chapter_structure_if_non_significant(
-          chapter_structure = out,
-          data = data,
-          hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
-          always_show_bi_for_indep = always_show_bi_for_indep,
-          progress = progress)
-
-
-      out <-
-        add_chunk_templates_to_chapter_structure(
-          chapter_structure = out,
-          chunk_templates = chunk_templates)
-
-
-      out <-
-        dplyr::distinct(out, dplyr::pick(tidyselect::everything()), .keep_all = TRUE)
-
-
-      out <- remove_from_chapter_structure_if_no_type_match(out)
-
-
-      validate_chapter_structure_has_not_chapter_with_all_vars(out, data = data)
-
-
-      log_unused_variables(chapter_structure = out,
-                           data = data,
-                           auxiliary_variables = auxiliary_variables,
-                           mesos_var = mesos_var,
-                           log_file = log_file)
-
-      out <-
-        set_chapter_structure_cols_as_factor_with_na(
-          chapter_structure = out,
-          data = data,
-          chunk_template_names = chunk_templates$name)
+      # if(!is.factor(out$.variable_name_dep)) browser()
 
 
 
-      out <-
-        split_chapter_structure_groups_if_single_y_bivariates(
-          chapter_structure = out,
-          data = data,
-          single_y_bivariates_if_indep_cats_above = single_y_bivariates_if_indep_cats_above,
-          single_y_bivariates_if_deps_above = single_y_bivariates_if_deps_above,
-          variable_group_dep = variable_group_dep,
-          organize_by = organize_by)
+      out <- dplyr::group_by(out, dplyr::pick(tidyselect::all_of(organize_by[organize_by %in% colnames(out)])))
+      out <- arrange2(data = out, arrange_vars = arrange_section_by, na_first = na_first_in_section)
+      # if(!is.factor(out$.variable_name_dep)) browser()
+
+      if(data_present) {
+
+        out <-
+          add_n_to_chapter_structure(
+            chapter_structure = out,
+            data = data,
+            variable_name = ".n")
+
+        out <-
+          remove_from_chapter_structure_if_n_below(
+            chapter_structure = out,
+            n_variable_name = ".n",
+            hide_chunk_if_n_below = hide_chunk_if_n_below)
+
+        out <-
+          add_n_range_to_chapter_structure(
+            chapter_structure = out,
+            data = data,
+            glue_template_1 = n_range_glue_template_1,
+            glue_template_2 = n_range_glue_template_2,
+            variable_name = ".n_range")
+        if(!is.factor(out$.variable_name_dep)) browser()
+
+        out <-
+          add_n_cats_to_chapter_structure(
+            chapter_structure = out,
+            data = data,
+            target_variable = ".variable_name_dep",
+            variable_name_n_cats = ".n_cats_dep",
+            variable_name_max_cat_char = ".max_chars_dep",
+            drop_na = TRUE)
+
+        out <-
+          add_n_cats_to_chapter_structure(
+            chapter_structure = out,
+            data = data,
+            target_variable = ".variable_name_indep",
+            variable_name_n_cats = ".n_cats_indep",
+            variable_name_max_cat_char = ".max_chars_indep",
+            drop_na = TRUE)
+
+      }
+      if(!is.factor(out$.variable_name_dep)) browser()
 
 
-
-
-    }
-
-
-    out <-
-      add_group_id_to_chapter_structure(out,
-                                        grouping_vars = organize_by[organize_by %in% colnames(out)])
-
-    out <- dplyr::group_by(out, dplyr::pick(tidyselect::all_of(organize_by[organize_by %in% colnames(out)])))
-    out <- arrange2(data = out, arrange_vars = arrange_section_by, na_first = na_first_in_section)
-
-    if(data_present) {
 
       out <-
-        add_n_to_chapter_structure(
+        add_n_vars_to_chapter_structure(
           chapter_structure = out,
-          data = data,
-          variable_name = ".n")
-
-      out <-
-        remove_from_chapter_structure_if_n_below(
-          chapter_structure = out,
-          n_variable_name = ".n",
-          hide_chunk_if_n_below = hide_chunk_if_n_below)
-
-      out <-
-        add_n_range_to_chapter_structure(
-          chapter_structure = out,
-          data = data,
-          glue_template_1 = n_range_glue_template_1,
-          glue_template_2 = n_range_glue_template_2,
-          variable_name = ".n_range")
-
-      out <-
-        add_n_cats_to_chapter_structure(
-          chapter_structure = out,
-          data = data,
           target_variable = ".variable_name_dep",
-          variable_name_n_cats = ".n_cats_dep",
-          variable_name_max_cat_char = ".max_chars_dep",
-          drop_na = TRUE)
+          variable_name = ".n_dep")
 
       out <-
-        add_n_cats_to_chapter_structure(
+        add_n_vars_to_chapter_structure(
           chapter_structure = out,
-          data = data,
           target_variable = ".variable_name_indep",
-          variable_name_n_cats = ".n_cats_indep",
-          variable_name_max_cat_char = ".max_chars_indep",
-          drop_na = TRUE)
+          variable_name = ".n_indep")
 
+
+
+      out <-
+        add_obj_name_to_chapter_structure(
+          chapter_structure = out,
+          variable_name = ".obj_name",
+          sep = sep_obj,
+          max_width = max_width_obj,
+          make_unique = TRUE,
+          to_lower = TRUE)
+
+      out <-
+        add_obj_name_to_chapter_structure(
+          chapter_structure = out,
+          variable_name = ".chunk_name",
+          sep = sep_chunk,
+          max_width = max_width_chunk,
+          make_unique = TRUE,
+          to_lower = TRUE)
+
+      out <-
+        add_obj_name_to_chapter_structure(
+          chapter_structure = out,
+          variable_name = ".file_name",
+          sep = sep_file,
+          max_width = max_width_file,
+          make_unique = TRUE,
+          to_lower = TRUE)
     }
 
+
     out <-
-      add_chapter_info_to_chapter_structure(
+      add_chapter_foldername_to_chapter_structure(
         chapter_overview = chapter_overview, # Original
         chapter_structure = out, #Current
         max_clean_folder_name = max_clean_folder_name)
 
 
-
-    out <-
-      add_n_vars_to_chapter_structure(
-        chapter_structure = out,
-        target_variable = ".variable_name_dep",
-        variable_name = ".n_dep")
-
-    out <-
-      add_n_vars_to_chapter_structure(
-        chapter_structure = out,
-        target_variable = ".variable_name_indep",
-        variable_name = ".n_indep")
-
-    out <-
-      add_obj_name_to_chapter_structure(
-        chapter_structure = out,
-        variable_name = ".obj_name",
-        sep = sep_obj,
-        max_width = max_width_obj,
-        make_unique = TRUE,
-        to_lower = TRUE)
-
-    out <-
-      add_obj_name_to_chapter_structure(
-        chapter_structure = out,
-        variable_name = ".chunk_name",
-        sep = sep_chunk,
-        max_width = max_width_chunk,
-        make_unique = TRUE,
-        to_lower = TRUE)
-
-    out <-
-      add_obj_name_to_chapter_structure(
-        chapter_structure = out,
-        variable_name = ".file_name",
-        sep = sep_file,
-        max_width = max_width_file,
-        make_unique = TRUE,
-        to_lower = TRUE)
 
     out
   }
