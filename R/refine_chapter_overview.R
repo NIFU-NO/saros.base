@@ -463,7 +463,6 @@ refine_chapter_overview <-
 
     out <-
       add_chapter_foldername_to_chapter_structure(
-        chapter_overview = chapter_overview, # Original
         chapter_structure = out, #Current
         max_clean_folder_name = max_clean_folder_name)
 

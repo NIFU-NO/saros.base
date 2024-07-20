@@ -1,6 +1,5 @@
 add_chapter_foldername_to_chapter_structure <-
-  function(chapter_overview,
-           chapter_structure,
+  function(chapter_structure,
            max_clean_folder_name = 64)  {
 
     if(!is.null(chapter_structure$chapter)) {

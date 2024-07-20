@@ -7,7 +7,7 @@ add_n_cats_to_chapter_structure <-
            drop_na = TRUE) {
 
     if(is.null(chapter_structure[[target_variable]])) {
-      cli::cli_abort("{.arg target_variable} ({target_variable} not found in {.arg chapter_structure}.")
+      cli::cli_abort("{.arg target_variable} ({.var {target_variable}}) not found in {.arg chapter_structure}.")
     }
 
     chapter_structure |>
