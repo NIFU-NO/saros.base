@@ -1,5 +1,6 @@
 
-add_chunk_templates_to_chapter_structure <- function(chapter_structure, chunk_templates) {
+add_chunk_templates_to_chapter_structure <-
+  function(chapter_structure, chunk_templates) {
 
   out <- vctrs::vec_slice(chapter_structure,
                           !is.na(chapter_structure$.variable_name_dep))
