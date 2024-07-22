@@ -24,7 +24,9 @@ process_yaml <- function(yaml_file = NULL,
     #                              ignore_null=TRUE)
 
     # if(length(new_title)>0)  yaml_section$title <- new_title
-    if(is.character(authors)) yaml_section$authors <- authors
+    if(is.character(authors)) {
+      yaml_section$authors <- authors
+    }
 
   }
   # if(is.null(yaml_section$title)) {

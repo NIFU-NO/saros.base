@@ -38,8 +38,14 @@
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
-#'   If NULL, infers from chapter_structure$authors, and collates for entire report.
+#'   If NULL, infers from `chapter_structure[[authors_col]]`, and collates for entire report.
 #'   If multiple authors per chapter, separate with semicolon. Ensure consistency.
+#'
+#' @param authors_col *Column name for author*
+#'
+#'   `scalar<character>` // *default:* `"author"` (`optional`)
+#'
+#'   Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).
 #'
 #' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and 0_report.qmd respectively*
 #'
@@ -181,6 +187,7 @@ draft_report <-
            path,
            title = "Report",
            authors = NULL,
+           authors_col = "author",
            mesos_var = NULL,
 
            chapter_yaml_file = NULL,
@@ -236,7 +243,7 @@ draft_report <-
 
 
 
-    all_authors <- get_authors(data = chapter_structure, col="author")
+    all_authors <- get_authors(data = chapter_structure, col=args$authors_col)
 
     if(!is_string(args$mesos_var)) {
 

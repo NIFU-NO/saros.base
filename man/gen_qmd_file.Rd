@@ -38,7 +38,7 @@ Added automatically to YAML-header of index.qmd and report.qmd-files.}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-If NULL, infers from chapter_structure$authors, and collates for entire report.
+If NULL, infers from \code{chapter_structure[[authors_col]]}, and collates for entire report.
 If multiple authors per chapter, separate with semicolon. Ensure consistency.}
 
 \item{output_filename, output_formats}{Character. If applied, will construct
