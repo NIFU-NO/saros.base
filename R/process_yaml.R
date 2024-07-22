@@ -3,7 +3,7 @@ process_yaml <- function(yaml_file = NULL,
                          title = NULL,
                          authors = NULL,
                          add_fences = TRUE,
-                         chapter_number = NA) {
+                         chapter_number = NA_integer_) {
 
   if(!is_string(yaml_file)) {
     yaml_section <-

@@ -55,7 +55,7 @@ gen_qmd_file <-
 
         stringi::stri_c(
         lapply(output_formats, function(frmt) {
-          if(frmt == "typst") frmt <- "combined_report"
+          if(frmt == "typst") frmt <- "pdf"
 
           stringi::stri_c("-\t[(", toupper(frmt), ")](", output_filename, ".", frmt, ")")
         }), collapse="\n")

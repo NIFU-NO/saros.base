@@ -135,14 +135,16 @@ gen_qmd_chapters <-
                                      serialized_format = dots$serialized_format)
             }
 
+          out <- c(chapter_yaml,
+                   stringi::stri_c("# ", chapter),
+                   load_dataset,
+                   qmd_start_section,
+                   chapter_contents,
+                   qmd_end_section)
+          out <- stringi::stri_remove_na(out)
           out <-
-          stringi::stri_c(chapter_yaml,
-                          stringi::stri_c("# ", chapter),
-                          load_dataset,
-                         qmd_start_section,
-                         chapter_contents,
-                         qmd_end_section,
-                         sep = "\n", ignore_null=TRUE)
+          stringi::stri_c(out,
+                         collapse = "\n", ignore_null=TRUE)
           out <- stringi::stri_replace_all_regex(out,
                                                  pattern = "\n{3,}",
                                                  replacement = "\n\n\n")

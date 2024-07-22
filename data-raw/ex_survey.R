@@ -26,7 +26,7 @@ ex_survey <-
 		dplyr::across(dplyr::all_of(paste0("p_", 1:3)),
 					  ~factor(sample(x=0:3, replace = TRUE, size = data_nrow, prob = c(.2,.2,.2,.4)),
 					  					labels = c("Strongly disagree", "Somewhat disagree", "Somewhat agree", "Strongly agree"))),
-		p_4 = factor(sample(x=c(1:4, NA), replace = TRUE, size = data_nrow, prob = c(.2,.2,.2,.3, .1)),
+		p_4 = factor(sample(x=c(1:4, NA_integer_), replace = TRUE, size = data_nrow, prob = c(.2,.2,.2,.3, .1)),
 		             labels = c("Strongly disagree", "Somewhat disagree", "Somewhat agree", "Strongly agree")),
 		f_uni=sample(x=paste0("Uni of ", LETTERS[1:5]), replace = TRUE, size = data_nrow),
 		open_comments = sample(x = c(rep(NA_character_, data_nrow-10), paste0("This is an open comment with random </br> symbols #", 1:10)),

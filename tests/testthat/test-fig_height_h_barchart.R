@@ -49,8 +49,7 @@ testthat::test_that("fig_height_h_barchart handles frequency plot", {
                                               margin_in_cm = 0,
                                               max = 8,
                                               min = 1)
-  testthat::expect_numeric(result)
-  testthat::expect_true(result >= 1 & result <= 8)
+  testthat::expect_equal(result, 8)
 })
 
 testthat::test_that("fig_height_h_barchart handles missing n_x and n_cats_x", {

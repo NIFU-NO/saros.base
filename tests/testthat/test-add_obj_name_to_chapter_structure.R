@@ -33,14 +33,14 @@ testthat::test_that("add_obj_name_to_chapter_structure handles custom separator"
     .variable_label_prefix_dep = c("label1", "label2"),
     .variable_label_prefix_indep = c("label3", "label4"),
     .variable_name_dep = c("var1", "var2"),
-    .variable_name_indep = c("var3", "var4"),
+    .variable_name_indep = c("xvar3", "xvar4"),
     .variable_group_id = c(1, 1)
   ), .variable_label_prefix_dep, .variable_label_prefix_indep)
 
   result <- saros.base:::add_obj_name_to_chapter_structure(chapter_structure, sep = "-")
 
   testthat::expect_true(".obj_name" %in% colnames(result))
-  testthat::expect_equal(result$.obj_name, c("var1-var3", "var1-var3-1"))
+  testthat::expect_equal(result$.obj_name, c("var-xvar", "var-xvar-1"))
 })
 
 testthat::test_that("add_obj_name_to_chapter_structure handles max_width", {
@@ -90,11 +90,11 @@ testthat::test_that("add_obj_name_to_chapter_structure handles to_lower", {
 
 testthat::test_that("add_obj_name_to_chapter_structure handles make_unique", {
   chapter_structure <- dplyr::group_by(data.frame(
-    .variable_label_prefix_dep = c("label1", "label1"),
-    .variable_label_prefix_indep = c("label3", "label3"),
-    .variable_name_dep = c("var1", "var2"),
-    .variable_name_indep = c("var3", "var4"),
-    .variable_group_id = c(1, 2)
+    .variable_label_prefix_dep = c("label1", "label1", "label2", "label2"),
+    .variable_label_prefix_indep = c("label3", "label3", "label3", "label3"),
+    .variable_name_dep = c("var1", "var2", "var3", "var4"),
+    .variable_name_indep = c("xvar3", "xvar3", "xvar3", "xvar3"),
+    .variable_group_id = c(1, 1, 2, 2)
   ), .variable_label_prefix_dep, .variable_label_prefix_indep)
 
   result <- saros.base:::add_obj_name_to_chapter_structure(chapter_structure, make_unique = TRUE)

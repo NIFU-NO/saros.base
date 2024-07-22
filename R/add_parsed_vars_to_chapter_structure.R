@@ -23,7 +23,7 @@ add_parsed_vars_to_chapter_structure <-
                            indices_to = ".variable_name")
     chapter_structure$.variable_name <-
       ifelse(chapter_structure$.variable_name %in% c("1", ""),
-             NA,
+             NA_character_,
              chapter_structure$.variable_name)
 
     chapter_structure

@@ -55,5 +55,5 @@ testthat::test_that("add_parsed_vars_to_chapter_structure handles empty variable
   testthat::expect_true(!".cols" %in% colnames(result))
   testthat::expect_true(".variable_position" %in% colnames(result))
   testthat::expect_true(".variable_name" %in% colnames(result))
-  testthat::expect_equal(result$.variable_name, NA)
+  testthat::expect_equal(result$.variable_name, NA_character_)
 })

@@ -56,7 +56,7 @@ girafe(ggobj = {.obj_name})
 
 ",
                     .template_variable_type_dep = c("fct;ord"),
-                    .template_variable_type_indep = NA) |>
+                    .template_variable_type_indep = NA_character_) |>
     tibble::add_row(.template_name = "uni_cat_prop_table",
                     .template =
                       "
@@ -69,7 +69,7 @@ gt(ggobj = {.obj_name})
 
 ",
                     .template_variable_type_dep = c("fct;ord"),
-                    .template_variable_type_indep = NA) |>
+                    .template_variable_type_indep = NA_character_) |>
     tibble::add_row(.template_name = "uni_chr_table",
                     .template =
                       "
@@ -82,6 +82,6 @@ gt({.obj_name})
 
 ",
                     .template_variable_type_dep = c("chr"),
-                    .template_variable_type_indep = NA)
+                    .template_variable_type_indep = NA_character_)
 
 }

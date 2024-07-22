@@ -6,6 +6,13 @@ attach_chapter_dataset <- function(chapter_structure_chapter,
                                    auxiliary_variables,
                                    serialized_format = "rds") {
 
+  if(is.null(chapter_foldername_clean) || is.na(chapter_foldername_clean)) {
+    cli::cli_abort("{.arg chapter_foldername_clean} must be a string (without a dot), not {.val {chapter_foldername_clean}} ({.obj_type_pretty {chapter_foldername_clean}}).")
+  }
+  if(is.null(serialized_format) || is.na(serialized_format)) {
+    cli::cli_abort("{.arg serialized_format} must be a string (without a dot), not {.val {serialized_format}} ({.obj_type_pretty {serialized_format}}).")
+  }
+
 
   dep_vars <- names(unlist(eval_cols(unique(as.character(chapter_structure_chapter$.variable_selection_dep)), data=data)))
   indep_vars <- names(unlist(eval_cols(unique(as.character(chapter_structure_chapter$.variable_selection_indep)), data=data)))

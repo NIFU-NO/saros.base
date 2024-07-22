@@ -6,7 +6,7 @@ testthat::test_that("add_core_info_to_chapter_structure works with typical input
 })
 
 testthat::test_that("add_core_info_to_chapter_structure handles missing indep variables", {
-  chapter_structure <- data.frame(dep = c("var1", "var2"), indep = c(NA, "var4"))
+  chapter_structure <- data.frame(dep = c("var1", "var2"), indep = c(NA_character_, "var4"))
   result <- saros.base:::add_core_info_to_chapter_structure(chapter_structure)
   testthat::expect_equal(result$.variable_role, c("dep", "dep", "indep"))
   testthat::expect_equal(result$.variable_selection, c("var1", "var2", "var4"))
