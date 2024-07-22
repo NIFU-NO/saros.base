@@ -8,6 +8,7 @@ gen_qmd_chapters(
   chapter_structure,
   data,
   mesos_group = NULL,
+  authors_col = "author",
   ...,
   call = rlang::caller_env()
 )
@@ -33,6 +34,12 @@ chapter_structure 'dep', etc columns.}
 \verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
 
 Both the absolute and relative folder paths are required, as strings.}
+
+\item{authors_col}{\emph{Column name for author}
+
+\verb{scalar<character>} // \emph{default:} \code{"author"} (\code{optional})
+
+Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).}
 
 \item{...}{\emph{Dynamic dots}
 

@@ -26,12 +26,12 @@ gen_qmd_chapters <-
   function(chapter_structure,
            data,
            mesos_group = NULL,
+           authors_col = "author",
            ...,
            call = rlang::caller_env()
   ) {
 
-    dots <- update_dots(dots = rlang::list2(...),
-                        allow_unique_overrides = FALSE)
+    dots <- rlang::list2(...)
 
     check_string(mesos_group, n=1, null.ok=TRUE, call = call)
 
@@ -87,7 +87,7 @@ gen_qmd_chapters <-
           chapter_filepath_absolute <- file.path(path, chapter_filepath_relative)
 
 
-          authors <- get_authors(data = chapter_structure_chapter, col = "authors")
+          authors <- get_authors(data = chapter_structure_chapter, col = authors_col)
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       authors = authors,
                                       title = NULL,

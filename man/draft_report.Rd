@@ -11,6 +11,7 @@ draft_report(
   path,
   title = "Report",
   authors = NULL,
+  authors_col = "author",
   mesos_var = NULL,
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
@@ -75,8 +76,14 @@ Added automatically to YAML-header of index.qmd and report.qmd-files.}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-If NULL, infers from chapter_structure$authors, and collates for entire report.
+If NULL, infers from \code{chapter_structure[[authors_col]]}, and collates for entire report.
 If multiple authors per chapter, separate with semicolon. Ensure consistency.}
+
+\item{authors_col}{\emph{Column name for author}
+
+\verb{scalar<character>} // \emph{default:} \code{"author"} (\code{optional})
+
+Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).}
 
 \item{mesos_var}{\emph{Variable in ´data´ indicating groups to tailor reports for}
 
