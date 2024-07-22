@@ -1,5 +1,6 @@
 
-validate_chapter_structure <- function(chapter_structure, data=NULL) {
+validate_chapter_structure <- function(chapter_structure, data=NULL,
+                                       core_chapter_structure_cols = .saros.env$core_chapter_structure_cols) {
 
   # ENSURE THAT .template_name, chapter etc are part of goruping_sturcture?
 
@@ -14,8 +15,8 @@ validate_chapter_structure <- function(chapter_structure, data=NULL) {
 
 
   missing_core_columns <-
-    .saros.env$core_chapter_structure_cols[
-      !.saros.env$core_chapter_structure_cols %in% colnames(chapter_structure)
+    core_chapter_structure_cols[
+      !core_chapter_structure_cols %in% colnames(chapter_structure)
     ]
   if(length(missing_core_columns)>0) {
     cli::cli_abort("{.arg chapter_structure} is missing {.var {missing_core_columns}}.")

@@ -19,12 +19,15 @@ validate_draft_report_args <- function(params) {
   }
   is_bool <- function(x) is.logical(x) && length(x) == 1 && !is.na(x)
 
+  core_chapter_structure_cols <-
+    .saros.env$core_chapter_structure_cols
+
 
   arg_params <-
     list(
       # Data frames
       data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
-      chapter_structure = list(fun = function(x) validate_chapter_structure(x)),
+      chapter_structure = list(fun = function(x) validate_chapter_structure(x, core_chapter_structure_cols = core_chapter_structure_cols)),
 
       # Character vectors (not enums)
       mesos_var = list(fun = function(x) is.null(x) || is_string(x)),
