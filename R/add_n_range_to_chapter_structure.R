@@ -37,9 +37,13 @@ add_n_range_to_chapter_structure <-
           n <-
             range(n, na.rm = TRUE) |>
             unique()
+          if(all(is.na(n))) {
+            .x[[variable_name]] <- 0
+          } else {
+            template <- if(length(n)==1) glue_template_1 else glue_template_2
+            .x[[variable_name]] <-  glue::glue(template)
+          }
 
-          template <- if(length(n)==1) glue_template_1 else glue_template_2
-          .x[[variable_name]] <-  glue::glue(template)
         }
         .x
       }) |>

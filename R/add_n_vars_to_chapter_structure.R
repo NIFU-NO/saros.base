@@ -10,8 +10,12 @@ add_n_vars_to_chapter_structure <-
     dplyr::group_map(.keep = TRUE,
         .f = ~{
           uniques <- as.character(unique(.x[[target_variable]]))
-          .x[[variable_name]] <-
-            length(uniques[!is.na(uniques)])
+          if(!is.na(length(uniques[!is.na(uniques)]))) {
+            .x[[variable_name]] <-
+              length(uniques[!is.na(uniques)])
+          } else {
+            .x[[variable_name]] <- 0
+          }
           .x
         }) |>
       dplyr::bind_rows() |>

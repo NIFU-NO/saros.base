@@ -16,8 +16,8 @@ testthat::test_that("draft_report", {
   output_files <-
     gsub(x=output_files, pattern = "\\", replacement = "/", fixed=TRUE)
   testthat::expect_equal(
-      object = length(output_files),
-      expected = nrow(saros.base::ex_survey_ch_overview)+2)
+    object = length(output_files),
+    expected = nrow(saros.base::ex_survey_ch_overview)+2)
   testthat::expect_lt(file.size(output_files[1]), 3600)
   testthat::expect_gt(file.size(output_files[4]), 3350)
 
@@ -30,23 +30,23 @@ testthat::test_that("draft_report", {
 
   ##############################
 
-  if(Sys.getenv("USERNAME") == "py128") {
-  tmpdir <- file.path(tempdir(), "test-draft_report2")
-  saros.base::ex_survey_ch_overview |>
-    saros.base::refine_chapter_overview(data = saros.base::ex_survey,
-                                        label_separator = " - ") |>
-  saros.base::draft_report(
-     chapter_structure = _,
-     data = saros.base::ex_survey,
-     mesos_var = "f_uni",
-     combined_report = TRUE,
-     path = tmpdir)
-  output_files <-
-    list.files(pattern = "\\.qmd", path = tmpdir,
-               full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
-  testthat::expect_equal(
-    object = length(output_files),
-    expected = (nrow(saros.base::ex_survey_ch_overview)+2) * dplyr::n_distinct(saros.base::ex_survey$f_uni))
+    tmpdir <- file.path(tempdir(), "test-draft_report2")
+    saros.base::ex_survey_ch_overview |>
+      saros.base::refine_chapter_overview(data = saros.base::ex_survey,
+                                          label_separator = " - ") |>
+      saros.base::draft_report(
+        chapter_structure = _,
+        data = saros.base::ex_survey,
+        mesos_var = "f_uni",
+        combined_report = TRUE,
+        path = tmpdir)
 
-  }
+    output_files <-
+      list.files(pattern = "\\.qmd", path = tmpdir,
+                 full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
+    testthat::expect_equal(
+      object = length(output_files),
+      expected = (nrow(saros.base::ex_survey_ch_overview)+2) * dplyr::n_distinct(saros.base::ex_survey$f_uni))
+
+
 })

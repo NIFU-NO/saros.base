@@ -8,8 +8,8 @@ testthat::test_that("add_chapter_foldername_to_chapter_structure works with typi
 testthat::test_that("add_chapter_foldername_to_chapter_structure handles null chapter", {
   chapter_structure <- data.frame(chapter = NULL)
   result <- saros.base:::add_chapter_foldername_to_chapter_structure(chapter_structure)
-  testthat::expect_null(result$.chapter_number)
-  testthat::expect_null(result$.chapter_foldername)
+  testthat::expect_equal(nrow(result), 0)
+  testthat::expect_equal(colnames(result), character())
 })
 
 testthat::test_that("add_chapter_foldername_to_chapter_structure handles character chapters (rare)", {
