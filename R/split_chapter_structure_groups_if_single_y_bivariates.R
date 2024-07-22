@@ -2,8 +2,8 @@
 split_chapter_structure_groups_if_single_y_bivariates <-
   function(chapter_structure,
            data,
-           single_y_bivariates_if_indep_cats_above = NA,
-           single_y_bivariates_if_deps_above = NA,
+           single_y_bivariates_if_indep_cats_above = NA_integer_,
+           single_y_bivariates_if_deps_above = NA_integer_,
            variable_group_dep = ".variable_group_dep",
            organize_by = NULL) {
 

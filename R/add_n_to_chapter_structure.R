@@ -26,7 +26,7 @@ add_n_to_chapter_structure <- function(chapter_structure,
                                       ~!is.na(.x))
                         ) |>
           nrow()
-      } else .x[[variable_name]] <- NA
+      } else .x[[variable_name]] <- NA_integer_
       .x
     }) |>
     dplyr::bind_rows() |>

@@ -2,8 +2,10 @@ add_chapter_foldername_to_chapter_structure <-
   function(chapter_structure,
            max_clean_folder_name = 64)  {
 
+    # Handles NA acceptably, as these are converted to string
+
     if(!is.null(chapter_structure$chapter)) {
-      chapter_structure$.chapter_number <- as.integer(chapter_structure$chapter)
+      chapter_structure$.chapter_number <- as.integer(as.factor(chapter_structure$chapter))
 
       digits <- floor(log10(length(unique(chapter_structure$chapter))))+1
       chapter_number_text <- sprintf(paste0("%0", digits, "d"),

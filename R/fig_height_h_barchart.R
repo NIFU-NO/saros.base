@@ -189,7 +189,7 @@ fig_height_h_barchart <- # Returns a numeric value
       x_axis_height <-
         max(c(max_lines_y, n_cats_y), na.rm=TRUE) *
         multiplier_per_horizontal_line * n_y
-      strip_height <- NA
+      strip_height <- NA_real_
       n_facets <- 1
 
     }

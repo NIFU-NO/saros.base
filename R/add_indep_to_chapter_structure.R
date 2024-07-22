@@ -1,15 +1,19 @@
 add_indep_to_chapter_structure <- function(chapter_structure) {
+
   if(!is.null(chapter_structure$.variable_role)) {
 
     indep_df <- chapter_structure
-    indep_df <- dplyr::bind_rows(indep_df, data.frame(.variable_name = NA_character_))
+    indep_df <- dplyr::bind_rows(indep_df, data.frame(.variable_name = NA_character_)) # Must add NA-row to allow univariates.
     indep_df <- dplyr::ungroup(indep_df)
-    indep_df <- vctrs::vec_slice(indep_df, !is.na(indep_df[[".variable_role"]]) & indep_df$.variable_role == "indep")
+    indep_df <- vctrs::vec_slice(indep_df,
+                                 !is.na(indep_df[[".variable_role"]]) &
+                                   indep_df[[".variable_role"]] == "indep")
     colnames(indep_df) <- stringi::stri_replace_all_regex(colnames(indep_df), pattern="^(.variable_.+)$", replacement = "$1_indep")
 
-    dep_df <- vctrs::vec_slice(chapter_structure,
-                               !is.na(chapter_structure[[".variable_role"]]) &
-                                 chapter_structure[[".variable_role"]] == "dep")
+    dep_df <- chapter_structure
+    dep_df <- vctrs::vec_slice(dep_df,
+                               !is.na(dep_df[[".variable_role"]]) &
+                                 dep_df[[".variable_role"]] == "dep")
     colnames(dep_df) <- stringi::stri_replace_all_regex(colnames(dep_df), pattern="^(.variable_.+)$", replacement = "$1_dep")
 
     na_df <- vctrs::vec_slice(chapter_structure, is.na(chapter_structure[[".variable_role"]]))
@@ -18,10 +22,15 @@ add_indep_to_chapter_structure <- function(chapter_structure) {
     join_variables <- stringi::stri_subset_regex(names(dep_df),
                                                  pattern = "^\\.variable_.+",
                                                  negate = TRUE)
-    bi_out <- dplyr::full_join(x = dep_df, # TASK: SIMPLIFY INDEP IN data_overview
-                            y = indep_df,
-                            by = join_variables,
-                            relationship = "many-to-many")
+    if(length(join_variables)>0) {
+      bi_out <- dplyr::full_join(x = dep_df,
+                                 y = indep_df,
+                                 by = join_variables,
+                                 relationship = "many-to-many")
+    } else {
+      bi_out <- dplyr::cross_join(x = dep_df, y = indep_df)
+    }
+
 
     dplyr::bind_rows(na_df, dep_df, bi_out)
 

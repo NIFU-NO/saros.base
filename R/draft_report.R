@@ -267,8 +267,8 @@ draft_report <-
 
                  mesos_group <- uniques[.x]
                  path <- file.path(path, report_foldername_clean[.x])
-                 args$title <- stringi::stri_c(args$title,
-                                          uniques[.x],
+                 args$title <- stringi::stri_c(if(!is.na(args$title)) args$title,
+                                               if(!is.na(uniques[.x])) uniques[.x],
                                           ignore_null=TRUE)
 
 

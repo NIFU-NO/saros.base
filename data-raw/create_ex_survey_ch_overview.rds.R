@@ -5,7 +5,7 @@ ex_survey_ch_overview <-
                "Big mysteries",
                "Confidence",
                "Doubt"),
-   author = c("Ernst Hemmingway", "Agatha Christie", "Mark Twain", "Stephen King", NA),
+   author = c("Ernst Hemmingway", "Agatha Christie", "Mark Twain", "Stephen King", NA_character_),
    dep = c("", "matches('^c_'), a_1:a_6, a_9", "p_1:p_4, b_1:b_3", "starts_with('d_'), matches('^e_')", "open_comments"),
    indep = c("", "x1_sex", "x3_nationality", "f_uni", ""),
    irrelevant_col = "abc")

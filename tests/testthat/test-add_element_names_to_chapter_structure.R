@@ -1,5 +1,5 @@
 testthat::test_that("add_chunk_templates_to_chapter_structure works with typical input", {
-  chapter_structure <- data.frame(.variable_name_dep = c("var1", "var2", NA))
+  chapter_structure <- data.frame(.variable_name_dep = c("var1", "var2", NA_character_))
   chunk_templates <- data.frame(template = c("temp1", "temp2"))
   result <- saros.base:::add_chunk_templates_to_chapter_structure(chapter_structure, chunk_templates)
   testthat::expect_equal(nrow(result), 5)

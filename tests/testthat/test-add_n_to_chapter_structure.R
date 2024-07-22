@@ -17,7 +17,7 @@ testthat::test_that("add_n_to_chapter_structure handles missing values in data",
 testthat::test_that("add_n_to_chapter_structure handles custom variable_name", {
   chapter_structure <- data.frame(.variable_name_dep = c("var1", "var2"), .variable_name_indep = c("var3", "var4"))
   data <- data.frame(var1 = c(1, 2, 3, 4), var2 = c(1, 2, 3, 4), var3 = c(1, 2, 3, 4), var4 = c(1, 2, 3, 4))
-  result <- saros.base::add_n_to_chapter_structure(chapter_structure, data, variable_name = "sample_size")
+  result <- saros.base:::add_n_to_chapter_structure(chapter_structure, data, variable_name = "sample_size")
   testthat::expect_true("sample_size" %in% colnames(result))
   testthat::expect_equal(result$sample_size, c(4, 4))
 })
