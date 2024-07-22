@@ -188,7 +188,6 @@ draft_report <-
            title = "Report",
            authors = NULL,
            authors_col = "author",
-           mesos_var = NULL,
 
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
@@ -245,91 +244,50 @@ draft_report <-
 
     all_authors <- get_authors(data = chapter_structure, col=args$authors_col)
 
-    if(!is_string(args$mesos_var)) {
 
-      uniques <- NA_character_
+    chapter_filepaths <-
+      rlang::exec(
+        gen_qmd_chapters,
+        chapter_structure = chapter_structure,
+        data = data,
+        path = path,
+        !!!args[!names(args) %in% .saros.env$ignore_args])
 
-    } else {
-      # Mesos reports
-      uniques <- pull_uniques(data[[args$mesos_var]])
+
+
+
+    if(isTRUE(args$combined_report)) {
+
+      report_filepath <-
+        gen_qmd_file(
+          path = path,
+          filename = args$report_filename,
+          yaml_file = args$report_yaml_file,
+          qmd_start_section_filepath = args$report_qmd_start_section_filepath,
+          qmd_end_section_filepath = args$report_qmd_end_section_filepath,
+          title = args$title,
+          authors = all_authors,
+          output_formats = NULL,
+          output_filename = NULL,
+          call = rlang::caller_env())
     }
 
-    report_foldername_clean <- filename_sanitizer(uniques, max_chars = args$max_clean_folder_name)
-
     index_filepath <-
-      lapply(X =
-               cli::cli_progress_along(uniques, # Not working well
-                                       format = "Generating mesos report for... {uniques[cli::pb_current]}",
-                                       clear = FALSE,
-                                       auto_terminate = FALSE),
-             FUN = function(.x) {
-
-
-               if(is.na(uniques[.x])) { # Macro
-
-                 mesos_group <- NULL
-
-
-               } else {  # Mesos
-
-                 mesos_group <- uniques[.x]
-                 path <- file.path(path, report_foldername_clean[.x])
-                 args$title <- stringi::stri_c(if(!is.na(args$title)) args$title,
-                                               if(!is.na(uniques[.x])) uniques[.x],
-                                          ignore_null=TRUE)
-
-
-               }
-
-
-               chapter_filepaths <-
-                 rlang::exec(
-                   gen_qmd_chapters,
-                   chapter_structure = chapter_structure,
-                   data = data,
-                   mesos_group = mesos_group,
-                   path = path,
-                   !!!args[!names(args) %in% .saros.env$ignore_args])
+      gen_qmd_file(
+        path = path,
+        filename = args$index_filename,
+        yaml_file = args$index_yaml_file,
+        qmd_start_section_filepath = args$index_qmd_start_section_filepath,
+        qmd_end_section_filepath = args$index_qmd_end_section_filepath,
+        title = args$title,
+        authors = all_authors,
+        output_formats = if(!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
+        output_filename = args$report_filename,
+        call = rlang::caller_env())
 
 
 
-
-               if(isTRUE(args$combined_report)) {
-
-                 report_filepath <-
-                     gen_qmd_file(
-                       path = path,
-                       filename = args$report_filename,
-                       yaml_file = args$report_yaml_file,
-                       qmd_start_section_filepath = args$report_qmd_start_section_filepath,
-                       qmd_end_section_filepath = args$report_qmd_end_section_filepath,
-                       title = args$title,
-                       authors = all_authors,
-                       output_formats = NULL,
-                       output_filename = NULL,
-                       call = rlang::caller_env())
-               }
-
-               index_filepath <-
-                   gen_qmd_file(
-                   path = path,
-                   filename = args$index_filename,
-                   yaml_file = args$index_yaml_file,
-                   qmd_start_section_filepath = args$index_qmd_start_section_filepath,
-                   qmd_end_section_filepath = args$index_qmd_end_section_filepath,
-                   title = args$title,
-                   authors = all_authors,
-                   output_formats = if(!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
-                   output_filename = args$report_filename,
-                   call = rlang::caller_env())
-
-               index_filepath
-
-             })
-
-    index_filepath <- as.character(unlist(index_filepath))
-
-    validate_path_lengths_on_win(path = path,
+    validate_path_lengths_on_win(path = index_filepath,
                                  max_path_warning_threshold = max_path_warning_threshold)
 
 

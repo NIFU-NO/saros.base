@@ -7,7 +7,6 @@
 gen_qmd_chapters(
   chapter_structure,
   data,
-  mesos_group = NULL,
   authors_col = "author",
   ...,
   call = rlang::caller_env()
@@ -28,12 +27,6 @@ variables) and other informative columns as needed.}
 
 A data frame (or a srvyr-object) with the columns specified in the
 chapter_structure 'dep', etc columns.}
-
-\item{mesos_group}{\emph{Specific group to compare with}
-
-\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
-
-Both the absolute and relative folder paths are required, as strings.}
 
 \item{authors_col}{\emph{Column name for author}
 

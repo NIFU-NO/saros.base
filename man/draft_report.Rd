@@ -12,7 +12,6 @@ draft_report(
   title = "Report",
   authors = NULL,
   authors_col = "author",
-  mesos_var = NULL,
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
@@ -84,12 +83,6 @@ If multiple authors per chapter, separate with semicolon. Ensure consistency.}
 \verb{scalar<character>} // \emph{default:} \code{"author"} (\code{optional})
 
 Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).}
-
-\item{mesos_var}{\emph{Variable in ´data´ indicating groups to tailor reports for}
-
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column name in data indicating the groups for which mesos reports will be produced.}
 
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 

@@ -107,7 +107,7 @@
 #'
 #'  `scalar<integer>` // *default:* `10` (`optional`)
 #'
-#'  Whether to hide result if N for a given datasets (or mesos group) is below
+#'  Whether to hide result if N for a given dataset is below
 #'  this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
 #'  typically exempted in the first place. This might change in the future with
 #'  a separate argument.
@@ -116,15 +116,15 @@
 #'
 #'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
-#'   For mesos reports using the element "chr_table", open responses are
-#'   displayed for also the entire sample (`FALSE`) or only for the mesos
+#'   MOVE TO saros.contents: For reports using the element "chr_table", open responses are
+#'   displayed for also the entire sample (`FALSE`) or only for the target
 #'   group to ensure data privacy (`TRUE`).
 #'
 #' @param hide_variable_if_all_na *Hide variable from outputs if containing all NA*
 #'
 #'   `scalar<boolean>` // *default:* `TRUE` (`optional`)
 #'
-#'   Whether to remove all variables (in particular useful for mesos) if all values are NA
+#'   Whether to remove variables if all values are NA.
 #'
 #' @param max_width_obj,max_width_chunk,max_width_file *Maximum object width*
 #'
@@ -160,13 +160,6 @@
 #'
 #'   Column names in `data` that should always be included in datasets for
 #'   chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
-#'
-#' @param mesos_var *Variable in ´data´ indicating groups to tailor reports for*
-#'
-#'   `scalar<character>` // *default:* `NULL` (`optional`)
-#'
-#'   Column name in data indicating the groups for which mesos reports will be produced.
-#'
 #'
 #' @param variable_group_dep *Name for the variable_group_dep column*
 #'
@@ -247,8 +240,6 @@ refine_chapter_overview <-
            sep_file = "-",
            max_clean_folder_name = 12,  # Tidy up argument name: max_width_clean_folder_name
 
-           # MESOS AND OTHER FEATURES
-           mesos_var = NULL, # Not in use yet
            auxiliary_variables = NULL, # Not in use yet
            ...,
            progress = TRUE,
@@ -344,7 +335,6 @@ refine_chapter_overview <-
         log_unused_variables(chapter_structure = out,
                              data = data,
                              auxiliary_variables = auxiliary_variables,
-                             mesos_var = mesos_var,
                              log_file = log_file)
         # if(!is.factor(out$.variable_name_dep)) browser()
 
