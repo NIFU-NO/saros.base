@@ -120,12 +120,6 @@ gen_qmd_structure <-
       return(output)
     }
 
-    # chapter_structure <- remove_empty_col_for_mesos_group(data = data,
-    #                                                      chapter_structure = chapter_structure,
-    #                                                      mesos_group = mesos_group,
-    #                                                      mesos_var = dots$mesos_var,
-    #                                                      hide_chunk_if_n_below = dots$hide_chunk_if_n_below)
-
     grouping_structure <- dplyr::group_vars(chapter_structure)
     non_grouping_vars <- colnames(chapter_structure)[!colnames(chapter_structure) %in% grouping_structure]
 

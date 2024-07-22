@@ -12,12 +12,6 @@
 #' main question, and being of the same data type.
 #'
 #' @inheritParams draft_report
-#' @param mesos_group *Specific group to compare with*
-#'
-#'   `scalar<character>` // *Default:* `NULL` (`optional`)
-#'
-#'   Both the absolute and relative folder paths are required, as strings.
-#'
 #'
 #' @return Side-effects: qmd-files generated in the specified working directory.
 #' @keywords internal
@@ -25,7 +19,6 @@
 gen_qmd_chapters <-
   function(chapter_structure,
            data,
-           mesos_group = NULL,
            authors_col = "author",
            ...,
            call = rlang::caller_env()
@@ -33,7 +26,6 @@ gen_qmd_chapters <-
 
     dots <- rlang::list2(...)
 
-    check_string(mesos_group, n=1, null.ok=TRUE, call = call)
 
     path <- fs::as_fs_path(dots$path)
     dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
@@ -100,7 +92,6 @@ gen_qmd_chapters <-
               gen_qmd_structure,
               data = data,
               chapter_structure = chapter_structure_chapter,
-              mesos_group = mesos_group,
               chapter_folderpath_absolute = chapter_folderpath_absolute,
               chapter_foldername = chapter_foldername_clean,
               !!!dots#[!names(dots) %in% c("chapter_structure", "call")]
@@ -130,7 +121,6 @@ gen_qmd_chapters <-
                                      chapter_structure_chapter = chapter_structure_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
                                      path = path,
-                                     mesos_var = dots$mesos_var,
                                      auxiliary_variables = dots$auxiliary_variables,
                                      serialized_format = dots$serialized_format)
             }
@@ -157,7 +147,7 @@ gen_qmd_chapters <-
 
     chapter_filepaths <- unlist(chapter_filepaths)
 
-    cli::cli_process_done(msg_done = "Completed report{if(is_string(mesos_group)) paste0(' for ', mesos_group)}.")
+    cli::cli_process_done(msg_done = "Completed report.")
 
 
     chapter_filepaths

@@ -30,7 +30,6 @@ validate_draft_report_args <- function(params) {
       chapter_structure = list(fun = function(x) validate_chapter_structure(x, core_chapter_structure_cols = core_chapter_structure_cols)),
 
       # Character vectors (not enums)
-      mesos_var = list(fun = function(x) is.null(x) || is_string(x)),
       auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       path = list(fun = function(x) is_string(x)),
 
@@ -73,17 +72,6 @@ validate_draft_report_args <- function(params) {
 
   params$tabular_format <- params$tabular_format[1]
   params$serialized_format <- params$serialized_format[1]
-
-  if(is_string(params$mesos_var)) {
-    if(!any(colnames(params$data) == params$mesos_var)) {
-      cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
-    }
-    if(all(is.na(params$data[[params$mesos_var]]))) {
-      cli::cli_abort("{.arg mesos_var}: All mesos_var entries are NA.")
-    }
-  }
-
-
 
 
   pkg <- switch(params$tabular_format,

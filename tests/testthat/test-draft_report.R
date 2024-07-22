@@ -37,7 +37,6 @@ testthat::test_that("draft_report", {
       saros.base::draft_report(
         chapter_structure = _,
         data = saros.base::ex_survey,
-        mesos_var = "f_uni",
         combined_report = TRUE,
         path = tmpdir)
 
@@ -46,7 +45,7 @@ testthat::test_that("draft_report", {
                  full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
     testthat::expect_equal(
       object = length(output_files),
-      expected = (nrow(saros.base::ex_survey_ch_overview)+2) * dplyr::n_distinct(saros.base::ex_survey$f_uni))
+      expected = (nrow(saros.base::ex_survey_ch_overview)+2))
 
 
 })

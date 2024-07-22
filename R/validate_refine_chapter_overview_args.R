@@ -34,7 +34,6 @@ validate_refine_chapter_overview_args <- function(params) {
       sep_obj = list(fun = function(x) is_string(x)),
       sep_chunk = list(fun = function(x) is_string(x)),
       sep_file = list(fun = function(x) is_string(x)),
-      mesos_var = list(fun = function(x) is.null(x) || is_string(x)),
       auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
@@ -78,15 +77,6 @@ validate_refine_chapter_overview_args <- function(params) {
 
 
   params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
-
-  if(is_string(params$mesos_var)) {
-    if(!any(colnames(params$data) == params$mesos_var)) {
-      cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
-    }
-    if(all(is.na(params$data[[params$mesos_var]]))) {
-      cli::cli_abort("{.arg mesos_var}: All mesos_var entries are NA.")
-    }
-  }
 
 
   if(!all(c("chapter", ".template_name") %in% params$organize_by)) {

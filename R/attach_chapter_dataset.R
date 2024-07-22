@@ -2,7 +2,6 @@ attach_chapter_dataset <- function(chapter_structure_chapter,
                                    data,
                                    path,
                                    chapter_foldername_clean,
-                                   mesos_var,
                                    auxiliary_variables,
                                    serialized_format = "rds") {
 
@@ -19,7 +18,6 @@ attach_chapter_dataset <- function(chapter_structure_chapter,
 
   data_chapter <- data[, names(data) %in% unique(c(dep_vars,
                                                    indep_vars,
-                                                   mesos_var,
                                                    auxiliary_variables)), drop = FALSE]
 
   filename_chapter_dataset <-

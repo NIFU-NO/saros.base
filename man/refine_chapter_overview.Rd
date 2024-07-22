@@ -30,7 +30,6 @@ refine_chapter_overview(
   sep_chunk = "-",
   sep_file = "-",
   max_clean_folder_name = 12,
-  mesos_var = NULL,
   auxiliary_variables = NULL,
   ...,
   progress = TRUE,
@@ -120,7 +119,7 @@ If N is below this value, p-value will not be shown.}
 
 \verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
 
-Whether to hide result if N for a given datasets (or mesos group) is below
+Whether to hide result if N for a given dataset is below
 this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
 typically exempted in the first place. This might change in the future with
 a separate argument.}
@@ -129,14 +128,14 @@ a separate argument.}
 
 \verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
 
-Whether to remove all variables (in particular useful for mesos) if all values are NA}
+Whether to remove variables if all values are NA.}
 
 \item{hide_chr_for_others}{\emph{Hide open response displays for others}
 
 \verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
-For mesos reports using the element "chr_table", open responses are
-displayed for also the entire sample (\code{FALSE}) or only for the mesos
+MOVE TO saros.contents: For reports using the element "chr_table", open responses are
+displayed for also the entire sample (\code{FALSE}) or only for the target
 group to ensure data privacy (\code{TRUE}).}
 
 \item{organize_by}{\emph{Grouping columns}
@@ -191,12 +190,6 @@ object names and hyphen for chunk labels and file names.}
 Whereas \code{max_width_file} truncates the file name, this argument truncates
 the folder name. It will not impact the report or chapter names in website,
 only the folders.}
-
-\item{mesos_var}{\emph{Variable in ´data´ indicating groups to tailor reports for}
-
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column name in data indicating the groups for which mesos reports will be produced.}
 
 \item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
 
