@@ -41,6 +41,7 @@ validate_refine_chapter_overview_args <- function(params) {
       n_range_glue_template_1 = list(fun = function(x) is_string(x)),
       n_range_glue_template_2 = list(fun = function(x) is_string(x)),
       variable_group_dep = list(fun = function(x) is_string(x)),
+      variable_group_prefix = list(fun = function(x) is.null(x) || is_string(x)),
       log_file = list(fun = function(x) is.null(x) || is_string(x)),
 
 

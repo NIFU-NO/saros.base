@@ -174,6 +174,15 @@
 #'
 #'   This column is used to group variables that are part of the same bivariate analysis.
 #'
+#' @param variable_group_prefix *Set a prefix to more easily find it in your labels*
+#'
+#'   `scalar<string>` // *default:* `NULL`
+#'
+#'   By default, the .variable_group column is just integers. If you wish to
+#'   use this as part of your object/label/filename numbering scheme, a number
+#'   by itself will not be very informative. Hence you could set a prefix such
+#'   as "Group" to distinguish this column from other columns in the chapter_structure.
+#'
 #' @param progress *Whether to display progress message*
 #'
 #'    `scalar<logical>` // *default:* `TRUE`
@@ -244,6 +253,7 @@ refine_chapter_overview <-
            ...,
            progress = TRUE,
            variable_group_dep = ".variable_group_dep",
+           variable_group_prefix = NULL,
            n_range_glue_template_1 = "{n}",
            n_range_glue_template_2 = "[{n[1]}-{n[2]}]",
            log_file = NULL) {
@@ -348,7 +358,8 @@ refine_chapter_overview <-
 
         out <-
           add_group_id_to_chapter_structure(out,
-                                            grouping_vars = organize_by[organize_by %in% colnames(out)])
+                                            grouping_vars = organize_by[organize_by %in% colnames(out)],
+                                            variable_group_prefix = NULL)
 
         # if(!is.factor(out$.variable_name_dep)) browser()
 

@@ -35,6 +35,7 @@ refine_chapter_overview(
   ...,
   progress = TRUE,
   variable_group_dep = ".variable_group_dep",
+  variable_group_prefix = NULL,
   n_range_glue_template_1 = "{n}",
   n_range_glue_template_2 = "[{n[1]}-{n[2]}]",
   log_file = NULL
@@ -221,6 +222,15 @@ Mostly useful when hide_bi_entry_if_sig_above < 1}
 \verb{scalar<string>} // \emph{default:} \code{".variable_group_dep"}
 
 This column is used to group variables that are part of the same bivariate analysis.}
+
+\item{variable_group_prefix}{\emph{Set a prefix to more easily find it in your labels}
+
+\verb{scalar<string>} // \emph{default:} \code{NULL}
+
+By default, the .variable_group column is just integers. If you wish to
+use this as part of your object/label/filename numbering scheme, a number
+by itself will not be very informative. Hence you could set a prefix such
+as "Group" to distinguish this column from other columns in the chapter_structure.}
 
 \item{n_range_glue_template_1, n_range_glue_template_2}{\verb{scalar<string>} // \emph{default:} \verb{"\{n\}" and "[\{n[1]\}, \{n[2]\}]} (\code{optional})
 
