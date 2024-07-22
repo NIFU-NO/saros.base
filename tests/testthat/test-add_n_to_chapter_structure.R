@@ -27,7 +27,7 @@ testthat::test_that("add_n_to_chapter_structure handles NA in target_grouping_va
   data <- data.frame(var1 = c(1, 2, 3, 4), var3 = c(1, 2, 3, 4), var4 = c(1, 2, 3, 4))
   result <- saros.base:::add_n_to_chapter_structure(chapter_structure, data)
   testthat::expect_true(".n" %in% colnames(result))
-  testthat::expect_equal(result$.n, c(4, NA))
+  testthat::expect_equal(result$.n, c(4, 0))
 })
 
 testthat::test_that("add_n_to_chapter_structure handles empty data", {

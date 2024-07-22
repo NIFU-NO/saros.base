@@ -2,6 +2,8 @@ add_chapter_foldername_to_chapter_structure <-
   function(chapter_structure,
            max_clean_folder_name = 64)  {
 
+    grouping_vars <- dplyr::group_vars(chapter_structure)
+
     # Handles NA acceptably, as these are converted to string
 
     if(!is.null(chapter_structure$chapter)) {
@@ -22,5 +24,6 @@ add_chapter_foldername_to_chapter_structure <-
                         ignore_null = TRUE)
 
     }
-    chapter_structure
+    chapter_structure |>
+      dplyr::group_by(dplyr::pick(tidyselect::all_of(grouping_vars)))
   }

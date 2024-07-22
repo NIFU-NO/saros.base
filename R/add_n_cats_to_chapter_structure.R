@@ -20,7 +20,12 @@ add_n_cats_to_chapter_structure <-
             if(isTRUE(drop_na)) out <- out[!is.na(out)]
 
             .x[[variable_name_n_cats]] <- length(out)
-            .x[[variable_name_max_cat_char]] <- max(nchar(out), na.rm=TRUE)
+            if(is.na(length(out))) {
+              .x[[variable_name_n_cats]] <- 0
+            } else .x[[variable_name_n_cats]] <- length(out)
+            if(is.na(max(nchar(out), na.rm=TRUE))) {
+              .x[[variable_name_max_cat_char]] <- 0
+            } else .x[[variable_name_max_cat_char]] <- max(nchar(out), na.rm=TRUE)
           }
           .x
         }) |>

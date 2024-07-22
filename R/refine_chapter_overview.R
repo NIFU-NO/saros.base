@@ -361,7 +361,7 @@ refine_chapter_overview <-
                                             grouping_vars = organize_by[organize_by %in% colnames(out)],
                                             variable_group_prefix = NULL)
 
-        # if(!is.factor(out$.variable_name_dep)) browser()
+        # browser()
 
         out <-
           split_chapter_structure_groups_if_single_y_bivariates(
@@ -375,7 +375,7 @@ refine_chapter_overview <-
 
       }
 
-      # if(!is.factor(out$.variable_name_dep)) browser()
+      # browser()
 
 
 

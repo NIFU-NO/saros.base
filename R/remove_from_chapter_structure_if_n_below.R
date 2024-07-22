@@ -8,6 +8,8 @@ remove_from_chapter_structure_if_n_below <-
     }
     check_integerish(hide_chunk_if_n_below)
     vctrs::vec_slice(chapter_structure,
-                     is.na(chapter_structure[[n_variable_name]]) |
-                     chapter_structure[[n_variable_name]] >= hide_chunk_if_n_below)
+                     is.na(as.character(chapter_structure[[".variable_name_dep"]])) | # Introduction chapter or ..
+                     (!is.na(chapter_structure[[n_variable_name]]) &
+                     chapter_structure[[n_variable_name]] >= hide_chunk_if_n_below)) |>
+      dplyr::group_by(dplyr::pick(tidyselect::all_of(dplyr::group_vars(chapter_structure))))
   }
