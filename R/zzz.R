@@ -41,7 +41,7 @@ link <- make_link(data=attr({.obj_name}, 'data_summary'))
 purrr::walk({.obj_name}, function(x) girafe(ggobj = .x))
 ``````
 
-_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{r} nrange`. `{r} link`.'
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`.'
 
 :::
 ",
@@ -61,7 +61,7 @@ link <- make_link(data=attr({.obj_name}, 'data_summary'))
 girafe(ggobj = {.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_. N=`{r} nrange`. `{r} link`.'
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
 
 :::
 
@@ -80,7 +80,7 @@ link <- make_link(data={.obj_name})
 gt(ggobj = {.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_. N=`{r} nrange`. `{r} link`.'
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
 
 :::
 
