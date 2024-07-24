@@ -31,14 +31,19 @@ if(!exists(".saros.env")) .saros.env <- NULL
     data.frame(.template_name = "bi_catcat_prop_plot",
                .template =
                  "
+::: {{#fig-{.chunk_name} }}
+
 ``````{{r}}
-#| label: 'fig-{.chunk_name}'
-#| fig-cap: '_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N={.n_range}. [xlsx]({.chapter_foldername}/{.file_name}.xlsx).'
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
 {.obj_name} <- \n\tsaros.contents::sarosmake(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype='cat_prop_plot_html')
-girafe(ggobj = {.obj_name})
+nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
+link <- make_link(data=attr({.obj_name}, 'data_summary'))
+purrr::walk({.obj_name}, function(x) girafe(ggobj = .x))
 ``````
 
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`.'
+
+:::
 ",
                .template_variable_type_dep = c("fct;ord"),
                .template_variable_type_indep = c("fct;ord")) |>
@@ -46,13 +51,19 @@ girafe(ggobj = {.obj_name})
     tibble::add_row(.template_name = "uni_cat_prop_plot",
                     .template =
                       "
+::: {{#fig-{.chunk_name} }}
+
 ``````{{r}}
-#| label: 'fig-{.chunk_name}'
 #| fig-cap: '_{.variable_label_prefix_dep}_. N={.n_range}. [xlsx]({.chapter_foldername}/{.file_name}.xlsx).'
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})
 {.obj_name} <- \n\tsaros.contents::sarosmake(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_plot_html')
+link <- make_link(data=attr({.obj_name}, 'data_summary'))
 girafe(ggobj = {.obj_name})
 ``````
+
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
+
+:::
 
 ",
                     .template_variable_type_dep = c("fct;ord"),
@@ -60,12 +71,19 @@ girafe(ggobj = {.obj_name})
     tibble::add_row(.template_name = "uni_cat_prop_table",
                     .template =
                       "
+::: {{#tbl-{.chunk_name} }}
+
 ``````{{r}}
-#| label: 'tbl-{.chunk_name}'
 #| tbl-cap: '_{.variable_label_prefix_dep}_. N={.n_range}.'
 {.obj_name} <- \n\tsaros.contents::sarosmake(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_table_html')
+link <- make_link(data={.obj_name})
 gt(ggobj = {.obj_name})
 ``````
+
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
+
+:::
+
 
 ",
                     .template_variable_type_dep = c("fct;ord"),
@@ -73,11 +91,17 @@ gt(ggobj = {.obj_name})
     tibble::add_row(.template_name = "uni_chr_table",
                     .template =
                       "
+::: {{#tbl-{.chunk_name} }}
+
 ``````{{r}}
-#| label: 'tbl-{.chunk_name}'
 #| tbl-cap: '_{.variable_label_prefix_dep}_. N={.n_range}.'
 {.obj_name} <- \n\tsaros.contents::sarosmake(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html')
 gt({.obj_name})
+
+_{.variable_label_prefix_dep}_.'
+
+:::
+
 ``````
 
 ",
