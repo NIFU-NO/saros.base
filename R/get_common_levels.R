@@ -8,7 +8,7 @@ get_common_levels <- function(data, col_pos=NULL) {
     fct_unions <- forcats::fct_unify(fs = data_out)[[1]]
     return(levels(fct_unions))
   }
-  if(length(get_common_data_type(data_out)>1) && length(col_pos)>1) {
+  if(length(get_common_data_type(data_out)) > 1 && length(col_pos)>1) {
     # browser()
     cli::cli_abort(c(x="{.arg data} contains columns without a common data type.",
                      i="Problem with: {.val {colnames(data_out)}};",
