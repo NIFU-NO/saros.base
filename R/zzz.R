@@ -46,7 +46,7 @@ link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[Dow
 purrr::walk({.obj_name}, ~girafe(ggobj = .x))
 ``````
 
-_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.'
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
 
 :::
 ",
@@ -67,7 +67,7 @@ link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[Dow
 girafe(ggobj = {.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.'
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
 
 :::
 
@@ -87,7 +87,7 @@ link <- make_link(data={.obj_name})
 gt(ggobj = {.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.
 
 :::
 
@@ -106,13 +106,32 @@ _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
 gt({.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_.'
+_{.variable_label_prefix_dep}_.
 
 :::
 
 
 ",
                     .template_variable_type_dep = "chr",
-                    .template_variable_type_indep = NA_character_)
+                    .template_variable_type_indep = NA_character_) |>
+
+    tibble::add_row(.template_name = "sigtest_table_html",
+                    .template =
+                      "
+::: {{#tbl-{.chunk_name} }}
+
+``````{{r}}
+{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype = 'sigtest_table_html')
+gt({.obj_name})
+``````
+
+_Significance tests_.
+
+:::
+
+
+",
+                    .template_variable_type_dep = "fct;ord;int;dbl",
+                    .template_variable_type_indep = "fct;ord;int;dbl")
 
 }
