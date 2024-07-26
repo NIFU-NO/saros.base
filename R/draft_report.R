@@ -169,6 +169,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' ex_survey_ch_structure <-
 #'   refine_chapter_overview(
 #'           chapter_overview = ex_survey_ch_overview,
@@ -178,6 +179,7 @@
 #'     chapter_structure = ex_survey_ch_structure,
 #'     data = ex_survey,
 #'     path = tempdir())
+#' }
 draft_report <-
   function(data,
            chapter_structure,
