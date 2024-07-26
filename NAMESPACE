@@ -3,6 +3,7 @@
 export(draft_report)
 export(fig_height_h_barchart)
 export(filename_sanitizer)
+export(get_chunk_template_defaults)
 export(get_raw_labels)
 export(is_string)
 export(refine_chapter_overview)
