@@ -28,7 +28,11 @@ if(!exists(".saros.env")) .saros.env <- NULL
 
 
   .saros.env$default_chunk_templates <<-
-    data.frame(.template_name = "bi_catcat_prop_plot",
+    data.frame(.template_name = character(),
+               .template = character(),
+               .template_variable_type_dep = character(),
+               .template_variable_type_indep = character()) |>
+    tibble::add_row(.template_name = "cat_prop_plot_html",
                .template =
                  "
 ::: {{#fig-{.chunk_name} }}
@@ -37,45 +41,46 @@ if(!exists(".saros.env")) .saros.env <- NULL
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
 {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype='cat_prop_plot_html')
 nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
-link <- make_link(data=attr({.obj_name}, 'data_summary'))
-purrr::walk({.obj_name}, function(x) girafe(ggobj = .x))
+link <- make_link(data = attr({.obj_name}, 'data_summary'))
+link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[Download PNG](', save_fn = ggsaver, width=12, height=12, units='cm')
+purrr::walk({.obj_name}, ~girafe(ggobj = .x))
 ``````
 
-_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`.'
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.'
 
 :::
 ",
-               .template_variable_type_dep = c("fct;ord"),
-               .template_variable_type_indep = c("fct;ord")) |>
+               .template_variable_type_dep = "fct;ord",
+               .template_variable_type_indep = "fct;ord") |>
 
-    tibble::add_row(.template_name = "uni_cat_prop_plot",
+    tibble::add_row(.template_name = "cat_prop_plot_html",
                     .template =
                       "
 ::: {{#fig-{.chunk_name} }}
 
 ``````{{r}}
-#| fig-cap: '_{.variable_label_prefix_dep}_. N={.n_range}. [xlsx]({.chapter_foldername}/{.file_name}.xlsx).'
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})
 {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_plot_html')
 nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
 link <- make_link(data=attr({.obj_name}, 'data_summary'))
+link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[Download PNG](', save_fn = ggsaver, width=12, height=12, units='cm')
 girafe(ggobj = {.obj_name})
 ``````
 
-_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
+_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.'
 
 :::
 
 ",
-                    .template_variable_type_dep = c("fct;ord"),
+                    .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = NA_character_) |>
-    tibble::add_row(.template_name = "uni_cat_prop_table",
+
+    tibble::add_row(.template_name = "cat_table_html",
                     .template =
                       "
 ::: {{#tbl-{.chunk_name} }}
 
 ``````{{r}}
-#| tbl-cap: '_{.variable_label_prefix_dep}_. N={.n_range}.'
 {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_table_html')
 nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
 link <- make_link(data={.obj_name})
@@ -88,26 +93,26 @@ _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.'
 
 
 ",
-                    .template_variable_type_dep = c("fct;ord"),
+                    .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = NA_character_) |>
-    tibble::add_row(.template_name = "uni_chr_table",
+
+    tibble::add_row(.template_name = "chr_table",
                     .template =
                       "
 ::: {{#tbl-{.chunk_name} }}
 
 ``````{{r}}
-#| tbl-cap: '_{.variable_label_prefix_dep}_. N={.n_range}.'
 {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html')
 gt({.obj_name})
+``````
 
 _{.variable_label_prefix_dep}_.'
 
 :::
 
-``````
 
 ",
-                    .template_variable_type_dep = c("chr"),
+                    .template_variable_type_dep = "chr",
                     .template_variable_type_indep = NA_character_)
 
 }

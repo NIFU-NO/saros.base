@@ -286,8 +286,7 @@ draft_report <-
         call = rlang::caller_env())
 
 
-
-    validate_path_lengths_on_win(path = index_filepath,
+    validate_path_lengths_on_win(path = path,
                                  max_path_warning_threshold = max_path_warning_threshold)
 
 
