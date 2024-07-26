@@ -169,7 +169,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' ex_survey_ch_structure <-
 #'   refine_chapter_overview(
 #'           chapter_overview = ex_survey_ch_overview,
@@ -179,7 +178,6 @@
 #'     chapter_structure = ex_survey_ch_structure,
 #'     data = ex_survey,
 #'     path = tempdir())
-#' }
 draft_report <-
   function(data,
            chapter_structure,
@@ -286,8 +284,7 @@ draft_report <-
         call = rlang::caller_env())
 
 
-
-    validate_path_lengths_on_win(path = index_filepath,
+    validate_path_lengths_on_win(path = path,
                                  max_path_warning_threshold = max_path_warning_threshold)
 
 

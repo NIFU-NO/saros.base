@@ -215,7 +215,6 @@ integer, factor, ordinal, character, and datetime. Currently, only
 factor/ordinal and character are implemented.
 }
 \examples{
-\donttest{
 ex_survey_ch_structure <-
   refine_chapter_overview(
           chapter_overview = ex_survey_ch_overview,
@@ -225,5 +224,4 @@ index_filepath <-
     chapter_structure = ex_survey_ch_structure,
     data = ex_survey,
     path = tempdir())
-}
 }
