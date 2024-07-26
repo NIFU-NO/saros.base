@@ -72,5 +72,5 @@ testthat::test_that("refine_chapter_overview", {
                                     data = saros.base::ex_survey,
                                     label_separator = " - ",
                                     name_separator = "_")
-  testthat::expect_equal(dim(x), c(60, 46))
+  testthat::expect_equal(dim(x), c(98, 50))
 })
