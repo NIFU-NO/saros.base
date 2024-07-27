@@ -90,12 +90,6 @@
 #'  variables in a battery/question matrix. This argument specifies the number of dep variables
 #'  above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.
 #'
-#' @param hide_test_if_n_below *Threshold n for hiding significance test*
-#'
-#'   `scalar<integer>` // *default:* `0` (`optional`)
-#'
-#'   If N is below this value, p-value will not be shown.
-#'
 #' @param hide_bi_entry_if_sig_above *p-value threshold for hiding bivariate entry*
 #'
 #'   `scalar<double>` // *default:* `1` (`optional`)
@@ -217,7 +211,6 @@ refine_chapter_overview <-
            single_y_bivariates_if_deps_above = 20,
            always_show_bi_for_indep = NULL,
            hide_bi_entry_if_sig_above = 1,
-           hide_test_if_n_below = 10,
            hide_chunk_if_n_below = 10,
            hide_variable_if_all_na = TRUE,
            hide_chr_for_others = TRUE, # NOT IMPLEMENTED

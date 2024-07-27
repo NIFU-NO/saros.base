@@ -14,7 +14,6 @@ refine_chapter_overview(
   single_y_bivariates_if_deps_above = 20,
   always_show_bi_for_indep = NULL,
   hide_bi_entry_if_sig_above = 1,
-  hide_test_if_n_below = 10,
   hide_chunk_if_n_below = 10,
   hide_variable_if_all_na = TRUE,
   hide_chr_for_others = TRUE,
@@ -108,12 +107,6 @@ Specific combinations with a by-variable where bivariates should always be shown
 
 Whether to hide bivariate entry if significance is above this value.
 Defaults to showing all.}
-
-\item{hide_test_if_n_below}{\emph{Threshold n for hiding significance test}
-
-\verb{scalar<integer>} // \emph{default:} \code{0} (\code{optional})
-
-If N is below this value, p-value will not be shown.}
 
 \item{hide_chunk_if_n_below}{\emph{Hide result if N below}
 

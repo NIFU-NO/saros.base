@@ -3,7 +3,6 @@ remove_from_chapter_structure_if_non_significant <-
            data,
            hide_bi_entry_if_sig_above = .05,
            always_show_bi_for_indep = c(),
-           hide_test_if_n_below = 10,
            progress = TRUE,
            call = rlang::caller_env()) {
 
@@ -11,7 +10,6 @@ remove_from_chapter_structure_if_non_significant <-
     check_data_frame(data)
     check_double(hide_bi_entry_if_sig_above, min = 0, max = 1, call = call)
     check_string(always_show_bi_for_indep, null.ok = TRUE, n = NULL, call = call)
-    check_integerish(hide_test_if_n_below, min=0, max=Inf, call = call)
 
     chapter_structure$.bi_test <- NA_character_
     chapter_structure$.p_value <- NA_real_
