@@ -54,7 +54,6 @@ validate_refine_chapter_overview_args <- function(params) {
       hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
       single_y_bivariates_if_indep_cats_above = list(fun = function(x) length(x)== 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
       single_y_bivariates_if_deps_above = list(fun = function(x) length(x)== 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
-      hide_test_if_n_below = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE)),
       max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_chunk = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
