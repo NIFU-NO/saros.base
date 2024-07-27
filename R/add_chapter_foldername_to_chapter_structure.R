@@ -1,6 +1,6 @@
 add_chapter_foldername_to_chapter_structure <-
   function(chapter_structure,
-           max_clean_folder_name = 64)  {
+           max_width_folder_name = 64)  {
 
     grouping_vars <- dplyr::group_vars(chapter_structure)
 
@@ -15,7 +15,7 @@ add_chapter_foldername_to_chapter_structure <-
 
       chapter_foldername_clean <-
         filename_sanitizer(as.character(chapter_structure$chapter),
-                           max_chars = max_clean_folder_name,
+                           max_chars = max_width_folder_name,
                            accept_hyphen = FALSE,
                            make_unique = FALSE)
 

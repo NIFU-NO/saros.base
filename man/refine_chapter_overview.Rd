@@ -16,7 +16,6 @@ refine_chapter_overview(
   hide_bi_entry_if_sig_above = 1,
   hide_chunk_if_n_below = 10,
   hide_variable_if_all_na = TRUE,
-  hide_chr_for_others = TRUE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".template_name"),
   arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
@@ -25,11 +24,10 @@ refine_chapter_overview(
   max_width_obj = 128,
   max_width_chunk = 128,
   max_width_file = 64,
+  max_width_folder_name = 12,
   sep_obj = "_",
   sep_chunk = "-",
   sep_file = "-",
-  max_clean_folder_name = 12,
-  auxiliary_variables = NULL,
   ...,
   progress = TRUE,
   variable_group_dep = ".variable_group_dep",
@@ -123,14 +121,6 @@ a separate argument.}
 
 Whether to remove variables if all values are NA.}
 
-\item{hide_chr_for_others}{\emph{Hide open response displays for others}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-MOVE TO saros.contents: For reports using the element "chr_table", open responses are
-displayed for also the entire sample (\code{FALSE}) or only for the target
-group to ensure data privacy (\code{TRUE}).}
-
 \item{organize_by}{\emph{Grouping columns}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -169,14 +159,7 @@ long file names if using labels as part of structure, and hashing with
 Quarto's \code{cache: true} feature. Thus consider restricting max_width_file
 to lower than what you optimally would have wished for.}
 
-\item{sep_obj, sep_chunk, sep_file}{\emph{Separator string}
-
-\verb{scalar<character>} // \emph{default:} \code{"_"} (\code{optional})
-
-Separator to use between grouping variables. Defaults to underscore for
-object names and hyphen for chunk labels and file names.}
-
-\item{max_clean_folder_name}{\emph{Maximum clean folder name length}
+\item{max_width_folder_name}{\emph{Maximum clean folder name length}
 
 \verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
 
@@ -184,12 +167,12 @@ Whereas \code{max_width_file} truncates the file name, this argument truncates
 the folder name. It will not impact the report or chapter names in website,
 only the folders.}
 
-\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
+\item{sep_obj, sep_chunk, sep_file}{\emph{Separator string}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{"_"} (\code{optional})
 
-Column names in \code{data} that should always be included in datasets for
-chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
+Separator to use between grouping variables. Defaults to underscore for
+object names and hyphen for chunk labels and file names.}
 
 \item{...}{\emph{Dynamic dots}
 

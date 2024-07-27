@@ -106,14 +106,6 @@
 #'  typically exempted in the first place. This might change in the future with
 #'  a separate argument.
 #'
-#' @param hide_chr_for_others *Hide open response displays for others*
-#'
-#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
-#'
-#'   MOVE TO saros.contents: For reports using the element "chr_table", open responses are
-#'   displayed for also the entire sample (`FALSE`) or only for the target
-#'   group to ensure data privacy (`TRUE`).
-#'
 #' @param hide_variable_if_all_na *Hide variable from outputs if containing all NA*
 #'
 #'   `scalar<boolean>` // *default:* `TRUE` (`optional`)
@@ -140,20 +132,13 @@
 #'   Separator to use between grouping variables. Defaults to underscore for
 #'   object names and hyphen for chunk labels and file names.
 #'
-#' @param max_clean_folder_name *Maximum clean folder name length*
+#' @param max_width_folder_name *Maximum clean folder name length*
 #'
 #'   `scalar<integer>` // *default:* `NULL` (`optional`)
 #'
 #'   Whereas `max_width_file` truncates the file name, this argument truncates
 #'   the folder name. It will not impact the report or chapter names in website,
 #'   only the folders.
-#'
-#' @param auxiliary_variables *Auxiliary variables to be included in datasets*
-#'
-#'   `vector<character>` // *default:* `NULL` (`optional`)
-#'
-#'   Column names in `data` that should always be included in datasets for
-#'   chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
 #'
 #' @param variable_group_dep *Name for the variable_group_dep column*
 #'
@@ -213,7 +198,6 @@ refine_chapter_overview <-
            hide_bi_entry_if_sig_above = 1,
            hide_chunk_if_n_below = 10,
            hide_variable_if_all_na = TRUE,
-           hide_chr_for_others = TRUE, # NOT IMPLEMENTED
            organize_by = c("chapter",
                            ".variable_label_prefix_dep",
                            ".variable_name_indep",
@@ -228,12 +212,11 @@ refine_chapter_overview <-
            max_width_obj = 128,
            max_width_chunk = 128,
            max_width_file = 64,
+           max_width_folder_name = 12,
            sep_obj = "_",
            sep_chunk = "-",
            sep_file = "-",
-           max_clean_folder_name = 12,  # Tidy up argument name: max_width_clean_folder_name
 
-           auxiliary_variables = NULL, # Not in use yet
            ...,
            progress = TRUE,
            variable_group_dep = ".variable_group_dep",
@@ -327,7 +310,6 @@ refine_chapter_overview <-
 
         log_unused_variables(chapter_structure = out,
                              data = data,
-                             auxiliary_variables = auxiliary_variables,
                              log_file = log_file)
         # if(!is.factor(out$.variable_name_dep)) browser()
 
@@ -458,7 +440,7 @@ refine_chapter_overview <-
     out <-
       add_chapter_foldername_to_chapter_structure(
         chapter_structure = out, #Current
-        max_clean_folder_name = max_clean_folder_name)
+        max_width_folder_name = max_width_folder_name)
 
 
 
