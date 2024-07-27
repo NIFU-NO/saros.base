@@ -57,7 +57,6 @@ validate_draft_report_args <- function(params) {
       # hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
 
       # Enums
-      tabular_format = list(fun = function(x) is.character(x) && any(env$tabular_format == x[1])),
       serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1]))
 
     )
@@ -70,19 +69,14 @@ validate_draft_report_args <- function(params) {
                             validation_fun = arg_params[[par]]$fun)
   }
 
-  params$tabular_format <- params$tabular_format[1]
   params$serialized_format <- params$serialized_format[1]
 
 
-  pkg <- switch(params$tabular_format,
-                "delim" = "utils",
-                "xlsx" = "openxlsx",
-                "csv" = "readr",
-                "tsv" = "readr",
-                "sav" = "haven",
-                "dta" = "haven")
+  pkg <- switch(params$serialized_format,
+                "qs" = "qs",
+                "rds" = "base")
   if(!requireNamespace(pkg, quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg tabular_format}={params$tabular_format}: {.run [install.packages(pkg)](install.packages())}")
+    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg serialized_format}={params$serialized_format}: {.run [install.packages(pkg)](install.packages())}")
   }
 
   params

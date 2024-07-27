@@ -143,16 +143,6 @@
 #'
 #'   Path to log file. Set to NULL to disable logging.
 #'
-#' @param tabular_format *Serialized format*
-#'
-#'   `scalar<string>` // *default:* `"delim"`
-#'
-#'   Format for pretty tabular data, meant for end-user to peruse and will be
-#'   linked to in reports (the graph data, etc). One of `"delim"` (tab-separated delim-files)
-#'   `"xlsx"` requires `writexl`-package), `"csv"` or `"csv2"` (requires `readr`-package.
-#'   `"dta"` or `"sav"` requires `haven`-package. Currently must be specified,
-#'   in the future this will become an optional argument.
-#'
 #' @param serialized_format *Serialized format*
 #'
 #'   `scalar<string>` // *default:* `"rds"`
@@ -217,7 +207,6 @@ draft_report <-
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
-           tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
 
 
            max_path_warning_threshold = 260,  # Tidy up argument name: max_width_path_warning. Keep here

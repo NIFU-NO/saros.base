@@ -32,7 +32,6 @@ draft_report(
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
   serialized_format = c("rds", "qs"),
-  tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
   max_path_warning_threshold = 260,
   log_file = NULL
 )
@@ -171,16 +170,6 @@ One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
 The latter two requires the respective packages to be installed.
 \code{"qs"} is usually the fastest and most space efficient, but sets package
 dependencies on the report project.}
-
-\item{tabular_format}{\emph{Serialized format}
-
-\verb{scalar<string>} // \emph{default:} \code{"delim"}
-
-Format for pretty tabular data, meant for end-user to peruse and will be
-linked to in reports (the graph data, etc). One of \code{"delim"} (tab-separated delim-files)
-\code{"xlsx"} requires \code{writexl}-package), \code{"csv"} or \code{"csv2"} (requires \code{readr}-package.
-\code{"dta"} or \code{"sav"} requires \code{haven}-package. Currently must be specified,
-in the future this will become an optional argument.}
 
 \item{max_path_warning_threshold}{\emph{Maximum number of characters in paths warning}
 
