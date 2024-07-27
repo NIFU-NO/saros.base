@@ -120,6 +120,13 @@
 #'   Whether to save in each chapter folder an 'Rds'-file with the
 #'   chapter-specific dataset, and load it at the top of each QMD-file.
 #'
+#' @param auxiliary_variables *Auxiliary variables to be included in datasets*
+#'
+#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Column names in `data` that should always be included in datasets for
+#'   chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
+#'
 #' @param combined_report *Create a combined report?*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)

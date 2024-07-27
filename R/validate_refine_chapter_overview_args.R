@@ -34,7 +34,6 @@ validate_refine_chapter_overview_args <- function(params) {
       sep_obj = list(fun = function(x) is_string(x)),
       sep_chunk = list(fun = function(x) is_string(x)),
       sep_file = list(fun = function(x) is_string(x)),
-      auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       n_range_glue_template_1 = list(fun = function(x) is_string(x)),
@@ -57,7 +56,7 @@ validate_refine_chapter_overview_args <- function(params) {
       max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_chunk = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-      max_clean_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
+      max_width_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
 
       # Enums
       organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
