@@ -29,8 +29,9 @@ insert_chunk <-
            ...
   ) {
 
-    dots <- update_dots(dots = rlang::list2(...),
-                        allow_unique_overrides = FALSE)
+    dots <- #update_dots(dots =
+                          rlang::list2(...)#,
+                        #allow_unique_overrides = FALSE)
 
     #####
     # Early returns
