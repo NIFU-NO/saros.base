@@ -8,7 +8,7 @@ draft_report(
   data,
   chapter_structure,
   ...,
-  path,
+  path = tempdir(),
   title = "Report",
   authors = NULL,
   authors_col = "author",
@@ -60,9 +60,9 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 \item{path}{\emph{Output path}
 
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{tempdir()} (\code{optional})
 
-Path to save all output.}
+Path to save all output. Defaults to a temporary directory.}
 
 \item{title}{\emph{Title of report}
 

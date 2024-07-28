@@ -21,7 +21,11 @@ if(!exists(".saros.env")) .saros.env <- NULL
     "\\.template_variable_type_dep|\\.template_variable_type_indep"
 
 
-  .saros.env$ignore_args <<- c("data", "chapter_overview", "chapter_structure", "path", "...")
+  .saros.env$ignore_args <<- c("data",
+                               "chapter_overview",
+                               "chapter_structure",
+                               "call",
+                               "...")
 
 
 
