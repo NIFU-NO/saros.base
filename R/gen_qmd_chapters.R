@@ -99,20 +99,27 @@ gen_qmd_chapters <-
 
           } else chapter_contents <- NULL
 
+          chapter_structure_chapter_simplified <-
+            dplyr::distinct(chapter_structure_chapter, dplyr::pick(tidyselect::everything()))
+
           qmd_start_section <-
             if(!is.null(dots$chapter_qmd_start_section_filepath)) {
-              stringi::stri_c(collapse = "\n",
+              out <-
+                stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
                               readLines(con = dots$chapter_qmd_start_section_filepath)
                               )
+              glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = "")
             }
 
           qmd_end_section <-
             if(!is.null(dots$chapter_qmd_end_section_filepath)) {
-              stringi::stri_c(collapse = "\n",
+              out <-
+                stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
                               readLines(con = dots$chapter_qmd_end_section_filepath)
                               )
+                glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = "")
             }
 
           load_dataset <-
