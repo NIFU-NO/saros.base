@@ -24,6 +24,7 @@ gen_qmd_file <-
     yaml_file = NULL,
     qmd_start_section_filepath = NULL,
     qmd_end_section_filepath = NULL,
+    data = NULL,
     title = NULL,
     authors = NULL,
     output_formats = NULL,
@@ -61,8 +62,23 @@ gen_qmd_file <-
         }), collapse="\n")
       }
 
-    qmd_start_section <- if(!is.null(qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
-    qmd_end_section <- if(!is.null(qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
+    qmd_start_section <-
+      if(!is.null(qmd_start_section_filepath)) {
+        out <-
+        stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
+        if(inherits(data, "data.frame")) {
+          glue::glue_data(data, out, .na = "")
+        } else out
+      }
+    qmd_end_section <-
+      if(!is.null(qmd_end_section_filepath)) {
+        out <-
+          stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
+        if(inherits(data, "data.frame")) {
+          glue::glue_data(data, out, .na = "")
+        } else out
+      }
+
 
     out <-
       stringi::stri_c(yaml_section, "\n",

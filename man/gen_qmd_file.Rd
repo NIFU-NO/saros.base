@@ -10,6 +10,7 @@ gen_qmd_file(
   yaml_file = NULL,
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
+  data = NULL,
   title = NULL,
   authors = NULL,
   output_formats = NULL,
@@ -27,6 +28,13 @@ generates a sanitized version of the title. If both filename and title are NULL,
 
 \item{qmd_start_section_filepath, qmd_end_section_filepath}{String, filepath
 to a qmd-file inserted at start and end of file.}
+
+\item{data}{\emph{Survey data}
+
+\verb{obj:<data.frame>|obj:<tbl_df>|obj:<srvyr>} // Required
+
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_structure 'dep', etc columns.}
 
 \item{title}{\emph{Title of report}
 
