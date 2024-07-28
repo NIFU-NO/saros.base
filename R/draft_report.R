@@ -85,9 +85,9 @@
 #'
 #' @param path *Output path*
 #'
-#'   `scalar<character>` // *default:* `NULL` (`optional`)
+#'   `scalar<character>` // *default:* `tempdir()` (`optional`)
 #'
-#'   Path to save all output.
+#'   Path to save all output. Defaults to a temporary directory.
 #'
 #' @param require_common_categories *Check common categories*
 #'
@@ -181,7 +181,7 @@ draft_report <-
   function(data,
            chapter_structure,
            ...,
-           path,
+           path = tempdir(),
            title = "Report",
            authors = NULL,
            authors_col = "author",
@@ -246,7 +246,6 @@ draft_report <-
         gen_qmd_chapters,
         chapter_structure = chapter_structure,
         data = data,
-        path = path,
         !!!args[!names(args) %in% .saros.env$ignore_args])
 
 
@@ -256,7 +255,7 @@ draft_report <-
 
       report_filepath <-
         gen_qmd_file(
-          path = path,
+          path = args$path,
           filename = args$report_filename,
           yaml_file = args$report_yaml_file,
           qmd_start_section_filepath = args$report_qmd_start_section_filepath,
@@ -270,7 +269,7 @@ draft_report <-
 
     index_filepath <-
       gen_qmd_file(
-        path = path,
+        path = args$path,
         filename = args$index_filename,
         yaml_file = args$index_yaml_file,
         qmd_start_section_filepath = args$index_qmd_start_section_filepath,
@@ -282,7 +281,7 @@ draft_report <-
         call = rlang::caller_env())
 
 
-    validate_path_lengths_on_win(path = path,
+    validate_path_lengths_on_win(path = args$path,
                                  max_path_warning_threshold = max_path_warning_threshold)
 
 

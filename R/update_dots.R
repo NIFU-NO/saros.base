@@ -19,7 +19,7 @@ update_dots <- function(dots = list(),
 
   dots_nms <- names(dots)
   dots <- lapply(seq_along(dots), function(i) {
-    if(!any(c("call", "...", "chapter_structure", "path") == names(dots)[i])) {
+    if(!any(.saros.env$ignore_args == names(dots)[i])) {
       out <- eval(dots[[i]])
     } else {
       out <- dots[[i]]
