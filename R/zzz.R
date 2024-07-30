@@ -22,6 +22,8 @@ if(!exists(".saros.env")) .saros.env <- NULL
 
 
   .saros.env$ignore_args <<- c("data",
+                               "dep",
+                               "indep",
                                "chapter_overview",
                                "chapter_structure",
                                "call",
