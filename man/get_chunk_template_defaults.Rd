@@ -4,7 +4,10 @@
 \alias{get_chunk_template_defaults}
 \title{Get Global Options for Chunk Templates}
 \usage{
-get_chunk_template_defaults()
+get_chunk_template_defaults(variant = 1)
+}
+\arguments{
+\item{variant}{Positive integer.}
 }
 \value{
 List with options in R

@@ -31,7 +31,7 @@ if(!exists(".saros.env")) .saros.env <- NULL
 
 
 
-  .saros.env$default_chunk_templates <<-
+  .saros.env$default_chunk_templates_1 <<-
     data.frame(.template_name = character(),
                .template = character(),
                .template_variable_type_dep = character(),
