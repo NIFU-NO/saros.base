@@ -41,7 +41,8 @@ add_n_range_to_chapter_structure <-
             .x[[variable_name]] <- 0
           } else {
             template <- if(length(n)==1) glue_template_1 else glue_template_2
-            .x[[variable_name]] <-  glue::glue(template)
+            tryCatch(.x[[variable_name]] <-  glue::glue(template),
+                     error = function(cnd) glue_err(cnd=cnd, arg_name="glue_template_*"))
           }
 
         }

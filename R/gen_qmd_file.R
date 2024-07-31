@@ -67,7 +67,8 @@ gen_qmd_file <-
         out <-
         stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
         if(inherits(data, "data.frame")) {
-          glue::glue_data(data, out, .na = "")
+          tryCatch(glue::glue_data(data, out, .na = ""),
+                   error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_start_section")))
         } else out
       }
     qmd_end_section <-
@@ -75,7 +76,8 @@ gen_qmd_file <-
         out <-
           stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
         if(inherits(data, "data.frame")) {
-          glue::glue_data(data, out, .na = "")
+          tryCatch(glue::glue_data(data, out, .na = ""),
+                   error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_end_section")))
         } else out
       }
 

@@ -109,7 +109,8 @@ gen_qmd_chapters <-
                               ignore_null = TRUE,
                               readLines(con = dots$chapter_qmd_start_section_filepath)
                               )
-              glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = "")
+              tryCatch(glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = ""),
+                       error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_start_section"))
             }
 
           qmd_end_section <-
@@ -119,7 +120,8 @@ gen_qmd_chapters <-
                               ignore_null = TRUE,
                               readLines(con = dots$chapter_qmd_end_section_filepath)
                               )
-                glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = "")
+                tryCatch(glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = ""),
+                         error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_end_section"))
             }
 
           load_dataset <-
