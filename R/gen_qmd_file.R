@@ -41,7 +41,7 @@ gen_qmd_file <-
     check_string(output_formats, n = NULL, null.ok = TRUE, call = call)
     check_string(output_filename, n = 1, null.ok = TRUE, call = call)
     if(is.null(title) && is.null(filename)) {
-      cli::cli_abort("{.arg filename} and {.arg title} cannot be both NULL.")
+      cli::cli_abort("{.arg filename} and {.arg title} cannot be both `NULL`.")
     }
 
     yaml_section <-
@@ -62,12 +62,18 @@ gen_qmd_file <-
         }), collapse="\n")
       }
 
+    if(inherits(data, "data.frame")) {
+      chapter_structure_simplified <-
+        data |>
+        dplyr::distinct(dplyr::pick(tidyselect::everything())) |>
+        collapse_chapter_structure_to_chr()
+    }
+
     qmd_start_section <-
       if(!is.null(qmd_start_section_filepath)) {
-        out <-
-        stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
+        out <- stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
         if(inherits(data, "data.frame")) {
-          tryCatch(glue::glue_data(data, out, .na = ""),
+          tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
                    error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_start_section")))
         } else out
       }
@@ -76,18 +82,23 @@ gen_qmd_file <-
         out <-
           stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
         if(inherits(data, "data.frame")) {
-          tryCatch(glue::glue_data(data, out, .na = ""),
+          tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
                    error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_end_section")))
         } else out
       }
 
 
     out <-
-      stringi::stri_c(yaml_section, "\n",
+      c(yaml_section, "\n",
                       qmd_start_section,
                       report_links,
                       qmd_end_section,
                       ignore_null=TRUE, sep="\n")
+    out <- stringi::stri_remove_na(out)
+    out <- stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
+    out <- stringi::stri_replace_all_regex(out,
+                                           pattern = "\n{3,}",
+                                           replacement = "\n\n\n")
     filepath <-
       if(is.character(filename)) {
         file.path(path, stringi::stri_c(filename, ".qmd"))

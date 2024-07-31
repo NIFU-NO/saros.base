@@ -25,13 +25,9 @@ insert_chunk <-
   function(chapter_structure_section,
            .y, # chapter_structure_grouping as data.frame?
            grouping_structure,
-           template_variable_name = ".template",
-           ...
+           template_variable_name = ".template"
   ) {
 
-    dots <- #update_dots(dots =
-                          rlang::list2(...)#,
-                        #allow_unique_overrides = FALSE)
 
     #####
     # Early returns
@@ -40,9 +36,6 @@ insert_chunk <-
        all(is.na(as.character(chapter_structure_section$.template_name)))) return()
 
     if(all(is.na(as.character(chapter_structure_section$.variable_name_dep)))) return()
-
-
-
 
 
     # Re-group chapter_structure_section
@@ -62,15 +55,7 @@ insert_chunk <-
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
     ## Collapsing the chapter_structure_section and inserting it into the template
-    out <-
-    chapter_structure_section |>
-      lapply(FUN = function(col) {
-        col <- as.character(col)
-        uniques <- unique(col)
-        uniques <- uniques[!is.na(uniques)]
-        cli::ansi_collapse(uniques, sep=",", sep2 = ",", last = ",", trunc = 30, width = Inf)
-        }) |>
-      unlist()
+    out <- collapse_chapter_structure_to_chr(chapter_structure_section)
 
 
     tryCatch(glue::glue_data(out, out[[template_variable_name]]),

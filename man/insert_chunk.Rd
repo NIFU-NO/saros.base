@@ -8,8 +8,7 @@ insert_chunk(
   chapter_structure_section,
   .y,
   grouping_structure,
-  template_variable_name = ".template",
-  ...
+  template_variable_name = ".template"
 )
 }
 \arguments{
@@ -25,12 +24,6 @@ with similar items. See \code{draft_report()}.}
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{Optional})
 
 Internal usage.}
-
-\item{...}{\emph{Dynamic dots}
-
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
-
-Arguments forwarded to the corresponding functions that create the elements.}
 }
 \value{
 Named list of elements, where each element can UNFINISHED.

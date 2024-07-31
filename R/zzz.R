@@ -32,7 +32,7 @@ if(!exists(".saros.env")) .saros.env <- NULL
 
 
 ################################################################################
-
+# for a single crowd only, no mesos
   .saros.env$default_chunk_templates_1 <<-
     data.frame(.template_name = character(),
                .template = character(),
@@ -41,7 +41,7 @@ if(!exists(".saros.env")) .saros.env <- NULL
     tibble::add_row(.template_name = "cat_prop_plot_html",
                .template =
                  "
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
@@ -49,7 +49,7 @@ if(!exists(".saros.env")) .saros.env <- NULL
 nrange <- n_range(data = data_{.chapter_foldername}, dep = c({.variable_name_dep}), indep = c({.variable_name_indep}))
 link <- make_link(data = {.obj_name}$data)
 link_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[download PNG](', \n\t\tsave_fn = ggsaver, width=12, height=12, units='cm')
-girafe(ggobj = {.obj_name})
+ggiraph::girafe(ggobj = {.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
@@ -64,15 +64,15 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`
     tibble::add_row(.template_name = "cat_prop_plot_html",
                     .template =
                       "
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})
-{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_plot_html')
-nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
+{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'cat_prop_plot_html')
+nrange <- n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))
 link <- make_link(data={.obj_name}$data)
 link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[download PNG](', save_fn = ggsaver, width=12, height=12, units='cm')
-girafe(ggobj = {.obj_name})
+ggiraph::girafe(ggobj = {.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
@@ -86,13 +86,13 @@ _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot
     tibble::add_row(.template_name = "cat_table_html",
                     .template =
                       "
-::: {{#tbl-{.chunk_name} }}
+::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
 {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_table_html')
 nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
 link <- make_link(data={.obj_name})
-gt(ggobj = {.obj_name})
+gt::gt(ggobj = {.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.
@@ -107,11 +107,11 @@ _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.
     tibble::add_row(.template_name = "chr_table",
                     .template =
                       "
-::: {{#tbl-{.chunk_name} }}
+::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html')
-gt({.obj_name})
+{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html')
+gt::gt({.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_.
@@ -121,26 +121,26 @@ _{.variable_label_prefix_dep}_.
 
 ",
                     .template_variable_type_dep = "chr",
-                    .template_variable_type_indep = NA_character_) |>
+                    .template_variable_type_indep = NA_character_) #|>
 
-    tibble::add_row(.template_name = "sigtest_table_html",
-                    .template =
-                      "
-::: {{#tbl-{.chunk_name} }}
-
-```{{r}}
-{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype = 'sigtest_table_html')
-gt({.obj_name})
-```
-
-_Significance tests_.
-
-:::
-
-
-",
-                    .template_variable_type_dep = "fct;ord;int;dbl",
-                    .template_variable_type_indep = "fct;ord;int;dbl")
+#     tibble::add_row(.template_name = "sigtest_table_html",
+#                     .template =
+#                       "
+# ::: {{#tbl-{.chunk_name}}}
+#
+# ```{{r}}
+# {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'sigtest_table_html')
+# gt::gt({.obj_name})
+# ```
+#
+# _Significance tests_.
+#
+# :::
+#
+#
+# ",
+#                     .template_variable_type_dep = "fct;ord;int;dbl",
+#                     .template_variable_type_indep = "fct;ord;int;dbl")
 
 #######################################################################################################################
   #### For crowd = c("target", "others") (and/or "all") in a tidy way
@@ -153,13 +153,13 @@ _Significance tests_.
     tibble::add_row(.template_name = "cat_prop_plot_html",
                     .template =
                       "
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype='cat_prop_plot_html', \n\tcrowd=c('target', 'others'), \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
+plots <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_prop_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 
 lapply(names(plots), function(.x) {{
   knitr::knit_child(text = c(
@@ -185,6 +185,8 @@ lapply(names(plots), function(.x) {{
 _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 
 :::
+
+
 ",
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = "fct;ord") |>
@@ -192,7 +194,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
     tibble::add_row(.template_name = "cat_prop_plot_html",
                     .template =
                       "
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
@@ -209,42 +211,96 @@ lapply(names(plots), function(.x) {
     'library(ggiraph)',
     'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))',
     'link <- saros.contents::make_link(data = plots[[.x]]$data)',
-    'link_plot <- saros.contents::make_link(data = plots[[.x]], link_prefix=\'[download PNG](\', save_fn = ggsaver)',
-    'caption <- I(paste0(\'_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N = \',
-                      nrange, \', \', link, \', \', link_plot))',
+    'link_plot <- saros.contents::make_link(data = plots[[.x]], link_prefix=\\'[download PNG](\\', save_fn = ggsaver)',
+    'caption <- I(paste0(\\'_{.variable_label_prefix_dep}_. N = \\',
+                      nrange, \\', \\', link, \\', \\', link_plot))',
     'ggiraph::girafe(ggobj = plots[[.x]])',
     '```',
     '',
     '`{{r}} caption`',
     ''
     ), envir = environment(), quiet = TRUE)
-}) |> unlist() |> cat(sep = '\n')
+}) |> unlist() |> cat(sep = '\\n')
 ```
 
 _{.variable_label_prefix_dep}_.
 
 :::
+
+
 ",
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = NA_character_) |>
 
+
     tibble::add_row(.template_name = "cat_table_html",
                     .template =
                       "
-::: {{#tbl-{.chunk_name} }}
+::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
-{.obj_name} <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'cat_prop_table_html', \n\tcrowd=c('target', 'others'), \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
-captions <- purrr::map2_chr(seq_along({.obj_name}), .fn = {
-\t  nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))
-\t  link <- saros.contents::make_link(data = .x$data)
-\t  link_plot <- saros.contents::make_link(data = .x, link_prefix='[download PNG](', save_fn = ggsaver)
-\t  paste0('N=', nrange, ', ', link, ', ', link_plot)
-}) |> paste0(collapse = '; ')
-purrr::walk({.obj_name}, ~gt::gt(ggobj = .x))
+#| output: asis
+#| panel: tabset
+tbls <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+
+lapply(names(tbls), function(.x) {
+  knitr::knit_child(text = c(
+    '##### `r .x',
+    '',
+    '```{{r}}',
+    'library(gt)',
+    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))',
+    'link <- saros.contents::make_link(data = tbls[[.x]])',
+    'caption <- I(paste0(\\'_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N = \\',
+                      nrange, \\', \\', link, \\', \\', link_plot))',
+    'gt::gt(ggobj = tbls[[.x]])',
+    '```',
+    '',
+    '`{{r}} caption`',
+    ''
+    ), envir = environment(), quiet = TRUE)
+}) |> unlist() |> cat(sep = '\\n')
 ```
 
-_{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.
+_{.variable_label_prefix_dep}_.
+
+:::
+
+
+",
+                    .template_variable_type_dep = "fct;ord",
+                    .template_variable_type_indep = "fct;ord") |>
+
+    tibble::add_row(.template_name = "cat_table_html",
+                    .template =
+                      "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+tbls <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+
+lapply(names(tbls), function(.x) {
+  knitr::knit_child(text = c(
+    '##### `r .x',
+    '',
+    '```{{r}}',
+    'library(gt)',
+    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})',
+    'link <- saros.contents::make_link(data = tbls[[.x]])',
+    'caption <- I(paste0(\\'_{.variable_label_prefix_dep}_. N = \\',
+                      nrange, \\', \\', link, \\', \\', link_plot))',
+    'gt::gt(ggobj = tbls[[.x]])',
+    '```',
+    '',
+    '`{{r}} caption`',
+    ''
+    ), envir = environment(), quiet = TRUE)
+}) |> unlist() |> cat(sep = '\\n')
+```
+
+_{.variable_label_prefix_dep}_.
 
 :::
 
@@ -256,14 +312,14 @@ _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`.
     tibble::add_row(.template_name = "chr_table",
                     .template =
                       "
-::: {{#tbl-{.chunk_name} }}
+::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
 {.obj_name} <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'), \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
 gt::gt({.obj_name})
 ```
 
-_{.variable_label_prefix_dep}_.
+_{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 
 :::
 
@@ -273,7 +329,7 @@ _{.variable_label_prefix_dep}_.
                     .template_variable_type_indep = NA_character_)
 
 ##################################################################################################################################
-  # For crowd = c("target", "others") when ggiraph has limitations in loops
+  # For crowd = c("target", "others") when ggiraph has limitations in loops: manual solution
   .saros.env$default_chunk_templates_3 <<-
     data.frame(.template_name = character(),
                .template = character(),
@@ -286,12 +342,12 @@ _{.variable_label_prefix_dep}_.
 
 ## Target
 
-::: {{#fig-{.chunk_name}-target }}
+::: {{#fig-{.chunk_name}-target}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype='cat_prop_plot_html', \n\tcrowd='target', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
-nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_prop_plot_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))
 link <- saros.contents::make_link(data = {.obj_name}$data)
 link_plot <- saros.contents::make_link(data = {.obj_name}, link_prefix='[download PNG](', save_fn = ggsaver)
 caption <-  I(paste0('N=', nrange, ', ', link, ', ', link_plot))
@@ -305,12 +361,12 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_ for 
 
 ## Others
 
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}-others}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}), \n\ttype='cat_prop_plot_html', \n\tcrowd='others', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
-nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_prop_plot_html', \n\t\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))
 link <- saros.contents::make_link(data = {.obj_name}$data)
 link_plot <- saros.contents::make_link(data = {.obj_name}, link_prefix='[download PNG](', save_fn = ggsaver)
 caption <-  I(paste0('N=', nrange, ', ', link, ', ', link_plot))
@@ -322,6 +378,8 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_ for 
 
 :::
 :::
+
+
 ",
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = "fct;ord") |>
@@ -333,7 +391,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_ for 
 
 ## Target
 
-::: {{#fig-{.chunk_name}-target }}
+::: {{#fig-{.chunk_name}-target}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
@@ -345,18 +403,18 @@ caption <-  paste0('N=', nrange, ', ', link, ', ', link_plot)
 ggiraph::girafe(ggobj = x)
 ```
 
-_{.variable_label_prefix_dep}_ for _`{{r}} params$mesos_group}}`_. `{{r}} caption`.
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_ for _`{{r}} params$mesos_group}}`_. `{{r}} caption`.
 
 :::
 
 
 ## Others
 
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}-others}}
 
 ```{{r}}
 #| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_prop_plot_html', \n\tcrowd='others', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_prop_plot_html', \n\t\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))
 link <- saros.contents::make_link(data = {.obj_name}$data)
 link_plot <- saros.contents::make_link(data = {.obj_name}, link_prefix='[download PNG](', save_fn = ggsaver)
@@ -365,10 +423,12 @@ ggiraph::girafe(ggobj = x)
 
 ```
 
-_{.variable_label_prefix_dep}_ for _others_. `{{r}} caption`.
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_ for _others_. `{{r}} caption`.
 
 :::
 :::
+
+
 ",
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = NA_character_) |>
@@ -380,13 +440,12 @@ _{.variable_label_prefix_dep}_ for _others_. `{{r}} caption`.
 
 ## Target
 
-::: {{#fig-{.chunk_name}-target }}
+::: {{#fig-{.chunk_name}-target}}
 
 ```{{r}}
-#| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_table_html', \n\tcrowd='target', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
-nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))
-caption <-  paste0('N=', nrange)
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))
+caption <- I(paste0('N=', nrange))
 gt::gt(ggobj = x)
 ```
 
@@ -397,13 +456,56 @@ _{.variable_label_prefix_dep}_ for _`{{r}} params$mesos_group}}`_. `{{r}} captio
 
 ## Others
 
-::: {{#fig-{.chunk_name} }}
+::: {{#fig-{.chunk_name}-others}}
 
 ```{{r}}
-#| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_table_html', \n\tcrowd='others', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))
+caption <-  I(paste0('N=', nrange))
+gt::gt(ggobj = x)
+
+```
+
+_{.variable_label_prefix_dep}_ for _others_. `{{r}} caption`.
+
+:::
+:::
+
+
+",
+                    .template_variable_type_dep = "fct;ord",
+                    .template_variable_type_indep = "fct;ord") |>
+
+
+    tibble::add_row(.template_name = "cat_table_html",
+                    .template =
+                      "
+::: {{.panel-tabset}}
+
+## Target
+
+::: {{#fig-{.chunk_name}-target}}
+
+```{{r}}
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}))
+caption <- I(paste0('N=', nrange))
+gt::gt(ggobj = x)
+```
+
+_{.variable_label_prefix_dep}_ for _`{{r}} params$mesos_group}}`_. `{{r}} caption`.
+
+:::
+
+
+## Others
+
+::: {{#fig-{.chunk_name}-others}}
+
+```{{r}}
+x <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))
-caption <-  paste0('N=', nrange)
+caption <-  I(paste0('N=', nrange))
 gt::gt(ggobj = x)
 
 ```
@@ -417,17 +519,19 @@ _{.variable_label_prefix_dep}_ for _others_. `{{r}} caption`.
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = NA_character_) |>
 
+
+
     tibble::add_row(.template_name = "chr_table",
                     .template =
                       "
-::: {{#tbl-{.chunk_name} }}
+::: {{#tbl-{.chunk_name}-target}}
 
 ```{{r}}
-{.obj_name} <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd='target', \n\tmesos_var = 'f_uni', \n\tmesos_group = params$mesos_group)
+{.obj_name} <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_group, \n\t\tmesos_group = params$mesos_group)
 gt::gt({.obj_name})
 ```
 
-_{.variable_label_prefix_dep}_.
+_{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 
 :::
 

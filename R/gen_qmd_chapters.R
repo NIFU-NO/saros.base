@@ -20,14 +20,17 @@ gen_qmd_chapters <-
   function(chapter_structure,
            data,
            authors_col = "author",
-           ...,
-           call = rlang::caller_env()
+           path = NULL,
+           chapter_yaml_file = NULL,
+           chapter_qmd_start_section_filepath = NULL,
+           chapter_qmd_end_section_filepath = NULL,
+           auxiliary_variables = NULL,
+           serialized_format = "rds"
   ) {
 
-    dots <- rlang::list2(...)
 
 
-    path <- fs::as_fs_path(dots$path)
+    path <- fs::as_fs_path(path)
     dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
 
 
@@ -80,75 +83,75 @@ gen_qmd_chapters <-
 
 
           authors <- get_authors(data = chapter_structure_chapter, col = authors_col)
-          chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
+          yaml_section <- process_yaml(yaml_file = chapter_yaml_file,
+                                       title = NULL,
                                       authors = authors,
-                                      title = NULL,
                                       chapter_number = chapter_number)
 
           if(!all(is.na(chapter_structure_chapter$.variable_name_dep))) {
 
           chapter_contents <-
-            rlang::exec(
-              gen_qmd_structure,
-              data = data,
-              chapter_structure = chapter_structure_chapter,
-              chapter_folderpath_absolute = chapter_folderpath_absolute,
-              chapter_foldername = chapter_foldername_clean,
-              !!!dots#[!names(dots) %in% c("chapter_structure", "call")]
-              )
+              gen_qmd_structure(chapter_structure = chapter_structure_chapter)
 
           } else chapter_contents <- NULL
 
-          chapter_structure_chapter_simplified <-
-            dplyr::distinct(chapter_structure_chapter, dplyr::pick(tidyselect::everything()))
+          ###
+          if(inherits(chapter_structure_chapter, "data.frame")) {
+            chapter_structure_chapter_simplified <-
+              chapter_structure_chapter |>
+              dplyr::distinct(dplyr::pick(tidyselect::everything())) |>
+              collapse_chapter_structure_to_chr()
+          }
 
           qmd_start_section <-
-            if(!is.null(dots$chapter_qmd_start_section_filepath)) {
+            if(rlang::is_string(chapter_qmd_start_section_filepath)) {
               out <-
                 stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
-                              readLines(con = dots$chapter_qmd_start_section_filepath)
+                              readLines(con = chapter_qmd_start_section_filepath)
                               )
-              tryCatch(glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = ""),
-                       error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_start_section"))
+
+              if(inherits(chapter_structure_chapter_simplified, "data.frame")) {
+                tryCatch(glue::glue_data(chapter_structure_chapter_simplified, out, .na = ""),
+                         error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_start_section"))
+              }
             }
 
           qmd_end_section <-
-            if(!is.null(dots$chapter_qmd_end_section_filepath)) {
+            if(rlang::is_string(chapter_qmd_end_section_filepath)) {
               out <-
                 stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
-                              readLines(con = dots$chapter_qmd_end_section_filepath)
+                              readLines(con = chapter_qmd_end_section_filepath)
                               )
-                tryCatch(glue::glue_data(.x = chapter_structure_chapter_simplified, out, .na = ""),
+                tryCatch(glue::glue_data(chapter_structure_chapter_simplified, out, .na = ""),
                          error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_end_section"))
             }
 
           load_dataset <-
-            if(isTRUE(dots$attach_chapter_dataset)) {
+            if(isTRUE(attach_chapter_dataset)) {
               attach_chapter_dataset(data = data,
                                      chapter_structure_chapter = chapter_structure_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
                                      path = path,
-                                     auxiliary_variables = dots$auxiliary_variables,
-                                     serialized_format = dots$serialized_format)
+                                     auxiliary_variables = auxiliary_variables,
+                                     serialized_format = serialized_format)
             }
 
-          out <- c(chapter_yaml,
-                   stringi::stri_c("# ", chapter),
+          out <- c(yaml_section,
+                   stringi::stri_c("# ", chapter), # Should use generalized function to get also reference, prefix and suffix
                    load_dataset,
                    qmd_start_section,
                    chapter_contents,
                    qmd_end_section)
           out <- stringi::stri_remove_na(out)
           out <-
-          stringi::stri_c(out,
-                         collapse = "\n", ignore_null=TRUE)
+          stringi::stri_c(out, collapse = "\n", ignore_null=TRUE)
           out <- stringi::stri_replace_all_regex(out,
                                                  pattern = "\n{3,}",
                                                  replacement = "\n\n\n")
 
-          cat(out, file = chapter_filepath_absolute)
+          cat(out, file = chapter_filepath_absolute, append = FALSE)
 
           chapter_filepath_relative
 

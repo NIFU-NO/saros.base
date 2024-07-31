@@ -8,8 +8,12 @@ gen_qmd_chapters(
   chapter_structure,
   data,
   authors_col = "author",
-  ...,
-  call = rlang::caller_env()
+  path = NULL,
+  chapter_yaml_file = NULL,
+  chapter_qmd_start_section_filepath = NULL,
+  chapter_qmd_end_section_filepath = NULL,
+  auxiliary_variables = NULL,
+  serialized_format = "rds"
 )
 }
 \arguments{
@@ -34,11 +38,34 @@ chapter_structure 'dep', etc columns.}
 
 Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).}
 
-\item{...}{\emph{Dynamic dots}
+\item{path}{\emph{Output path}
 
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+\verb{scalar<character>} // \emph{default:} \code{tempdir()} (\code{optional})
 
-Arguments forwarded to the corresponding functions that create the elements.}
+Path to save all output. Defaults to a temporary directory.}
+
+\item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
+
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Path to file used to insert header YAML, in each chapter.}
+
+\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names in \code{data} that should always be included in datasets for
+chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
+
+\item{serialized_format}{\emph{Serialized format}
+
+\verb{scalar<string>} // \emph{default:} \code{"rds"}
+
+Format for serialized data when storing chapter dataset.
+One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
+The latter two requires the respective packages to be installed.
+\code{"qs"} is usually the fastest and most space efficient, but sets package
+dependencies on the report project.}
 }
 \value{
 Side-effects: qmd-files generated in the specified working directory.
