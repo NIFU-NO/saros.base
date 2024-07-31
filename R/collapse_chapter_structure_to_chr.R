@@ -1,5 +1,6 @@
 collapse_chapter_structure_to_chr <- function(data, sep=",", sep2=",", last=",", trunc = 30) {
   data |>
+    dplyr::distinct(dplyr::pick(tidyselect::everything())) |>
   lapply(FUN = function(col) {
     col <- as.character(col)
     uniques <- unique(col)
