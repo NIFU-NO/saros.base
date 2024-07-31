@@ -31,17 +31,12 @@ gen_qmd_chapters <-
 
 
     path <- fs::as_fs_path(path)
-    dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
-
 
     grouping_structure <- dplyr::group_vars(chapter_structure)
 
     chapter_structure_chapter_groups <-
       dplyr::group_by(chapter_structure,
                       dplyr::pick(tidyselect::all_of(grouping_structure[1])))
-
-    total_iterations <-
-      dplyr::n_distinct(chapter_structure_chapter_groups[[grouping_structure[1]]])
 
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
