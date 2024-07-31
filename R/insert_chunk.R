@@ -71,6 +71,8 @@ insert_chunk <-
         cli::ansi_collapse(uniques, sep=",", sep2 = ",", last = ",", trunc = 30, width = Inf)
         }) |>
       unlist()
-    glue::glue_data(out, out[[template_variable_name]])
 
+
+    tryCatch(glue::glue_data(out, out[[template_variable_name]]),
+             error = function(cnd) glue_err(cnd, arg_name = "chapter_structure$.template"))
   }
