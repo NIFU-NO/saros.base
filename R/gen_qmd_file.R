@@ -24,7 +24,7 @@ gen_qmd_file <-
     yaml_file = NULL,
     qmd_start_section_filepath = NULL,
     qmd_end_section_filepath = NULL,
-    data = NULL,
+    chapter_structure = NULL,
     title = NULL,
     authors = NULL,
     output_formats = NULL,
