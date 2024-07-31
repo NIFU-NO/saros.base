@@ -62,15 +62,7 @@ insert_chunk <-
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
     ## Collapsing the chapter_structure_section and inserting it into the template
-    out <-
-    chapter_structure_section |>
-      lapply(FUN = function(col) {
-        col <- as.character(col)
-        uniques <- unique(col)
-        uniques <- uniques[!is.na(uniques)]
-        cli::ansi_collapse(uniques, sep=",", sep2 = ",", last = ",", trunc = 30, width = Inf)
-        }) |>
-      unlist()
+    out <- collapse_chapter_structure_to_chr(chapter_structure_section)
 
 
     tryCatch(glue::glue_data(out, out[[template_variable_name]]),
