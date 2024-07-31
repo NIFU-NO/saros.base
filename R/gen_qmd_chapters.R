@@ -91,9 +91,7 @@ gen_qmd_chapters <-
           ###
           if(inherits(chapter_structure_chapter, "data.frame")) {
             chapter_structure_chapter_simplified <-
-              chapter_structure_chapter |>
-              dplyr::distinct(dplyr::pick(tidyselect::everything())) |>
-              collapse_chapter_structure_to_chr()
+              collapse_chapter_structure_to_chr(chapter_structure_chapter)
           }
 
           qmd_start_section <-
