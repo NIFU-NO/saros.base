@@ -237,17 +237,20 @@ draft_report <-
     data <- ungroup_data(data)
 
 
-
-
     all_authors <- get_authors(data = chapter_structure, col=args$authors_col)
 
 
     chapter_filepaths <-
-      rlang::exec(
-        gen_qmd_chapters,
+      gen_qmd_chapters(
         chapter_structure = chapter_structure,
         data = data,
-        !!!args[!names(args) %in% .saros.env$ignore_args])
+        path = args$path,
+        chapter_yaml_file = args$chapter_yaml_file,
+        chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
+        chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,
+        auxiliary_variables = args$auxiliary_variables,
+        serialized_format = args$serialized_format
+        )
 
 
 

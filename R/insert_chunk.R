@@ -25,13 +25,9 @@ insert_chunk <-
   function(chapter_structure_section,
            .y, # chapter_structure_grouping as data.frame?
            grouping_structure,
-           template_variable_name = ".template",
-           ...
+           template_variable_name = ".template"
   ) {
 
-    dots <- #update_dots(dots =
-                          rlang::list2(...)#,
-                        #allow_unique_overrides = FALSE)
 
     #####
     # Early returns
@@ -40,9 +36,6 @@ insert_chunk <-
        all(is.na(as.character(chapter_structure_section$.template_name)))) return()
 
     if(all(is.na(as.character(chapter_structure_section$.variable_name_dep)))) return()
-
-
-
 
 
     # Re-group chapter_structure_section

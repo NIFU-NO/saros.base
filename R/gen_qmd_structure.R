@@ -1,14 +1,7 @@
 #' @keywords internal
 gen_qmd_structure <-
   function(chapter_structure,
-           ...,
-           call = rlang::caller_env()) {
-
-
-    dots <- #update_dots(dots =
-                          rlang::list2(...)#,
-                        #allow_unique_overrides = FALSE)
-
+           ignore_heading_for_group = NULL) {
 
 
 
@@ -91,8 +84,7 @@ gen_qmd_structure <-
                                .f = ~insert_chunk(
                                  chapter_structure_section = .x,
                                  .y=.y,
-                                 grouping_structure = unname(grouping_structure),
-                                 dots = dots
+                                 grouping_structure = unname(grouping_structure)
                                ))
 
             output <- attach_new_output_to_output(new_out = new_out,
