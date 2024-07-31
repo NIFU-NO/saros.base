@@ -43,11 +43,6 @@ gen_qmd_chapters <-
     total_iterations <-
       dplyr::n_distinct(chapter_structure_chapter_groups[[grouping_structure[1]]])
 
-    cli::cli_progress_bar(name = "Creating chapter files...",
-                          type = "iterator",
-                          format_done = "Chapter files completed!", clear = FALSE,
-                          total = total_iterations)
-
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
     chapter_filepaths <-
@@ -71,8 +66,6 @@ gen_qmd_chapters <-
           chapter <- unique(chapter_structure_chapter$chapter)
           chapter_number <- unique(chapter_structure_chapter$.chapter_number)
           chapter_foldername_clean <- unique(chapter_structure_chapter$.chapter_foldername)
-
-          cli::cli_progress_message(msg = "Generating for chapter {chapter}: {chapter_foldername_clean}")
 
 
           chapter_folderpath_absolute <- file.path(path, chapter_foldername_clean)
@@ -157,12 +150,7 @@ gen_qmd_chapters <-
 
         })
 
-    chapter_filepaths <- unlist(chapter_filepaths)
-
-    cli::cli_process_done(msg_done = "Completed report.")
-
-
-    chapter_filepaths
+    unlist(chapter_filepaths)
 
 
   }
