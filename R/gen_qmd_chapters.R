@@ -78,7 +78,7 @@ gen_qmd_chapters <-
 
           if(!all(is.na(chapter_structure_chapter$.variable_name_dep))) {
 
-          chapter_contents <-
+            chapter_contents <-
               gen_qmd_structure(chapter_structure = chapter_structure_chapter)
 
           } else chapter_contents <- NULL
@@ -110,8 +110,10 @@ gen_qmd_chapters <-
                               ignore_null = TRUE,
                               readLines(con = chapter_qmd_end_section_filepath)
                               )
+              if(inherits(chapter_structure_chapter_simplified, "data.frame")) {
                 tryCatch(glue::glue_data(chapter_structure_chapter_simplified, out, .na = ""),
                          error = function(cnd) glue_err(cnd=cnd, arg_name="chapter_qmd_end_section"))
+              }
             }
 
           load_dataset <-

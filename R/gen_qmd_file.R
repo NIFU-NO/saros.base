@@ -69,7 +69,10 @@ gen_qmd_file <-
 
     qmd_start_section <-
       if(!is.null(qmd_start_section_filepath)) {
-        out <- stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
+        out <- stringi::stri_c(collapse="\n",
+                               ignore_null=TRUE,
+                               readLines(con = qmd_start_section_filepath)
+                               )
         if(inherits(chapter_structure, "data.frame")) {
           tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
                    error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_start_section")))
@@ -78,7 +81,10 @@ gen_qmd_file <-
     qmd_end_section <-
       if(!is.null(qmd_end_section_filepath)) {
         out <-
-          stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
+          stringi::stri_c(collapse="\n",
+                          ignore_null=TRUE,
+                          readLines(con = qmd_end_section_filepath)
+                          )
         if(inherits(chapter_structure, "data.frame")) {
           tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
                    error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_end_section")))
@@ -88,10 +94,10 @@ gen_qmd_file <-
 
     out <-
       c(yaml_section, "\n",
-                      qmd_start_section,
-                      report_links,
-                      qmd_end_section,
-                      ignore_null=TRUE, sep="\n")
+        qmd_start_section,
+        report_links,
+        qmd_end_section,
+        ignore_null=TRUE, sep="\n")
     out <- stringi::stri_remove_na(out)
     out <- stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
     out <- stringi::stri_replace_all_regex(out,
