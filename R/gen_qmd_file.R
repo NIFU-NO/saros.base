@@ -41,7 +41,7 @@ gen_qmd_file <-
     check_string(output_formats, n = NULL, null.ok = TRUE, call = call)
     check_string(output_filename, n = 1, null.ok = TRUE, call = call)
     if(is.null(title) && is.null(filename)) {
-      cli::cli_abort("{.arg filename} and {.arg title} cannot be both NULL.")
+      cli::cli_abort("{.arg filename} and {.arg title} cannot be both `NULL`.")
     }
 
     yaml_section <-
