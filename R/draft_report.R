@@ -200,9 +200,10 @@ draft_report <-
            report_qmd_start_section_filepath = NULL,
            report_qmd_end_section_filepath = NULL,
 
-           ignore_heading_for_group = c(".template_name", # Do not move
+           ignore_heading_for_group = c(".template_name",
                                         ".variable_type_dep",
                                         ".variable_type_indep",
+                                        ".variable_group_dep",
                                         "chapter"),
            replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep",
                                          ".variable_label_suffix_indep" = ".variable_name_indep"),

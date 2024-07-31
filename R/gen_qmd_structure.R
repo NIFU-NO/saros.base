@@ -30,8 +30,8 @@ gen_qmd_structure <-
           chapter_structure = chapter_structure,
           value = value)
 
-        # Add heading line if not a .template_name or chapter
-        if(!names(grouped_data)[level] %in% c(dots$ignore_heading_for_group, ".variable_group_dep") &&
+        # Append heading line if not ignorable and not the deepest level (WHY?)
+        if(!names(grouped_data)[level] %in% ignore_heading_for_group &&
            level < ncol(grouped_data)) {
 
           output <-
