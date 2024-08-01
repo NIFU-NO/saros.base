@@ -21,9 +21,14 @@ gen_qmd_chapters <-
            data,
            authors_col = "author",
            path = NULL,
+           ignore_heading_for_group = NULL,
+           replace_heading_for_group = NULL,
+           prefix_heading_for_group = NULL,
+           suffix_heading_for_group = NULL,
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
+           attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
            serialized_format = "rds"
   ) {
@@ -79,7 +84,11 @@ gen_qmd_chapters <-
           if(!all(is.na(chapter_structure_chapter$.variable_name_dep))) {
 
             chapter_contents <-
-              gen_qmd_structure(chapter_structure = chapter_structure_chapter)
+              gen_qmd_structure(chapter_structure = chapter_structure_chapter,
+                                ignore_heading_for_group = ignore_heading_for_group,
+                                replace_heading_for_group = replace_heading_for_group,
+                                prefix_heading_for_group = prefix_heading_for_group,
+                                suffix_heading_for_group = suffix_heading_for_group)
 
           } else chapter_contents <- NULL
 
@@ -133,8 +142,7 @@ gen_qmd_chapters <-
                    chapter_contents,
                    qmd_end_section)
           out <- stringi::stri_remove_na(out)
-          out <-
-          stringi::stri_c(out, collapse = "\n", ignore_null=TRUE)
+          out <- stringi::stri_c(out, collapse = "\n", ignore_null=TRUE)
           out <- stringi::stri_replace_all_regex(out,
                                                  pattern = "\n{3,}",
                                                  replacement = "\n\n\n")

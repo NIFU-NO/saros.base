@@ -1,124 +1,103 @@
 #' @keywords internal
 gen_qmd_structure <-
   function(chapter_structure,
-           ignore_heading_for_group = NULL) {
+           ignore_heading_for_group = NULL,
+           replace_heading_for_group = NULL,
+           prefix_heading_for_group = NULL,
+           suffix_heading_for_group = NULL) {
 
 
 
     gen_group_structure <- function(grouped_data,
                                      level = 1,
                                      grouping_structure) {
-      output <- ""
+      output <- character()
+      new_out <- character()
 
-      if (level > ncol(grouped_data)) {
-        return(output)
-      }
+      if (level > ncol(grouped_data)) return(output)
 
 
       for(value in unique(grouped_data[[level]])) {
-
-        heading_line <- insert_section_heading_line(
-          grouped_data = grouped_data,
-          level = level,
-          chapter_structure = chapter_structure,
-          value = value)
-
-        # Append heading line if not ignorable and not the deepest level (WHY?)
-        if(!names(grouped_data)[level] %in% ignore_heading_for_group &&
-           level < ncol(grouped_data)) {
-
-          output <-
-            stringi::stri_c(output,
-                            heading_line,
-                            sep="\n",
-                            ignore_null=TRUE)
-        }
-
-        # Keep only relevant part of meta data
+# if(!is.na(value) && value == "x1_sex") browser()
 
 
-        sub_df <- vctrs::vec_slice(grouped_data,
-                                   is.na(as.character(grouped_data[[colnames(grouped_data)[level]]])) |
-                                     as.character(grouped_data[[colnames(grouped_data)[level]]]) == value)
+        # Keep only relevant part of meta data which will be forwarded into a deeper level
+        sub_df <-
+          vctrs::vec_slice(grouped_data,
+                           is.na(as.character(grouped_data[[colnames(grouped_data)[level]]])) |
+                             as.character(grouped_data[[colnames(grouped_data)[level]]]) == value) |>
+          droplevels()
 
-        sub_df <- droplevels(sub_df)
 
-
-        # Setting a specific sub-chapter (e.g. a label_prefix) as the column name. WHY?
+        # Setting a specific sub-chapter (e.g. a label_prefix) as the column name to be able to forward filtering information to deeper recursion calls without additional complex arguments
         names(grouping_structure)[level] <- value
 
-        # If innermost/deepest level, start producing contents
+        # If innermost/deepest level, insert chunk
         if(level == length(grouping_structure)) {
 
           # Create new metadata with bare minimum needed, and reapply grouping
-          chapter_structure_section <- chapter_structure
-
-          if(all(is.na(chapter_structure_section$chapter)) && nrow(chapter_structure_section)>1) browser()
-
-          for(i in seq_along(grouping_structure)) {
-            variable <- as.character(chapter_structure_section[[grouping_structure[[i]]]])
-            lgl_filter <-
-              (!is.na(names(grouping_structure)[i]) & !is.na(variable) & variable == names(grouping_structure)[i]) |
-              (is.na(names(grouping_structure)[i]) & is.na(variable))
-
-            chapter_structure_section <-
-              vctrs::vec_slice(chapter_structure_section, lgl_filter)
-          }
-          if(all(is.na(chapter_structure_section$.variable_name_dep)) &&
-             nrow(chapter_structure_section) > 1) browser()
-
-          chapter_structure_section <- droplevels(chapter_structure_section)
+          chapter_structure_section <-
+            prepare_chapter_structure_section(chapter_structure = chapter_structure,
+                                              grouping_structure = grouping_structure)
 
           if(nrow(chapter_structure_section) >= 1) {
 
-
-            chapter_structure_section <-
-              dplyr::group_by(chapter_structure_section,
-                              dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
-            chapter_structure_section <- droplevels(chapter_structure_section)
-
-
-            new_out <-
-              chapter_structure_section |>
-              dplyr::group_map(.keep = TRUE,
-                               .f = ~insert_chunk(
-                                 chapter_structure_section = .x,
-                                 .y=.y,
-                                 grouping_structure = unname(grouping_structure)
-                               ))
-
-            output <- attach_new_output_to_output(new_out = new_out,
-                                                  output = output,
-                                                  level = level,
-                                                  grouped_data = grouped_data,
-                                                  heading_line = heading_line)
-
+            new_out <- # Might be character() (initialized) or string (character vector?)
+              insert_chunk(chapter_structure_section = chapter_structure_section,
+                           grouping_structure = unname(grouping_structure)
+                          )
           }
         }
 
+        heading_line <- # Might be character() (if ignorable or value is NA). String always produced (even if no new output)
+          insert_section_heading_line(
+            grouped_data = grouped_data,
+            level = level,
+            chapter_structure = chapter_structure,
+            value = value,
+            ignore_heading_for_group = ignore_heading_for_group,
+            replace_heading_for_group = replace_heading_for_group,
+            prefix_heading_for_group = prefix_heading_for_group,
+            suffix_heading_for_group = suffix_heading_for_group)
+
+
+        output <- attach_new_output_to_output( # Might be character() or a string
+          output = output,
+          heading_line = heading_line,
+          new_out = new_out,
+          level = level,
+          grouping_structure = grouping_structure)
 
         added <- # Recursive call
           gen_group_structure(grouped_data = sub_df,
                                level = level + 1,
-                               grouping_structure = grouping_structure)
-        added <- stringi::stri_remove_empty_na(added)
+                               grouping_structure = grouping_structure) |>
+          stringi::stri_remove_empty_na()
+
         output <-
           stringi::stri_c(output,
                           added,
                           sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
+        output <-
+          if(length(output)>0) output else ""
       }
+      if(length(output)>1) browser()
 
-      if(length(output)>1 || (length(output)==1 && is.na(output))) browser()
+      if(length(output) != 1 || is.na(output)) {
+        cli::cli_abort(c("x"="Internal error in {.fn gen_qmd_structure}",
+                         "!" = "{.val output} is {output}",
+                       i="Please create a bug report at {.url https://github.com/NIFU-NO/saros.base/issues}."))
+      }
 
       return(output)
     }
 
     grouping_structure <- dplyr::group_vars(chapter_structure)
-    non_grouping_vars <- colnames(chapter_structure)[!colnames(chapter_structure) %in% grouping_structure]
 
-    grouped_data <- chapter_structure
-    grouped_data <-dplyr::group_by(grouped_data, dplyr::pick(tidyselect::all_of(grouping_structure)))
-    grouped_data <- dplyr::distinct(grouped_data, dplyr::pick(tidyselect::all_of(grouping_structure)))
+    grouped_data <-
+      chapter_structure |>
+      dplyr::group_by(dplyr::pick(tidyselect::all_of(grouping_structure))) |>
+      dplyr::distinct(dplyr::pick(tidyselect::all_of(grouping_structure)))
 
     out <-
       gen_group_structure(grouped_data = grouped_data,

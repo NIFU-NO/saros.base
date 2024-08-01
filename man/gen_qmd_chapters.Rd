@@ -9,9 +9,14 @@ gen_qmd_chapters(
   data,
   authors_col = "author",
   path = NULL,
+  ignore_heading_for_group = NULL,
+  replace_heading_for_group = NULL,
+  prefix_heading_for_group = NULL,
+  suffix_heading_for_group = NULL,
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
+  attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
   serialized_format = "rds"
 )
@@ -44,11 +49,41 @@ Only used if it exists. Multiple authors are separated by semicolon (and optiona
 
 Path to save all output. Defaults to a temporary directory.}
 
+\item{ignore_heading_for_group}{\emph{Ignore heading for group}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Type of refined chapter_structure data for which to suppress the heading
+in the report output. Typically variable_name_dep, variable_name_indep, etc.}
+
+\item{replace_heading_for_group}{\emph{Replacing heading for group}
+
+\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
+
+Occasionally, one needs to replace the heading with another piece of information
+in the refined chapter_structure. For instance, one may want to organize output
+by variable_name_indep, but to display the variable_label_indep instead. Use
+the name for the replacement and the value for the original.}
+
+\item{prefix_heading_for_group, suffix_heading_for_group}{\emph{Prefix and suffix headings}
+
+\verb{vector<named character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Names are heading_groups, values are the prefixes and suffixes. Note
+that prefixes should end with a \verb{\\n} as headings must begin on a new line.}
+
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Path to file used to insert header YAML, in each chapter.}
+
+\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+Whether to save in each chapter folder an 'Rds'-file with the
+chapter-specific dataset, and load it at the top of each QMD-file.}
 
 \item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
 

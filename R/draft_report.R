@@ -113,6 +113,14 @@
 #'  in the report output. Typically variable_name_dep, variable_name_indep, etc.
 #'
 #'
+#' @param prefix_heading_for_group,suffix_heading_for_group *Prefix and suffix headings*
+#'
+#'  `vector<named character>` // *default:* `NULL` (`optional`)
+#'
+#'  Names are heading_groups, values are the prefixes and suffixes. Note
+#'  that prefixes should end with a `\n` as headings must begin on a new line.
+#'
+#'
 #' @param attach_chapter_dataset *Toggle inclusion of chapter-specific datasets in qmd-files*
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
@@ -208,6 +216,8 @@ draft_report <-
            replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep",
                                          ".variable_label_suffix_indep" = ".variable_name_indep"),
 
+           prefix_heading_for_group = NULL,
+           suffix_heading_for_group = NULL,
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
 
            # Formats and attachments
@@ -245,9 +255,14 @@ draft_report <-
         chapter_structure = chapter_structure,
         data = data,
         path = args$path,
+        ignore_heading_for_group = args$ignore_heading_for_group,
+        replace_heading_for_group = args$replace_heading_for_group,
+        prefix_heading_for_group = args$prefix_heading_for_group,
+        suffix_heading_for_group = args$suffix_heading_for_group,
         chapter_yaml_file = args$chapter_yaml_file,
         chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
         chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,
+        attach_chapter_dataset = args$attach_chapter_dataset,
         auxiliary_variables = args$auxiliary_variables,
         serialized_format = args$serialized_format
         )
