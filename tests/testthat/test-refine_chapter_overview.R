@@ -68,9 +68,10 @@ testthat::test_that("add_chunk_templates_to_chapter_structure", {
 
 testthat::test_that("refine_chapter_overview", {
   x <-
-    saros.base:::refine_chapter_overview(chapter_overview = saros.base::ex_survey_ch_overview,
-                                    data = saros.base::ex_survey,
-                                    label_separator = " - ",
-                                    name_separator = "_")
-  testthat::expect_equal(dim(x), c(60, 46))
+    saros.base:::refine_chapter_overview(
+      chapter_overview = saros.base::ex_survey_ch_overview,
+      data = saros.base::ex_survey,
+      label_separator = " - ",
+      name_separator = "_")
+  testthat::expect_equal(dim(x), c(1+1+7*4+7*4+8*2, 46))
 })
