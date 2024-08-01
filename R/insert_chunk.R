@@ -23,19 +23,21 @@
 
 insert_chunk <-
   function(chapter_structure_section,
-           .y, # chapter_structure_grouping as data.frame?
            grouping_structure,
            template_variable_name = ".template"
   ) {
 
-
+    chapter_structure_section <-
+      dplyr::group_by(chapter_structure_section,
+                      dplyr::pick(tidyselect::all_of(unname(grouping_structure)))) |>
+      droplevels()
     #####
     # Early returns
     # chapter and element_name is NA
     if(all(!is.na(chapter_structure_section$chapter)) &&
-       all(is.na(as.character(chapter_structure_section$.template_name)))) return()
+       all(is.na(as.character(chapter_structure_section$.template_name)))) return(character())
 
-    if(all(is.na(as.character(chapter_structure_section$.variable_name_dep)))) return()
+    if(all(is.na(as.character(chapter_structure_section$.variable_name_dep)))) return(character())
 
 
     # Re-group chapter_structure_section

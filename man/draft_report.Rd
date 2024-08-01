@@ -27,6 +27,8 @@ draft_report(
     ".variable_type_indep", ".variable_group_dep", "chapter"),
   replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
     .variable_label_suffix_indep = ".variable_name_indep"),
+  prefix_heading_for_group = NULL,
+  suffix_heading_for_group = NULL,
   require_common_categories = TRUE,
   combined_report = TRUE,
   attach_chapter_dataset = TRUE,
@@ -133,6 +135,13 @@ Occasionally, one needs to replace the heading with another piece of information
 in the refined chapter_structure. For instance, one may want to organize output
 by variable_name_indep, but to display the variable_label_indep instead. Use
 the name for the replacement and the value for the original.}
+
+\item{prefix_heading_for_group, suffix_heading_for_group}{\emph{Prefix and suffix headings}
+
+\verb{vector<named character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Names are heading_groups, values are the prefixes and suffixes. Note
+that prefixes should end with a \verb{\\n} as headings must begin on a new line.}
 
 \item{require_common_categories}{\emph{Check common categories}
 

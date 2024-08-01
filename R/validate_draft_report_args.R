@@ -44,6 +44,10 @@ validate_draft_report_args <- function(params) {
       report_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
       index_filename = list(fun = function(x) is_string(x) || is.null(x)),
       report_filename = list(fun = function(x) is_string(x) || is.null(x)),
+      ignore_heading_for_group = list(fun = function(x) is.null(x) || is.character(x) && !rlang::is_named(x)),
+      replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
+      prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
+      suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
 
       log_file = list(fun = function(x) is.null(x) || is_string(x)),
 

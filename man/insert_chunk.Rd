@@ -6,7 +6,6 @@
 \usage{
 insert_chunk(
   chapter_structure_section,
-  .y,
   grouping_structure,
   template_variable_name = ".template"
 )
