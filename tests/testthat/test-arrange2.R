@@ -31,11 +31,12 @@ testthat::test_that("arrange2 works with factors and descending order", {
 })
 
 testthat::test_that("arrange2 handles na_first argument", {
-  data <- data.frame(var1 = c(3, NA, 2), var2 = c(4, 6, 5))
+  data <- data.frame(var1 = forcats::fct_na_value_to_level(factor(c(3, NA, 2)), NA), var2 = c(4, 6, 5))
   arrange_vars <- c("var1")
   result <- saros.base:::arrange2(data, arrange_vars, na_first = TRUE)
-  testthat::expect_true(is.na(result$var1[1]))
-  testthat::expect_equal(result$var1[-1], c(2, 3))
+  testthat::expect_true(is.na(as.character(result$var1[1])))
+  testthat::expect_true(!is.na(result$var1[1]))
+  testthat::expect_equal(levels(droplevels(result$var1[-1])), c("2", "3"))
 })
 
 testthat::test_that("arrange2 handles missing columns", {

@@ -256,8 +256,6 @@ refine_chapter_overview <-
         hide_variable_if_all_na = hide_variable_if_all_na
       )
 
-      # check_duplicates_in_chapter_overview(out)
-
       present_variable_names <-
         stringi::stri_remove_empty_na(unique(out$.variable_name))
 
@@ -270,8 +268,6 @@ refine_chapter_overview <-
                                                name_separator = name_separator),
                            by = dplyr::join_by(".variable_position", ".variable_name"))
 
-        # if(!is.factor(out$.variable_name_dep)) browser()
-
         out <-
           trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
         out <-
@@ -279,7 +275,6 @@ refine_chapter_overview <-
 
         out <-
           add_indep_to_chapter_structure(out)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
 
         out <-
@@ -289,7 +284,6 @@ refine_chapter_overview <-
             hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
             always_show_bi_for_indep = always_show_bi_for_indep,
             progress = progress)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
 
         out <-
@@ -297,12 +291,10 @@ refine_chapter_overview <-
             chapter_structure = out,
             chunk_templates = chunk_templates)
         out <- remove_from_chapter_structure_if_no_type_match(out)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
 
         out <-
           dplyr::distinct(out, dplyr::pick(tidyselect::everything()), .keep_all = TRUE)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
 
         validate_chapter_structure_has_not_chapter_with_all_vars(out, data = data)
@@ -311,7 +303,6 @@ refine_chapter_overview <-
         log_unused_variables(chapter_structure = out,
                              data = data,
                              log_file = log_file)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
 
         out <-
@@ -319,15 +310,11 @@ refine_chapter_overview <-
             chapter_structure = out,
             data = data,
             chunk_template_names = chunk_templates$name)
-        # if(!is.factor(out$.variable_name_dep)) browser()
 
         out <-
           add_group_id_to_chapter_structure(out,
                                             grouping_vars = organize_by[organize_by %in% colnames(out)],
                                             variable_group_prefix = NULL)
-
-        # browser()
-
         out <-
           split_chapter_structure_groups_if_single_y_bivariates(
             chapter_structure = out,
@@ -340,13 +327,10 @@ refine_chapter_overview <-
 
       }
 
-      # browser()
-
-
 
       out <- dplyr::group_by(out, dplyr::pick(tidyselect::all_of(organize_by[organize_by %in% colnames(out)])))
       out <- arrange2(data = out, arrange_vars = arrange_section_by, na_first = na_first_in_section)
-      # if(!is.factor(out$.variable_name_dep)) browser()
+
 
       if(data_present) {
 
@@ -369,7 +353,6 @@ refine_chapter_overview <-
             glue_template_1 = n_range_glue_template_1,
             glue_template_2 = n_range_glue_template_2,
             variable_name = ".n_range")
-        if(!is.factor(out$.variable_name_dep)) browser()
 
         out <-
           add_n_cats_to_chapter_structure(
@@ -390,8 +373,6 @@ refine_chapter_overview <-
             drop_na = TRUE)
 
       }
-      if(!is.factor(out$.variable_name_dep)) browser()
-
 
 
       out <-
