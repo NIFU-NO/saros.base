@@ -1,6 +1,7 @@
 url: https://nifu-no.github.io/saros.base/
 template:
   bootstrap: 5
+  light-switch: true
 
 
 reference:
@@ -12,10 +13,17 @@ reference:
     The only functions you will probably use, in the order listed
   contents:
   - draft_report
+- title: "Auxiliary functions to obtain defaults"
+  contents:
+  - get_chunk_template_defaults
 - title: "Example data and metadata"
   desc: "You would need to create these two types of data frames."
   contents:
   - starts_with("ex_survey")
-- title: "Internal functions"
+- title: "Read and write draft_report arguments as YAML for sharing across projects"
+  contents:
+  - read_default_draft_report_args
+  - write_default_draft_report_args
+- title: "Internal functions used by other packages"
   contents:
   - matches("get_raw_labels|is_string|filename_sanitizer")

@@ -17,6 +17,7 @@
 #' Defaults to ".n_range"
 #'
 #' @return chapter_structure with a new variable added. Grouped as before.
+#' @keywords internal
 #'
 add_n_range_to_chapter_structure <-
   function(chapter_structure, data,

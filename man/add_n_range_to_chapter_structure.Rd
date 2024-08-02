@@ -33,3 +33,4 @@ an attached variable containing a string with the sample size-range (or
 single value if min=max). Allows specifying the glue_template_1 (single value)
 and glue_template_2 (for min and max values).
 }
+\keyword{internal}

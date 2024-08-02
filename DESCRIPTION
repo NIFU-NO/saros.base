@@ -1,6 +1,6 @@
 Type: Package
 Package: saros.base
-Title: Semi-Automatic Reporting of Ordinary Surveys (Base Package)
+Title: Base Package for Semi-Automatic Reporting of Ordinary Surveys (saros)
 Version: 0.1.1
 Authors@R: c(
     person(given = "Stephan", 
@@ -17,12 +17,12 @@ Maintainer: Stephan Daus <stephus.daus@gmail.com>
 Description: Produces highly customized reports, primarily intended for survey
     research. Building on 'Quarto' (<https://quarto.org>), it generates draft
     chapters of all specified dependent/independent variables, which can be
-    further edited by hand, with the chunk templates specified. Part of the 
-    sarosverse.
+    further edited by hand, with the chunk templates specified. Component of the 
+    saros.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
-URL: https://nifu-no.github.io/saros/, https://github.com/NIFU-NO/saros 
-BugReports: https://github.com/NIFU-NO/saros/issues
+URL: https://nifu-no.github.io/saros.base/, https://github.com/NIFU-NO/saros.base 
+BugReports: https://github.com/NIFU-NO/saros.base/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
@@ -60,4 +60,3 @@ Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
-Config/testthat/start-first: refine_chapter_overview
