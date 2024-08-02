@@ -12,7 +12,6 @@ err_msg <- function(infix) {
 #' @param x Object
 #'
 #' @return Bool
-#' @export
 #'
 is_string <- function(x) {
   is.character(x) && length(x) == 1

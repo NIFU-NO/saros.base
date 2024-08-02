@@ -3,8 +3,6 @@
 export(draft_report)
 export(filename_sanitizer)
 export(get_chunk_template_defaults)
-export(get_raw_labels)
-export(is_string)
 export(read_default_draft_report_args)
 export(refine_chapter_overview)
 export(write_default_draft_report_args)

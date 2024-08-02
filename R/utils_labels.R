@@ -5,7 +5,6 @@
 #' @param return_as_list Flag, whether to return as list or character vector
 #'
 #' @return List or character vector
-#' @export
 #'
 get_raw_labels <-
   function(data, col_pos = NULL, return_as_list = FALSE) {
