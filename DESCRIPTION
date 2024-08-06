@@ -37,7 +37,7 @@ Imports:
     stringi,
     yaml,
     forcats,
-     fs,
+    fs,
 Suggests:
     covr,
     haven,
