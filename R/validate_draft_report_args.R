@@ -1,5 +1,7 @@
 validate_draft_report_args <- function(params) {
 
+  if(!"data" %in% names(params)) cli::cli_abort("{.arg data} argument must be provided.")
+
   unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
   if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
 
@@ -10,7 +12,7 @@ validate_draft_report_args <- function(params) {
 
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
-      cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
+      cli::cli_warn(paste0("{.arg {(param_name)}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
       default
     } else target[[param_name]]
   }
