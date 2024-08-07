@@ -182,7 +182,6 @@ _{.variable_label_prefix_dep}_.
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
-#| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
 #| output: asis
 #| panel: tabset
 plots <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
@@ -191,17 +190,18 @@ lapply(names(plots), function(.x) {{
   knitr::knit_child(text = c(
     '##### `r .x`',
     '',
-    '```{{r}}',
+    '```{{r, fig.height = saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})}}',
     'library(ggplot2)',
     'library(ggiraph)',
-    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep}))',
-    'link <- saros.contents::make_link(data = plots[[.x]]$data)',
-    'link_plot <- saros.contents::make_link(data = plots[[.x]], link_prefix=\\'[PNG](\\', file_suffix = \\'.png\\', save_fn = ggsaver)',
-    'caption <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
+    'library(saros.contents)',
+    'nrange <- n_range2(plots[[.x]])',
+    'link <- make_link(data = plots[[.x]]$data)',
+    'link_plot <- make_link(data = plots[[.x]], link_prefix=\\'[PNG](\\', file_suffix = \\'.png\\', save_fn = ggsaver)',
+    'x <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
     'girafe(ggobj = plots[[.x]])',
     '```',
     '',
-    '`r caption`',
+    '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
 }}) |> unlist() |> cat(sep = '\\n')
@@ -223,7 +223,6 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
-#| fig-height: !expr saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})
 #| output: asis
 #| panel: tabset
 plots <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_plot_html', \n\tcrowd=c('target', 'others'), \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
@@ -233,17 +232,18 @@ lapply(names(plots), function(.x) {{
   knitr::knit_child(text = c(
     '##### `r .x`',
     '',
-    '```{{r}}',
+    '```{{r, fig.height = saros.contents::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})}}',
     'library(ggplot2)',
     'library(ggiraph)',
-    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))',
-    'link <- saros.contents::make_link(data = plots[[.x]]$data)',
-    'link_plot <- saros.contents::make_link(data = plots[[.x]], link_prefix=\\'[PNG](\\', file_suffix = \\'.png\\', save_fn = ggsaver)',
-    'caption <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
+    'library(saros.contents)',
+    'nrange <- n_range2(plots[[.x]])',
+    'link <- make_link(data = plots[[.x]]$data)',
+    'link_plot <- make_link(data = plots[[.x]], link_prefix=\\'[PNG](\\', file_suffix = \\'.png\\', save_fn = ggsaver)',
+    'x <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
     'girafe(ggobj = plots[[.x]])',
     '```',
     '',
-    '`{{r}} caption`',
+    '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
 }}) |> unlist() |> cat(sep = '\\n')
@@ -277,13 +277,14 @@ lapply(names(tbls), function(.x) {{
     '',
     '```{{r}}',
     'library(gt)',
-    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))',
-    'link <- saros.contents::make_link(data = tbls[[.x]])',
-    'caption <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
+    'library(saros.contents)',
+    'nrange <- n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}))',
+    'link <- make_link(data = tbls[[.x]])',
+    'x <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
     'gt(ggobj = tbls[[.x]])',
     '```',
     '',
-    '`{{r}} caption`',
+    '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
 }}) |> unlist() |> cat(sep = '\\n')
@@ -316,13 +317,14 @@ lapply(names(tbls), function(.x) {{
     '',
     '```{{r}}',
     'library(gt)',
-    'nrange <- saros.contents::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})',
-    'link <- saros.contents::make_link(data = tbls[[.x]])',
-    'caption <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
+    'library(saros.contents)',
+    'nrange <- n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})',
+    'link <- make_link(data = tbls[[.x]])',
+    'x <- I(paste0(\\'N = \\', nrange, \\', \\', link, \\', \\', link_plot))',
     'gt(ggobj = tbls[[.x]])',
     '```',
     '',
-    '`{{r}} caption`',
+    '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
 }}) |> unlist() |> cat(sep = '\\n')
