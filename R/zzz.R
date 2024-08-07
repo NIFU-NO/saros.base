@@ -45,11 +45,11 @@ if(!exists(".saros.env")) .saros.env <- NULL
 
 ```{{r}}
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_x={.max_chars_indep})
-{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_plot_html')
-nrange <- n_range(data = data_{.chapter_foldername}, dep = c({.variable_name_dep}), indep = c({.variable_name_indep}))
+{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_prop_plot_html')
+nrange <- n_range2({.obj_name})
 link <- make_link(data = {.obj_name}$data)
-link_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver, width=12, height=12, units='cm')
-ggiraph::girafe(ggobj = {.obj_name})
+link_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[download PNG](', \n\t\tsave_fn = ggsaver)
+girafe(ggobj = {.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
@@ -68,11 +68,11 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. N=`
 
 ```{{r}}
 #| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_y={.max_chars_dep})
-{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'cat_plot_html')
-nrange <- n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}))
-link <- make_link(data={.obj_name}$data)
-link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[PNG](', save_fn = ggsaver, width=12, height=12, units='cm')
-ggiraph::girafe(ggobj = {.obj_name})
+{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'cat_prop_plot_html')
+nrange <- n_range2({.obj_name})
+link <- make_link(data = {.obj_name}$data)
+link_plot <- make_link(data = {.obj_name}, file_suffix='.png', link_prefix='[download PNG](', save_fn = ggsaver)
+girafe(ggobj = {.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. N=`{{r}} nrange`. `{{r}} link`. `{{r}} link_plot`.
