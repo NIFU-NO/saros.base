@@ -96,8 +96,7 @@ gen_qmd_file <-
       c(yaml_section, "\n",
         qmd_start_section,
         report_links,
-        qmd_end_section,
-        ignore_null=TRUE, sep="\n")
+        qmd_end_section)
     out <- stringi::stri_remove_na(out)
     out <- stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
     out <- stringi::stri_replace_all_regex(out,

@@ -60,7 +60,7 @@ testthat::test_that("validate_labels", {
 testthat::test_that("add_chunk_templates_to_chapter_structure", {
   saros.base::ex_survey_ch_overview |>
     dplyr::mutate(.variable_name_dep = dep) |>
-  saros.base:::add_chunk_templates_to_chapter_structure(chunk_templates = c("uni_cat_prop_plot", "uni_cat_table")) |>
+  saros.base:::add_chunk_templates_to_chapter_structure(chunk_templates = c("cat_plot", "cat_table")) |>
     dim() |>
     testthat::expect_equal(c(10, 7))
 })

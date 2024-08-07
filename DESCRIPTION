@@ -1,6 +1,6 @@
 Type: Package
 Package: saros.base
-Title: Base Package for Semi-Automatic Reporting of Ordinary Surveys (saros)
+Title: Base Tools in Semi-Automatic Reporting of Ordinary Surveys (Saros)
 Version: 0.1.1
 Authors@R: c(
     person(given = "Stephan", 
@@ -14,11 +14,11 @@ Authors@R: c(
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Produces highly customized reports, primarily intended for survey
-    research. Building on 'Quarto' (<https://quarto.org>), it generates draft
-    chapters of all specified dependent/independent variables, which can be
-    further edited by hand, with the chunk templates specified. Component of the 
-    saros.
+Description: Component of the saros package project. Generate an entire report 
+    scaffold with templated chunks, based on a small chapter overview and a dataset. 
+    Highly customizable with insertable prefixes, suffixes, translations, etc.
+    See 'saros' (<https://CRAN.R-project.org/package=saros>) for the main
+    umbrella package.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
 URL: https://nifu-no.github.io/saros.base/, https://github.com/NIFU-NO/saros.base 
@@ -37,7 +37,7 @@ Imports:
     stringi,
     yaml,
     forcats,
-     fs,
+    fs,
 Suggests:
     covr,
     haven,
