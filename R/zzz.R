@@ -42,7 +42,7 @@ if(!exists(".saros.env")) .saros.env <- NULL
     tibble::add_row(.template_name = "cat_plot_html",
                     .template_variable_type_dep = "fct;ord",
                     .template_variable_type_indep = "fct;ord",
-               .template =
+                    .template =
                  "
 ::: {{#fig-{.chunk_name}}}
 
@@ -285,10 +285,11 @@ _{.variable_label_prefix_dep}_.
 #| output: asis
 #| panel: tabset
 tbls <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+if(!all(sapply(tbls, is.null))) {{
 
-lapply(names(tbls), function(.x) {
+lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
-    '##### `r .x',
+    '##### `r .x`',
     '',
     '```{{r}}',
     'library(gt)',
@@ -302,7 +303,8 @@ lapply(names(tbls), function(.x) {
     '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
-}) |> unlist() |> cat(sep = '\\n')
+}}) |> unlist() |> cat(sep = '\\n')
+}}
 ```
 
 _{.variable_label_prefix_dep}_.
@@ -323,8 +325,9 @@ _{.variable_label_prefix_dep}_.
 #| output: asis
 #| panel: tabset
 tbls <- \n\tsaros.contents::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+if(!all(sapply(tbls, is.null))) {{
 
-lapply(names(tbls), function(.x) {
+lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
     '##### `r .x`',
     '',
@@ -340,7 +343,8 @@ lapply(names(tbls), function(.x) {
     '`r x`',
     ''
     ), envir = environment(), quiet = TRUE)
-}) |> unlist() |> cat(sep = '\\n')
+}}) |> unlist() |> cat(sep = '\\n')
+}}
 ```
 
 _{.variable_label_prefix_dep}_.
@@ -509,7 +513,7 @@ x <-  I(paste0(c(nrange, link), collapse = ', '))
 gt(table)
 ```
 
-`{{r}} caption`.
+`{{r}} x`.
 
 :::
 
