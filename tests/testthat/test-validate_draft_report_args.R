@@ -30,7 +30,7 @@ testthat::test_that("validate_draft_report_args", {
                        val =
                          list(data = NULL)) |>
      saros.base:::validate_draft_report_args() |>
-     testthat::expect_warning(regexp = "`data` is invalid")
+     testthat::expect_error(regexp = "`data` argument must be provided")
 
     # Test Case 4: Invalid data type for 'data'
    args |>
