@@ -1,6 +1,6 @@
 validate_draft_report_args <- function(params) {
 
-  if(!"data" %in% names(params)) cli::cli_abort("{.arg data} argument must be provided.")
+  if(!"data" %in% names(params) || is.null(params$data)) cli::cli_abort("{.arg data} argument must be provided.")
 
   unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
   if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
