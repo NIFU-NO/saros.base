@@ -1,6 +1,6 @@
 Type: Package
 Package: saros.base
-Title: Base Tools in Semi-Automatic Reporting of Ordinary Surveys (Saros)
+Title: Base Tools for Semi-Automatic Reporting of Ordinary Surveys (Saros)
 Version: 0.2.0
 Authors@R: c(
     person(given = "Stephan", 
