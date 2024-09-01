@@ -50,33 +50,6 @@ compare_many <- function(x) {
 
 
 
-
-#' Create All Possible Combinations of Vector Elements with Minimum A and
-#' Maximum B.
-#'
-#' @param vec Vector
-#' @param n_min Minimum number of elements
-#' @param n_max Maximum number of elements. Defaults to length of vec.
-#'
-#' @importFrom utils combn
-#' @importFrom rlang is_integer
-#' @return A data frame
-#' @export
-#' @examples
-#' combn_upto()
-combn_upto <-
-  function(vec=c("a", "b", "c", "d", "e", "f", "g"),
-           n_min=6L,
-           n_max=length(vec)) {
-	stopifnot(rlang::is_integer(as.integer(n_min)))
-	stopifnot(n_max<=length(vec))
-	x <-
-	  unlist(lapply(n_min:n_max, function(x) utils::combn(x = vec, m = x, simplify = F)), recursive = FALSE)
-	x <- stats::setNames(x, x)
-	rev(x)
-}
-
-
 trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable_label_prefix_dep",
                                         ".variable_label_prefix_indep", ".variable_label_suffix_indep")) {
   for(col in cols) {

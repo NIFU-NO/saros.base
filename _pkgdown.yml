@@ -18,8 +18,6 @@ reference:
   contents:
   - read_default_draft_report_args
   - write_default_draft_report_args
-- title: Internal functions used by other packages
-  contents: matches("get_raw_labels|is_string|filename_sanitizer")
 - title: Website management tools
   desc: Share reports to various recipients with password access and automatic sending
     of emails
@@ -40,22 +38,5 @@ reference:
   - copy_folder_contents_to_dir
   - create_directory_structure
   - create_r_files
-- title: Column recoding tools
-  desc: 'Note: will be moved to 3rd party package in the future'
-  contents:
-  - col_to_binaries
-  - combn_upto
-  - recode_checkbox_sets
-  - omitted_recoder_df
-- title: Convenience tools for working with datasets
-  desc: Perhaps better suited in 3rd party packages, so might be moved later
-  contents: handpick
-- title: Label tools
-  desc: 'Note: will be moved to 3rd party package in the future'
-  contents:
-  - attach_qualtrics_labels
-  - remove_special_chars_in_labels
-  - rename_by_labels
-  - replace_stata_labels
-  - sanitize_labels
-  - swap_label_colnames
+- title: Internal functions used by other packages
+  contents: matches("get_raw_labels|is_string|filename_sanitizer")
