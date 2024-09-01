@@ -1,7 +1,7 @@
 Type: Package
 Package: saros.base
 Title: Base Tools in Semi-Automatic Reporting of Ordinary Surveys (Saros)
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -14,11 +14,9 @@ Authors@R: c(
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Component of the saros package project. Generate an entire report 
-    scaffold with templated chunks, based on a small chapter overview and a dataset. 
+Description: Generate an entire report scaffold with templated chunks, based on a small chapter overview and a dataset. 
     Highly customizable with insertable prefixes, suffixes, translations, etc.
-    See 'saros' (<https://CRAN.R-project.org/package=saros>) for the main
-    umbrella package.
+    See 'saros' (<https://CRAN.R-project.org/package=saros>) for tools used for authors in the drafted reports.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
 URL: https://nifu-no.github.io/saros.base/, https://github.com/NIFU-NO/saros.base 
@@ -38,6 +36,9 @@ Imports:
     yaml,
     forcats,
     fs,
+	zip,
+    rstudioapi,
+    bcrypt
 Suggests:
     covr,
     haven,
@@ -48,7 +49,7 @@ Suggests:
     quarto,
     labelled,
     testthat (>= 3.0.0),
-	  tibble,
+	tibble,
     withr,
     spelling
 SystemRequirements: None.

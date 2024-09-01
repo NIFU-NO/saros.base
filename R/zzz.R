@@ -1,3 +1,5 @@
+utils::globalVariables(names = c(".", ".data", ".env"))
+
 if(!exists(".saros.env")) .saros.env <- NULL
 .onLoad <- function(libname, pkgname) {
   # Initialize the .saros.env environment if not already set

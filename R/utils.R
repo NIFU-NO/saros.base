@@ -1,6 +1,3 @@
-
-
-
 ###  Check that all pairs of cols share at least one observed response category
 check_category_pairs <-
   function(data, cols_pos, call = rlang::caller_env(), return_error=TRUE) {
@@ -30,30 +27,6 @@ check_category_pairs <-
     TRUE
   }
 
-trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable_label_prefix_dep",
-                                        ".variable_label_prefix_indep", ".variable_label_suffix_indep")) {
-  for(col in cols) {
-    if(is.character(data[[col]])) {
-      data[[col]] <- stringi::stri_trim_both(data[[col]])
-      data[[col]] <- stringi::stri_replace_all_regex(data[[col]], pattern = "[[:space:]]+", replacement = " ")
-    }
-  }
-  data
-}
-
-# get_main_question <-
-#   function(data, cols_pos, label_separator) {
-#   x <- unlist(lapply(data[, cols_pos], FUN = function(.x) attr(.x, "label")))
-#   x <- unname(x)
-#   x <-
-#     stringi::stri_replace(string = x,
-#                          regex = stringi::stri_c(ignore_null=TRUE, "(^.*)", label_separator, "(.*$)"),
-#                          replacement = "$1")
-#   x <- unique(x)
-#   x <-
-#     stringi::stri_c(ignore_null=TRUE, x, collapse="\n")
-#   x
-# }
 
 
 create_text_collapse <-
@@ -71,5 +44,48 @@ compare_many <- function(x) {
     nrow(x[[1]])==1
 }
 
+
+
+
+
+
+
+
+#' Create All Possible Combinations of Vector Elements with Minimum A and
+#' Maximum B.
+#'
+#' @param vec Vector
+#' @param n_min Minimum number of elements
+#' @param n_max Maximum number of elements. Defaults to length of vec.
+#'
+#' @importFrom utils combn
+#' @importFrom rlang is_integer
+#' @return A data frame
+#' @export
+#' @examples
+#' combn_upto()
+combn_upto <-
+  function(vec=c("a", "b", "c", "d", "e", "f", "g"),
+           n_min=6L,
+           n_max=length(vec)) {
+	stopifnot(rlang::is_integer(as.integer(n_min)))
+	stopifnot(n_max<=length(vec))
+	x <-
+	  unlist(lapply(n_min:n_max, function(x) utils::combn(x = vec, m = x, simplify = F)), recursive = FALSE)
+	x <- stats::setNames(x, x)
+	rev(x)
+}
+
+
+trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable_label_prefix_dep",
+                                        ".variable_label_prefix_indep", ".variable_label_suffix_indep")) {
+  for(col in cols) {
+    if(is.character(data[[col]])) {
+      data[[col]] <- stringi::stri_trim_both(data[[col]])
+      data[[col]] <- stringi::stri_replace_all_regex(data[[col]], pattern = "[[:space:]]+", replacement = " ")
+    }
+  }
+  data
+}
 
 

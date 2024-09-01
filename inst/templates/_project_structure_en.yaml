@@ -1,0 +1,90 @@
+Administration:
+  Application:
+    Call: []
+    Formalities: []
+    CVs: []
+    Collaboration and cooperation agreements: []
+    Application: []
+    Pre-analysis: []
+    For submission: []
+  Budget: []
+  Contracts and agreements: []
+  Invoices, accounting and receipts: []
+  Status reports: []
+  Logo and graphical materials:
+  Internal meetings:
+    Meeting agendas and invitations: []
+    Internal presentations: []
+    Minutes: []
+Materials:
+  Overall planning: []
+  Consent form: []
+  Ethical-GDPR approval: []
+  Survey questionnaires: []
+  Interview guides:
+    Staff: []
+    Pupils: []
+    Parents: []
+    Researchers: []
+    Leaders: []
+    Teachers: []
+    Principals: []
+    Students: []
+    Population: []
+  Request of data from: []
+  Literature review-design: []
+  Intervention materials: []
+  Randomizing participants: []
+  Chapter overviews: []
+Literature:
+  Topic has policy relevance: []
+  Pure theory and framework: []
+  Similar empirical studies: []
+  Similar instruments and guides for data collection: []
+  Relevant analytic methodology: []
+  Unprocessed (remove from here): []
+Data:
+  Population data:
+    Codebook: []
+  Sampling frame: []
+  Registry data: []
+  Collected respondent lists: []
+  Respondent list for survey system: []
+  Downloaded response data:
+    Codebook: []
+  Qualitative data:
+    Interview recordings: []
+    Observational notes: []
+  Text corpus: []
+  PDF-reports: []
+  Prepared data:
+    Codebooks: []
+Saros_{{project_initials}}:
+  Scripts: []
+  Resources: []
+  Draft generations:
+    main: []
+    Reports: []
+  Drafts in editing:
+    main: []
+    Reports: []
+  Completed drafts:
+    main: []
+    Reports: []
+Publications:
+  Paper1-Short title (author initials):
+    Cover letter & response to reviewers: []
+    Manuscript: []
+    Analysis: []
+    Figures for submission: []
+    Tables for submission: []
+    Appendix: []
+    Online supplementary materials: []
+Outreach:
+  Research conference presentation:
+  Research conference poster:
+  Stakeholders and reference group: []
+  Stakeholders' communication channels:
+  Practitioners and special interest channels:
+  Public through mass media channels: []
+Other: []

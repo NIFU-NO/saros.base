@@ -1,0 +1,40 @@
+Binding: initialize_saros_project
+Title: Set Up Social Science Project Structure
+Subtitle: Makes a folder structure tailored towards the common practices associated with commissioned and free social science research, including a ready to use setup for the Saros system.
+
+Parameter: structure_path
+Widget: FileInput
+Label: YAML-file with folder structure. Default: Saros template (eng)
+Position: left
+
+Parameter: word_separator
+Widget: SelectInput
+Label: Word separator
+Fields: NULL, '', ' ', '-', '_', '.'
+Position: right
+
+Parameter: case
+Widget: SelectInput
+Label: Case conversion
+Fields: asis, sentence, title, lower, upper, snake
+Position: right
+
+Parameter: numbering_prefix
+Widget: SelectInput
+Label: Numbering prefix
+Default: none
+Fields: max_global, max_local, none
+Position: right
+
+Parameter: numbering_inheritance
+Widget: CheckboxInput
+Default: On
+Label: Inherit numbering from parent folder(s)
+Position: left
+
+Parameter: numbering_parent_child_separator
+Widget: SelectInput
+Label: Separator b/w parent-child #
+Fields: '', ' ', '-', '_', '.'
+Position: left
+
