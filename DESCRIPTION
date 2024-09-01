@@ -14,8 +14,10 @@ Authors@R: c(
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Generate an entire report scaffold with templated chunks, based on a small chapter overview and a dataset. 
-    Highly customizable with insertable prefixes, suffixes, translations, etc.
+Description: Scaffold an entire web-based report using templated chunks, based on a small chapter overview and a dataset. 
+    Highly customizable with insertable prefixes, suffixes, translations, etc. Also contains tools for password-protecting,
+    e.g. for each organization's report on a website. Developed for the common case of a survey across multiple organizations/sites
+    where each organization wants to obtain results for their organization compared with everyone else.
     See 'saros' (<https://CRAN.R-project.org/package=saros>) for tools used for authors in the drafted reports.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
