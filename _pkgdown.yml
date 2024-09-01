@@ -40,11 +40,6 @@ reference:
   - copy_folder_contents_to_dir
   - create_directory_structure
   - create_r_files
-- title: MS Word <--> Quarto
-  desc: Resolving some current limitations of Quarto
-  contents:
-  - post_render_docx_img_replacer
-  - replace_docx_imgs_with_mscharts
 - title: Column recoding tools
   desc: 'Note: will be moved to 3rd party package in the future'
   contents:
