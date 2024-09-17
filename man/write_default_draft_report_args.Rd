@@ -24,5 +24,5 @@ The defaults as a \code{yaml}-object.
 Write Default Arguments for \code{\link[=draft_report]{draft_report()}} to YAML-file
 }
 \examples{
-write_default_draft_report_args(path=tempfile(fileext=".yaml"))
+write_default_draft_report_args(path = tempfile(fileext = ".yaml"))
 }

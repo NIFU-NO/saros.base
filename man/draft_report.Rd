@@ -216,12 +216,14 @@ factor/ordinal and character are implemented.
 \donttest{
 ex_survey_ch_structure <-
   refine_chapter_overview(
-          chapter_overview = ex_survey_ch_overview,
-          data = ex_survey)
+    chapter_overview = ex_survey_ch_overview,
+    data = ex_survey
+  )
 index_filepath <-
- draft_report(
+  draft_report(
     chapter_structure = ex_survey_ch_structure,
     data = ex_survey,
-    path = tempdir())
+    path = tempdir()
+  )
 }
 }

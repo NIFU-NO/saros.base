@@ -4,7 +4,7 @@
 \alias{handle_max_observed}
 \title{Handle Maximum Observed Numbering}
 \usage{
-handle_max_observed(parent_path = getwd(), count_existing_folders = FALSE)
+handle_max_observed(parent_path, count_existing_folders = FALSE)
 }
 \arguments{
 \item{parent_path}{String. The path to the parent directory.}

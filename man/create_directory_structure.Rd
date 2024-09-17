@@ -5,7 +5,7 @@
 \title{Create a Pre-defined Directory Hierarchy on Disk}
 \usage{
 create_directory_structure(
-  path = getwd(),
+  path,
   structure_path = system.file("templates", "_project_structure_en.yaml", package =
     "saros.base"),
   numbering_prefix = c("none", "max_local", "max_global"),
@@ -42,9 +42,12 @@ create_directory_structure(
 
 \item{count_existing_folders}{Boolean. Defaults to FALSE.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Create a Pre-defined Directory Hierarchy on Disk
 }
 \examples{
-create_directory_structure()
+create_directory_structure(path = tempdir())
 }

@@ -44,9 +44,12 @@ create_r_files(
 
 \item{numbering_name_separator}{String. Separator between numbering part and name.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Create Folder with Placeholder R-files Based on Structure in CSV-file
 }
 \examples{
-create_r_files(r_files_out_path=tempdir())
+create_r_files(r_files_out_path = tempdir())
 }

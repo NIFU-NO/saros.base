@@ -16,7 +16,7 @@ The defaults as a \code{yaml}-object.
 Read Default Arguments for \code{\link[=draft_report]{draft_report()}} from YAML-file
 }
 \examples{
-tmpfile <- tempfile(fileext=".yaml")
-write_default_draft_report_args(path=tmpfile)
-read_default_draft_report_args(path=tmpfile)
+tmpfile <- tempfile(fileext = ".yaml")
+write_default_draft_report_args(path = tmpfile)
+read_default_draft_report_args(path = tmpfile)
 }

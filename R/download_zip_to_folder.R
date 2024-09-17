@@ -19,25 +19,25 @@
 #'
 #' @examples
 #' download_zip_to_folder(
-#'    github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
-#'    out_path = tempdir(), overwrite=TRUE)
+#'   github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
+#'   out_path = tempdir(), overwrite = TRUE
+#' )
 download_zip_to_folder <-
   function(github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
            zip_path = tempfile(fileext = ".zip"),
            files = NULL,
-           out_path = getwd(),
+           out_path,
            prompt = TRUE,
            overwrite = FALSE,
            open_project = FALSE,
            newSession = TRUE) {
-
-    if(!rlang::is_scalar_logical(prompt)) cli::cli_abort("{.arg prompt} must be logical, not {.obj_type_friendly {prompt}}.")
-    if(!rlang::is_scalar_logical(overwrite)) cli::cli_abort("{.arg overwrite} must be logical, not {.obj_type_friendly {overwrite}}.")
-    if(!(rlang::is_scalar_logical(open_project) || rlang::is_scalar_character(open_project))) {
+    if (!rlang::is_scalar_logical(prompt)) cli::cli_abort("{.arg prompt} must be logical, not {.obj_type_friendly {prompt}}.")
+    if (!rlang::is_scalar_logical(overwrite)) cli::cli_abort("{.arg overwrite} must be logical, not {.obj_type_friendly {overwrite}}.")
+    if (!(rlang::is_scalar_logical(open_project) || rlang::is_scalar_character(open_project))) {
       cli::cli_abort("{.arg open_project} must be logical or string, not {.obj_type_friendly {open_project}}.")
     }
 
-    tmpfolder <- file.path(tempdir(), paste0(sample(letters, size = 5, replace = TRUE), collapse=""))
+    tmpfolder <- file.path(tempdir(), paste0(sample(letters, size = 5, replace = TRUE), collapse = ""))
     utils::download.file(url = github_zip_url, destfile = zip_path, method = "auto", cacheOK = TRUE)
     zip_temp_path <- zip::unzip(zipfile = zip_path, files = files, exdir = tmpfolder, junkpaths = FALSE, overwrite = TRUE)
     folder_in_temp_path <- fs::dir_ls(path = tmpfolder, recurse = FALSE, type = "directory")
@@ -48,18 +48,22 @@ download_zip_to_folder <-
     old_files <- gsub(x = old_files, pattern = out_path, replacement = "")
     old_files <- gsub(x = old_files, pattern = "^/", replacement = "")
     intersects <- new_files[new_files %in% old_files]
-    if(isTRUE(prompt) && length(intersects) > 0 && isTRUE(overwrite)) {
-      cat(intersects, sep = "\n")
+    if (isTRUE(prompt) && length(intersects) > 0 && isTRUE(overwrite)) {
+      cli::cli_inform(intersects)
       choice <-
-      utils::menu(title = "These files will be overwritten. Are you sure?",
-                  choices = c("Yes, overwrite all.", "No, abort!"))
-      if(choice == 2) return()
+        utils::menu(
+          title = "These files will be overwritten. Are you sure?",
+          choices = c("Yes, overwrite all.", "No, abort!")
+        )
+      if (choice == 2) {
+        return()
+      }
     }
     copy_folder_contents_to_dir(from = folder_in_temp_path, to = out_path, overwrite = overwrite)
-    if((isTRUE(open_project) || file.exists(file.path(out_path, ".Rproj")) ||
-        (rlang::is_scalar_character(open_project) && file.exists(open_project))) &&
-       requireNamespace("rstudioapi", character.only = TRUE) &&
-       interactive()) {
+    if ((isTRUE(open_project) || file.exists(file.path(out_path, ".Rproj")) ||
+      (rlang::is_scalar_character(open_project) && file.exists(open_project))) &&
+      requireNamespace("rstudioapi", character.only = TRUE) &&
+      interactive()) {
       rstudioapi::openProject(file.path(out_path, ".Rproj"), newSession = newSession)
     }
     out_path

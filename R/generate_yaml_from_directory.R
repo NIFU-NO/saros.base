@@ -1,14 +1,16 @@
-
 #' Generate YAML File from Directory Structure
 #'
 #' @param input_path String. The path to the directory whose structure needs to be captured.
 #' @param output_yaml_path String. The path where the YAML file will be saved.
 #' @param remove_prefix_numbers Boolean. Whether to remove numeric prefixes and any resulting leading non-alphanumeric characters from folder names. Defaults to FALSE.
-#' @return NULL
+#' @return No return value, called for side effects
 #' @export
 #' @examples
-#' generate_yaml_from_directory(output_yaml_path = tempfile("_project_structure_en", fileext=".yaml"))
-generate_yaml_from_directory <- function(input_path = getwd(),
+#' generate_yaml_from_directory(
+#'   output_yaml_path =
+#'     tempfile("_project_structure_en", fileext = ".yaml")
+#' )
+generate_yaml_from_directory <- function(input_path = tempdir(),
                                          output_yaml_path = "_project_structure_en.yaml",
                                          remove_prefix_numbers = FALSE) {
   # Recursive function to traverse directory and build list
@@ -21,7 +23,7 @@ generate_yaml_from_directory <- function(input_path = getwd(),
       folder_name <- if (remove_prefix_numbers) {
         cleaned_name <- stringi::stri_replace_first_regex(folder, "^[0-9\\s_-]+", "")
         if (stringi::stri_length(cleaned_name) == 0) {
-          folder  # Keep original name if cleaning results in an empty string
+          folder # Keep original name if cleaning results in an empty string
         } else {
           cleaned_name
         }
@@ -44,4 +46,3 @@ generate_yaml_from_directory <- function(input_path = getwd(),
   # Write to YAML file
   yaml::write_yaml(folder_structure, output_yaml_path)
 }
-
