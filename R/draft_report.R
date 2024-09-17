@@ -177,13 +177,15 @@
 #' \donttest{
 #' ex_survey_ch_structure <-
 #'   refine_chapter_overview(
-#'           chapter_overview = ex_survey_ch_overview,
-#'           data = ex_survey)
+#'     chapter_overview = ex_survey_ch_overview,
+#'     data = ex_survey
+#'   )
 #' index_filepath <-
-#'  draft_report(
+#'   draft_report(
 #'     chapter_structure = ex_survey_ch_structure,
 #'     data = ex_survey,
-#'     path = tempdir())
+#'     path = tempdir()
+#'   )
 #' }
 draft_report <-
   function(data,
@@ -193,51 +195,43 @@ draft_report <-
            title = "Report",
            authors = NULL,
            authors_col = "author",
-
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
-
            index_filename = "index",
            index_yaml_file = NULL,
            index_qmd_start_section_filepath = NULL,
            index_qmd_end_section_filepath = NULL,
-
            report_filename = "0_report",
            report_yaml_file = NULL,
            report_qmd_start_section_filepath = NULL,
            report_qmd_end_section_filepath = NULL,
-
-           ignore_heading_for_group = c(".template_name",
-                                        ".variable_type_dep",
-                                        ".variable_type_indep",
-                                        ".variable_group_dep",
-                                        "chapter"),
-           replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep",
-                                         ".variable_label_suffix_indep" = ".variable_name_indep"),
-
+           ignore_heading_for_group = c(
+             ".template_name",
+             ".variable_type_dep",
+             ".variable_type_indep",
+             ".variable_group_dep",
+             "chapter"
+           ),
+           replace_heading_for_group = c(
+             ".variable_label_suffix_dep" = ".variable_name_dep",
+             ".variable_label_suffix_indep" = ".variable_name_indep"
+           ),
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
-
            # Formats and attachments
            combined_report = TRUE,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
-
-
-           max_path_warning_threshold = 260,  # Tidy up argument name: max_width_path_warning. Keep here
-
+           max_path_warning_threshold = 260, # Tidy up argument name: max_width_path_warning. Keep here
            # Debugging
-           log_file = NULL
-
-
-  ) {
-
-    args <- utils::modifyList(as.list(environment()),
-                              rlang::list2(...)
-                              )
+           log_file = NULL) {
+    args <- utils::modifyList(
+      as.list(environment()),
+      rlang::list2(...)
+    )
     timestamp <- proc.time()
 
 
@@ -247,7 +241,7 @@ draft_report <-
     data <- ungroup_data(data)
 
 
-    all_authors <- get_authors(data = chapter_structure, col=args$authors_col)
+    all_authors <- get_authors(data = chapter_structure, col = args$authors_col)
 
 
     chapter_filepaths <-
@@ -265,13 +259,12 @@ draft_report <-
         attach_chapter_dataset = args$attach_chapter_dataset,
         auxiliary_variables = args$auxiliary_variables,
         serialized_format = args$serialized_format
-        )
+      )
 
 
 
 
-    if(isTRUE(args$combined_report)) {
-
+    if (isTRUE(args$combined_report)) {
       report_filepath <-
         gen_qmd_file(
           path = args$path,
@@ -284,7 +277,8 @@ draft_report <-
           authors = all_authors,
           output_formats = NULL,
           output_filename = NULL,
-          call = rlang::caller_env())
+          call = rlang::caller_env()
+        )
     }
 
     index_filepath <-
@@ -297,19 +291,21 @@ draft_report <-
         chapter_structure = args$chapter_structure,
         title = args$title,
         authors = all_authors,
-        output_formats = if(!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
+        output_formats = if (!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
         output_filename = args$report_filename,
-        call = rlang::caller_env())
+        call = rlang::caller_env()
+      )
 
 
-    validate_path_lengths_on_win(path = args$path,
-                                 max_path_warning_threshold = max_path_warning_threshold)
+    validate_path_lengths_on_win(
+      path = args$path,
+      max_path_warning_threshold = max_path_warning_threshold
+    )
 
 
-    cat(proc.time()-timestamp)
-    cat("\n")
-    if(is_string(args$log_file)) {
-      cat("Run time: ", proc.time()-timestamp, file=args$log_file)
+    cli::cli_inform(proc.time() - timestamp)
+    if (is_string(args$log_file)) {
+      cat(paste0("Run time: ", proc.time() - timestamp), file = args$log_file)
     }
-    stringi::stri_replace_all_regex(index_filepath, pattern="\\\\+", replacement="/")
+    stringi::stri_replace_all_regex(index_filepath, pattern = "\\\\+", replacement = "/")
   }

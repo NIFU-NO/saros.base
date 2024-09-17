@@ -20,7 +20,7 @@
 #' @param r_add_folder_scope_as_README Flag. Whether to create README file in each folder with the folder_scope column cell in r_files_source_path. Defaults to FALSE.
 #' @param r_optionals Flag. Whether to add files marked as 1 (or TRUE) in the optional column. Defaults to TRUE.
 #'
-#' @return NULL
+#' @return Returns invisibly `path`
 #' @export
 #'
 #' @examples initialize_saros_project(path = tempdir())
@@ -35,50 +35,55 @@ initialize_saros_project <-
            numbering_parent_child_separator = word_separator,
            case = c("asis", "sentence", "title", "lower", "upper", "snake"),
            count_existing_folders = FALSE,
-
            r_files_out_path = NULL,
-           r_files_source_path = system.file("templates", "r_files.csv", package="saros.base"),
+           r_files_source_path = system.file("templates", "r_files.csv", package = "saros.base"),
            r_optionals = TRUE,
            r_add_file_scope = TRUE,
            r_prefix_file_scope = "### ",
            r_add_folder_scope_as_README = FALSE,
            create = TRUE) {
+    if (missing(structure_path) ||
+      !rlang::is_string(structure_path) ||
+      structure_path == "") {
+      structure_path <- system.file("templates", "_project_structure_en.yaml",
+        package = "saros.base"
+      )
+    }
 
-    if(missing(structure_path) ||
-       !rlang::is_string(structure_path) ||
-       structure_path=="") structure_path <- system.file("templates", "_project_structure_en.yaml",
-                                                         package="saros.base")
-
-    if(rlang::is_string(word_separator) && word_separator=="NULL") word_separator <- NULL
+    if (rlang::is_string(word_separator) && word_separator == "NULL") word_separator <- NULL
     word_separator <- stringi::stri_replace_all_fixed(word_separator, "'", "")
-    if(rlang::is_string(numbering_name_separator) && numbering_name_separator=="NULL") numbering_name_separator <- NULL
+    if (rlang::is_string(numbering_name_separator) && numbering_name_separator == "NULL") numbering_name_separator <- NULL
     numbering_name_separator <- stringi::stri_replace_all_fixed(numbering_name_separator, "'", "")
-    if(rlang::is_string(numbering_parent_child_separator) && numbering_parent_child_separator=="NULL") numbering_parent_child_separator <- NULL
+    if (rlang::is_string(numbering_parent_child_separator) && numbering_parent_child_separator == "NULL") numbering_parent_child_separator <- NULL
     numbering_parent_child_separator <- stringi::stri_replace_all_fixed(numbering_parent_child_separator, "'", "")
 
 
     folder_structure <-
-      create_directory_structure(path = path,
-                               structure_path = structure_path,
-                               numbering_prefix = numbering_prefix,
-                               numbering_inheritance = numbering_inheritance,
-                               word_separator = word_separator,
-                               numbering_name_separator = numbering_name_separator,
-                               numbering_parent_child_separator = numbering_parent_child_separator,
-                               case = case,
-                               replacement_list = replacement_list,
-                               create = TRUE,
-                               count_existing_folders = count_existing_folders)
+      create_directory_structure(
+        path = path,
+        structure_path = structure_path,
+        numbering_prefix = numbering_prefix,
+        numbering_inheritance = numbering_inheritance,
+        word_separator = word_separator,
+        numbering_name_separator = numbering_name_separator,
+        numbering_parent_child_separator = numbering_parent_child_separator,
+        case = case,
+        replacement_list = replacement_list,
+        create = TRUE,
+        count_existing_folders = count_existing_folders
+      )
 
 
 
-    if(!is.null(r_files_out_path)) {
-      create_r_files(r_files_out_path = r_files_out_path,
-                     r_files_source_path = r_files_source_path,
-                     r_optionals = r_optionals,
-                     r_add_file_scope = r_add_file_scope,
-                     r_prefix_file_scope = r_prefix_file_scope,
-                     r_add_folder_scope_as_README = r_add_folder_scope_as_README)
+    if (!is.null(r_files_out_path)) {
+      create_r_files(
+        r_files_out_path = r_files_out_path,
+        r_files_source_path = r_files_source_path,
+        r_optionals = r_optionals,
+        r_add_file_scope = r_add_file_scope,
+        r_prefix_file_scope = r_prefix_file_scope,
+        r_add_folder_scope_as_README = r_add_folder_scope_as_README
+      )
       # saros_path <-
       #   unname(unlist(sapply(folder_structure, function(x) grep("saros.base", x = x, value = TRUE, ignore.case = TRUE))))
       # if(length(saros_path)==1) {
@@ -87,7 +92,8 @@ initialize_saros_project <-
       # }
     }
     new_folder_name <- stringi::stri_extract_last_regex(path, pattern = "([^/]+)$")
-    print(new_folder_name) # Only remove if folder is otherwise empty
+    cli::cli_inform(new_folder_name) # Only remove if folder is otherwise empty
+    invisible(new_folder_name)
     # stuff_to_remove <- paste0(path, .Platform$file.sep, ".", c(new_folder_name, "Rproj"))
     # unlink()
-}
+  }

@@ -8,7 +8,7 @@ download_zip_to_folder(
   github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
   zip_path = tempfile(fileext = ".zip"),
   files = NULL,
-  out_path = getwd(),
+  out_path,
   prompt = TRUE,
   overwrite = FALSE,
   open_project = FALSE,
@@ -43,6 +43,7 @@ Wrapper to Download and Unzip a Github Repository to A Folder
 }
 \examples{
 download_zip_to_folder(
-   github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
-   out_path = tempdir(), overwrite=TRUE)
+  github_zip_url = "https://github.com/NIFU-NO/nifutemplates/archive/refs/heads/main.zip",
+  out_path = tempdir(), overwrite = TRUE
+)
 }

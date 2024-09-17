@@ -18,10 +18,15 @@ copy_folder_contents_to_dir(
 
 \item{only_copy_folders}{Flag. Defaults to FALSE. If TRUE, only copies folders.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Convenience Function to Copy Only the Contents of A Folder to Another Folder
 }
 \examples{
-copy_folder_contents_to_dir(from = system.file("help", "figures", package = "dplyr"),
-                            to = tempdir())
+copy_folder_contents_to_dir(
+  from = system.file("help", "figures", package = "dplyr"),
+  to = tempdir()
+)
 }
