@@ -1,3 +1,3 @@
-# saros.base 0.2.0
+# saros.base 0.2.1
 
 * CRAN release.
