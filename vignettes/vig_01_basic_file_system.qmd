@@ -1,0 +1,64 @@
+---
+vignette: >
+  %\VignetteIndexEntry{Basic R, Quarto and file system setup}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+eval: false
+---
+
+
+::: callout-tip
+
+We recommend updating R, RStudio and Quarto twice a year, though this depends on how many and which advanced features are being pursued.
+
+:::
+
+::: callout-note
+
+## Noobs only
+
+The following is for computer novices only. If you are well acquainted with R, Windows Explorer, syncronization of cloud files, etc you can skip this.
+
+:::
+
+## Installing R, Rstudio, Quarto, Rtools (Windows)
+
+#. Your files should be synchronized to your local computer. You cannot work with R directly through files and folders only available in the cloud (e.g. Teams). [See here](https://www.berkshirecc.edu/knowledge/microsoft-office/sync-teams-files.php) for synchronizing from a Teams or Sharepoint project to you local computer. 
+
+#. Install R, Rstudio and optionally a newest pre-release of Quarto (the latter on own risk, the built-in version of Quarto attached to RStudio is usually sufficient). The easiest way to install these is to first make yourself administrator[^By installing in Program Files rather than AppData, you avoid potential problems if you have non-ASCII characters in your username], then open Windows start menu and type cmd.exe, click "Run as administrator" and press {{< kbd Enter >}}.
+
+
+```{bash}
+#| eval: false
+winget install Posit.rig
+#winget install Posit.RStudio
+# Restart cmd.exe
+#rig install R
+#rig system rtools add
+rig system setup-user-lib
+```
+
+Restart your computer. Check that RStudio runs as expected.
+
+P.S. You do not need shortcuts to R on your desktop, you will only be using RStudio.
+
+
+# Configuring R
+
+```{R}
+install.packages(c("tidyverse", "devtools", "gt", "ggiraph", "webshot", "webshot2", "saros.base", "saros"))
+webshot::install_phantomjs()
+usethis::edit_r_environ()
+# Add the following in the renviron-file being opened: LC_ALL="nb.utf8"
+# Save file and restart RStudio
+```
+
+# Known problems during installation or first time use
+
+-   If problems occur, always try restarting RStudio before asking for help. Solves a lot of problems - same with your computer in general.
+
+-   When you press Render for a document that contains R code, you may get an error message that R does not exist. It may be because you have installed R in a folder path that contains ÆØÅ, etc. The bug has been reported, but in the meantime you can try to install in the normal Program Files folder.
+
+-   Error: unable to open file \[bla bla\] for writing \[or reading\]
+
+    -   This is most often due to the fact that Microsoft has set a restriction that file paths in Sharepoint cannot exceed 260 characters... Completely idiotic. And the problem is made worse by the fact that many new employees at NIFU get their full name as their username, which means that the characters are used up quickly... Move to a shorter folder path and it will work. Anyway, no persistent problem when putting the chapters together, just frustrating when working on it yourself.
