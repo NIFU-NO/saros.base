@@ -1,8 +1,17 @@
 pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-10-06T19:31Z
+articles:
+  vig_01_basic_file_system: vig_01_basic_file_system.html
+  vig_02_project_setup: vig_02_project_setup.html
+  vig_03_configure_report_cycle: vig_03_configure_report_cycle.html
+  vig_04_prepare_data: vig_04_prepare_data.html
+  vig_05_standard_variable_names: vig_05_standard_variable_names.html
+  vig_06_prepare_chapter_overview: vig_06_prepare_chapter_overview.html
+  vig_07_adjust_report_cycle_settings: vig_07_adjust_report_cycle_settings.html
+  vig_31_render: vig_31_render.html
+  vig_32_render_problems: vig_32_render_problems.html
+last_built: 2024-10-06T20:09Z
 urls:
   reference: https://nifu-no.github.io/saros.base/reference
   article: https://nifu-no.github.io/saros.base/articles
