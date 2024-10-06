@@ -29,7 +29,6 @@ The following is for computer novices only. If you are well acquainted with R, W
 
 
 ```{bash}
-#| eval: false
 winget install Posit.rig
 #winget install Posit.RStudio
 # Restart cmd.exe
