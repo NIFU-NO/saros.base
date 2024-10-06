@@ -1,4 +1,5 @@
 ---
+title: "Draft report"
 vignette: >
   %\VignetteIndexEntry{Draft report}
   %\VignetteEngine{quarto::html}

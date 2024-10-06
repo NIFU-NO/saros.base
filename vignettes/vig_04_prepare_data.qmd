@@ -1,4 +1,5 @@
 ---
+title: "Prepare dataset"
 vignette: >
   %\VignetteIndexEntry{Prepare dataset}
   %\VignetteEngine{quarto::html}

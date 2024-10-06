@@ -1,4 +1,5 @@
 ---
+title: "Basic R, Quarto and file system setup"
 vignette: >
   %\VignetteIndexEntry{Basic R, Quarto and file system setup}
   %\VignetteEngine{quarto::html}

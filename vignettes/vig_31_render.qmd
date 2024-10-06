@@ -1,4 +1,5 @@
 ---
+title: "Render"
 vignette: >
   %\VignetteIndexEntry{Render}
   %\VignetteEngine{quarto::html}
