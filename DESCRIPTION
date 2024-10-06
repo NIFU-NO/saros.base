@@ -1,7 +1,7 @@
 Type: Package
 Package: saros.base
 Title: Base Tools for Semi-Automatic Reporting of Ordinary Surveys
-Version: 0.2.0
+Version: 0.2.2
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -61,5 +61,6 @@ LazyData: true
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Language: en-US
+VignetteBuilder: quarto
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true

@@ -1,0 +1,12 @@
+---
+vignette: >
+  %\VignetteIndexEntry{Configure Saros settings for a project}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+## See the respective template R script files, YAML-files and QMD-files.
+
+```{r}
+saros.base::get_chunk_template_defaults()
+```
