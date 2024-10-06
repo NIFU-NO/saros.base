@@ -1,4 +1,5 @@
 ---
+title: "Standard variable naming in longitudinal projects"
 vignette: >
   %\VignetteIndexEntry{Standard variable naming in longitudinal projects}
   %\VignetteEngine{quarto::html}

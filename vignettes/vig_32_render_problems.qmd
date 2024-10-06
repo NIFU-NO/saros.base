@@ -1,4 +1,5 @@
 ---
+title: "Error messages and Frequently Asked Questions"
 vignette: >
   %\VignetteIndexEntry{Error messages and Frequently Asked Questions}
   %\VignetteEngine{quarto::html}

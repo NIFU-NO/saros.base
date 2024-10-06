@@ -1,4 +1,5 @@
 ---
+title: "Configure Saros settings for a project"
 vignette: >
   %\VignetteIndexEntry{Configure Saros settings for a project}
   %\VignetteEngine{quarto::html}

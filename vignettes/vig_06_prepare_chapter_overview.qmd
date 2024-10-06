@@ -1,4 +1,5 @@
 ---
+title: "Preparing the chapter overview"
 vignette: >
   %\VignetteIndexEntry{Preparing the chapter overview}
   %\VignetteEngine{quarto::html}
