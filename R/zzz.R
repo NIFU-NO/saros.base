@@ -108,7 +108,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_prop_table_html')
+{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_table_html')
 nrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))
 link <- make_link(data={.obj_name})
 x <- I(paste0(c(nrange, link), collapse=', '))
@@ -131,7 +131,7 @@ _{.variable_label_prefix_dep}_. `{{r}} x`.
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_prop_table_html')
+{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_table_html')
 nrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})))
 link <- make_link(data={.obj_name})
 x <- I(paste0(c(nrange, link), collapse=', '))
