@@ -112,7 +112,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
 nrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))
 link <- make_link(data={.obj_name})
 x <- I(paste0(c(nrange, link), collapse=', '))
-gt(ggobj = {.obj_name})
+gt({.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. `{{r}} x`.
@@ -135,7 +135,7 @@ _{.variable_label_prefix_dep}_. `{{r}} x`.
 nrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})))
 link <- make_link(data={.obj_name})
 x <- I(paste0(c(nrange, link), collapse=', '))
-gt(ggobj = {.obj_name})
+gt({.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. N=`{{r}} x`.
@@ -312,7 +312,7 @@ lapply(names(tbls), function(.x) {{
     'nrange <- stringi::stri_c(\\'N = \\', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep})))',
     'link <- make_link(data = tbls[[.x]])',
     'x <- I(paste0(c(nrange, link), collapse=\\', \\')',
-    'gt(ggobj = tbls[[.x]])',
+    'gt(tbls[[.x]])',
     '```',
     '',
     '`r x`',
@@ -353,7 +353,7 @@ lapply(names(tbls), function(.x) {{
     'nrange <- stringi::stri_c(\\'N = \\', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})))',
     'link <- make_link(data = tbls[[.x]])',
     'x <- I(paste0(c(nrange, link), collapse=\\', \\')',
-    'gt(ggobj = tbls[[.x]])',
+    'gt(tbls[[.x]])',
     '```',
     '',
     '`r x`',
@@ -599,7 +599,7 @@ gt(table)
 table <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 nrange <- n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}))
 x <-  I(paste0(c(nrange, link), collapse = ', '))
-gt(ggobj = table)
+gt(table)
 
 ```
 
