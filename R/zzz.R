@@ -93,7 +93,7 @@ x <- I(paste0(c(nrange, link, link_plot), collapse=', '))
 girafe(ggobj = {.obj_name})
 ```
 
-_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.
+_{.variable_label_prefix_dep}_. `{{r}} x`.
 
 :::
 
@@ -115,7 +115,7 @@ x <- I(paste0(c(nrange, link), collapse=', '))
 gt({.obj_name})
 ```
 
-_{.variable_label_prefix_dep}_. `{{r}} x`.
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.
 
 :::
 
