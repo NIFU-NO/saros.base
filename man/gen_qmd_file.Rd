@@ -6,7 +6,7 @@
 \usage{
 gen_qmd_file(
   path = NULL,
-  filename = "0_report",
+  filename = "report",
   yaml_file = NULL,
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
@@ -21,7 +21,7 @@ gen_qmd_file(
 \arguments{
 \item{path}{String, where to write qmd-file.}
 
-\item{filename}{String, bare name of qmd-file. Default: "0_report". If NULL,
+\item{filename}{String, bare name of qmd-file. Default: "report". If NULL,
 generates a sanitized version of the title. If both filename and title are NULL, errors.}
 
 \item{yaml_file}{A string containing the filepath to a yaml-file to be inserted at top of qmd-file.}
