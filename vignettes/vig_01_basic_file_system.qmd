@@ -59,6 +59,6 @@ usethis::edit_r_environ()
 
 -   When you press Render for a document that contains R code, you may get an error message that R does not exist. It may be because you have installed R in a folder path that contains ÆØÅ, etc. The bug has been reported, but in the meantime you can try to install in the normal Program Files folder.
 
--   Error: unable to open file \[bla bla\] for writing \[or reading\]
+-   Error: unable to open file \[somewhere\] for writing \[or reading\]
 
     -   This is most often due to the fact that Microsoft has set a restriction that file paths in Sharepoint cannot exceed 260 characters... Completely idiotic. And the problem is made worse by the fact that many new employees at NIFU get their full name as their username, which means that the characters are used up quickly... Move to a shorter folder path and it will work. Anyway, no persistent problem when putting the chapters together, just frustrating when working on it yourself.
