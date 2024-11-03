@@ -16,6 +16,7 @@ refine_chapter_overview(
   hide_bi_entry_if_sig_above = 1,
   hide_chunk_if_n_below = 10,
   hide_variable_if_all_na = TRUE,
+  keep_dep_indep_if_no_overlap = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".template_name"),
   arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
@@ -121,6 +122,12 @@ a separate argument.}
 
 Whether to remove variables if all values are NA.}
 
+\item{keep_dep_indep_if_no_overlap}{\emph{Keep dep-indep if no overlap}
+
+\verb{scalar<boolean>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to keep dep-indep rows if there is no overlap.}
+
 \item{organize_by}{\emph{Grouping columns}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -220,7 +227,9 @@ Processes A 'chapter_overview' Data Frame
 \examples{
 ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
 \donttest{
-ref_df2 <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview,
-                     data = ex_survey, hide_bi_entry_if_sig_above=.05)
+ref_df2 <- refine_chapter_overview(
+  chapter_overview = ex_survey_ch_overview,
+  data = ex_survey, hide_bi_entry_if_sig_above = .05
+)
 }
 }
