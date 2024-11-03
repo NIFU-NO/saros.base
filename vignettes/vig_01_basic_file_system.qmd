@@ -18,7 +18,7 @@ We recommend updating R, RStudio and Quarto twice a year, though this depends on
 
 ## Noobs only
 
-The following is for computer novices only. If you are well acquainted with R, Windows Explorer, syncronization of cloud files, etc you can skip this.
+The following is for computer novices only. If you are well acquainted with R, Windows Explorer, synchronization of cloud files, etc you can skip this.
 
 :::
 
