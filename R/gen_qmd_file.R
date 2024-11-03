@@ -6,7 +6,7 @@
 #'
 #' @inheritParams draft_report
 #' @param path String, where to write qmd-file.
-#' @param filename String, bare name of qmd-file. Default: "0_report". If NULL,
+#' @param filename String, bare name of qmd-file. Default: "report". If NULL,
 #' generates a sanitized version of the title. If both filename and title are NULL, errors.
 #' @param yaml_file A string containing the filepath to a yaml-file to be inserted at top of qmd-file.
 #' @param qmd_start_section_filepath,qmd_end_section_filepath String, filepath
@@ -20,7 +20,7 @@
 gen_qmd_file <-
   function(
     path = NULL,
-    filename = "0_report",
+    filename = "report",
     yaml_file = NULL,
     qmd_start_section_filepath = NULL,
     qmd_end_section_filepath = NULL,

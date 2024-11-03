@@ -48,7 +48,7 @@ saros.base::copy_folder_contents_to_dir(
 Very often you have an existing project going, and only want to add the Saros-specific report production setup.
 
 An easy basis to get going is the project template used by the [Nordic Institute for the Studies of Innovation, Research, and Education (NIFU)](https://www.nifu.no).
-Remember to have your project folder syncronized if this already exists.
+Remember to have your project folder synchronized if this already exists.
 
 
 ```{r}

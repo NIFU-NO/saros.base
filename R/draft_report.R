@@ -47,7 +47,7 @@
 #'
 #'   Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).
 #'
-#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and 0_report.qmd respectively*
+#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and report.qmd respectively*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
@@ -68,7 +68,7 @@
 #'
 #' @param report_filename *Report filename*
 #'
-#'   `scalar<character>` // *default:* `"0_report.qmd"` (`optional`)
+#'   `scalar<character>` // *default:* `"report.qmd"` (`optional`)
 #'
 #'   The name of the main report QMD-file used when compiling a complete report
 #'   collecting all chapters in its folder (except itself).
@@ -202,7 +202,7 @@ draft_report <-
            index_yaml_file = NULL,
            index_qmd_start_section_filepath = NULL,
            index_qmd_end_section_filepath = NULL,
-           report_filename = "0_report",
+           report_filename = "report",
            report_yaml_file = NULL,
            report_qmd_start_section_filepath = NULL,
            report_qmd_end_section_filepath = NULL,
