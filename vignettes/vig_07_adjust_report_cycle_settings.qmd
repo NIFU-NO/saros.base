@@ -8,7 +8,7 @@ vignette: >
 
 After all the data has been washed, the chapter overview has been created, and any adjustments to the templates in `02_resources` have been made, we can finally create a draft report!
 
-1. It is natural to set up an RStudio Project (\*.rproj) for the Saros folder that remembers unsaved R files, some personal preferences for the project, etc. But avoid saving the working memory (Environment) to disk (.RData) , so that functionality can be turned off in Project options... The reason is that over time there can be many large objects, and as much as possible should be able to be run from scratch when you need it.
+1. It is natural to set up an RStudio Project (\*.Rproj) for the Saros folder that remembers unsaved R files, some personal preferences for the project, etc. But avoid saving the working memory (Environment) to disk (.Rdata) , so that functionality can be turned off in Project options... The reason is that over time there can be many large objects, and as much as possible should be able to be run from scratch when you need it.
 
 2. Given that everything is set up correctly, there are really only 2-3 syntax files you will need to work with each implementation.
     0.  `000_initialize_project.R`: Establishes global paths, and lists to be populated with datasets, etc for each year. The system is set up so that you can easily handle several years (implementations) without accidentally overwriting each other. You are actually guaranteed that the spring of 2024 will always be the spring of 2024 when you loop over several years - given that the data sets are stored in the correct folders.
