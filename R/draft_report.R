@@ -232,7 +232,6 @@ draft_report <-
       as.list(environment()),
       rlang::list2(...)
     )
-    timestamp <- proc.time()
 
 
     args <- validate_draft_report_args(params = args)
@@ -303,9 +302,5 @@ draft_report <-
     )
 
 
-    cli::cli_inform(proc.time() - timestamp)
-    if (is_string(args$log_file)) {
-      cat(paste0("Run time: ", proc.time() - timestamp), file = args$log_file)
-    }
     stringi::stri_replace_all_regex(index_filepath, pattern = "\\\\+", replacement = "/")
   }
