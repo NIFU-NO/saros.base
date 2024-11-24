@@ -259,10 +259,13 @@ if(!all(sapply(plots, is.null))) {{
 
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
-      '##### `r .x',
+      '##### `r .x`',
+      '',
+      '',
       '```{{r}}',
       'library(saros)',
       'knitr::opts_template$set(fig = list(fig.height = fig_height_h_barchart2(plots[[.x]])))',
+      '',
       '```',
       '',
       '```{{r, opts.label=\\'fig\\'}}',
@@ -275,8 +278,7 @@ if(!all(sapply(plots, is.null))) {{
       'girafe(ggobj = plots[[.x]])',
       '```',
       '',
-      '`r x`',
-      ''
+      '`r x`'
       ), envir = environment(), quiet = TRUE)
   }}) |> unlist() |> cat(sep = '\\n')
 }}
