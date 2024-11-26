@@ -27,7 +27,8 @@ remove_entry_from_sidebar <-
                     paste0(collapse = "\n") |>
                     stringi::stri_replace_all_regex(
                         pattern = pattern_to_remove,
-                        replacement = ""
+                        replacement = "",
+                        vectorize = FALSE
                     ) |>
                     stringi::stri_split_lines() |>
                     unlist() |>
