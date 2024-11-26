@@ -29,8 +29,9 @@ remove_entry_from_sidebar <-
                         pattern = pattern_to_remove,
                         replacement = ""
                     ) |>
-                    stringi::stri_split_lines1() |>
-                    writeLines(con = .x, sep = "\n")
+                    stringi::stri_split_lines() |>
+                    unlist()
+                writeLines(con = .x, sep = "\n")
                 .x
             }) |>
             unlist() |>
