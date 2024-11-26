@@ -23,15 +23,15 @@ remove_entry_from_sidebar <-
                         filename_as_regex, "\"[^>]*>\\s*<span class=\"menu-text\">[^<]*</span></a>\\s*</div>\\s*</li>"
                     )
                 .x |>
-                    readLines() |>
+                    readLines(warn = FALSE, encoding = "UTF-8") |>
                     paste0(collapse = "\n") |>
                     stringi::stri_replace_all_regex(
                         pattern = pattern_to_remove,
                         replacement = ""
                     ) |>
                     stringi::stri_split_lines() |>
-                    unlist()
-                writeLines(con = .x, sep = "\n")
+                    unlist() |>
+                    writeLines(con = .x, sep = "\n")
                 .x
             }) |>
             unlist() |>
