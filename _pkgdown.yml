@@ -3,12 +3,18 @@ template:
   bootstrap: 5
   light-switch: yes
 reference:
-- title: Useful helper functions that will be later moved to respective packages
-  contents: refine_chapter_overview
+- title: Used to create the structure of your report(s)
+  contents: 
+  - refine_chapter_overview
 - title: Main use
   desc: |
     The only functions you will probably use, in the order listed
-  contents: draft_report
+  contents: 
+  - draft_report
+  - wrapper_create_mesos_qmd_files
+- title: Post-processing tools (possibly movin to a Quarto extension at a later stage)
+  contents:
+  - remove_entry_from_sidebar
 - title: Auxiliary functions to obtain defaults
   contents: 
   - get_chunk_template_defaults
