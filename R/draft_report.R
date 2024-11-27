@@ -260,6 +260,7 @@ draft_report <-
         serialized_format = args$serialized_format
       )
 
+    processed_files <- chapter_filepaths
 
 
 
@@ -278,6 +279,7 @@ draft_report <-
           output_filename = NULL,
           call = rlang::caller_env()
         )
+      processed_files <- c(processed_files, report_filepath)
     }
 
     index_filepath <-
@@ -294,6 +296,7 @@ draft_report <-
         output_filename = args$report_filename,
         call = rlang::caller_env()
       )
+    processed_files <- c(processed_files, index_filepath)
 
 
     validate_path_lengths_on_win(
@@ -302,5 +305,5 @@ draft_report <-
     )
 
 
-    stringi::stri_replace_all_regex(index_filepath, pattern = "\\\\+", replacement = "/")
+    stringi::stri_replace_all_regex(processed_files, pattern = "\\\\+", replacement = "/")
   }

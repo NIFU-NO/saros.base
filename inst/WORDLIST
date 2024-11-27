@@ -45,6 +45,7 @@ dataset's
 datetime
 de
 dep
+docx
 dta
 exe
 filepath
@@ -53,6 +54,7 @@ htpasswd
 indep
 kbd
 labelled
+makeme
 mesos
 netlify
 pre
