@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros.base</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Render</h1>
+      <h1></h1>
 
 
 
@@ -84,7 +84,7 @@
 
 
 
-    <p>The idea behind the Saros concept is that you can create temporary documents for internal quality assurance, but that the main point is to compile the interactive website at the same time as creating the reports in PDF and Word (where all the chapters are merged and automatically added to the cover page, colophon, etc). In principle, several ways to start this process, but for now this is what works best:</p>
+    <header id="title-block-header" class="quarto-title-block"><h1 class="title">Render</h1></header><p>The idea behind the Saros concept is that you can create temporary documents for internal quality assurance, but that the main point is to compile the interactive website at the same time as creating the reports in PDF and Word (where all the chapters are merged and automatically added to the cover page, colophon, etc). In principle, several ways to start this process, but for now this is what works best:</p>
 <ul>
 <li>In <code>000_initialize_project.R</code> under <code>paths$site</code>, you use a folder on your machine, outside of OneDrive/Sharepoint/Teams. An example is “C:/Users/%HOMEPATH%/AppData/Local/Saros”.</li>
 <li>Why not in a folder for cloud storage? Well, Sharepoint/Microsoft has a silly limitation on the number of characters in file paths of approx. 260 characters, and spaces count for 3 characters (%20). If you use caching in Quarto, you run the risk of Windows not finding the files…</li>

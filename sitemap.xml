@@ -41,8 +41,10 @@
 <url><loc>https://nifu-no.github.io/saros.base/reference/is_string.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/read_default_draft_report_args.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros.base/reference/remove_entry_from_sidebar.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/render_full_reports.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/setup_access_restrictions.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros.base/reference/setup_mesos.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/write_default_draft_report_args.html</loc></url>
 </urlset>
 
