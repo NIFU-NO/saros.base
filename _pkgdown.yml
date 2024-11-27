@@ -11,7 +11,7 @@ reference:
     The only functions you will probably use, in the order listed
   contents: 
   - draft_report
-  - wrapper_create_mesos_qmd_files
+  - setup_mesos
 - title: Post-processing tools (possibly movin to a Quarto extension at a later stage)
   contents:
   - remove_entry_from_sidebar
