@@ -2,13 +2,15 @@ set_underscore_on_filenames <- function(files_to_process) {
     if (!is.character(files_to_process) ||
         length(files_to_process) == 0 ||
         !all(file.exists(files_to_process))) {
-        cli::cli_abort("{.arg files_to_process} must be a character vector of paths to existing files, not: {.obj_type_friendly {files_to_process}}.")
+        cli::cli_abort("{.arg files_to_process} must be a character vector of paths to existing files, not {.obj_type_friendly {files_to_process}}: {files_to_process}.")
     }
 
 
 
     files_to_be_renamed <-
-        rlang::set_names(paste0("_", files_to_process), nm = files_to_process)
+        rlang::set_names(stringi::stri_replace_last_fixed(files_to_process, pattern = "/", replacement = "/_"),
+            nm = files_to_process
+        )
     file.rename(
         from = names(files_to_be_renamed),
         to = unname(files_to_be_renamed)
@@ -44,13 +46,16 @@ create_mesos_stubs_from_main_files <- function(
     main_files = c("index", "report")) {
     ####
 
-    if (!is.character(files) || !file.exists(files)) {
+    if (!is.character(files) || !any(file.exists(files))) {
         cli::cli_warn("No files found.")
         return()
     }
     if (!rlang::is_string(mesos_var) || !is.character(mesos_groups)) {
         cli::cli_abort("{.arg mesos_var} must be a string and {.arg mesos_groups} must be a character vector.")
     }
+
+    dir_path <- unique(dirname(files))
+    if (length(dir_path) > 1) cli::cli_abort("All files must be in the same folder.")
 
     new_qmd_files <-
         files |>
@@ -68,7 +73,7 @@ create_mesos_stubs_from_main_files <- function(
             new_file_path = fs::path(
                 .env$dir_path,
                 .data$mesos_group,
-                paste0(.data$main_file_no_, ".qmd")
+                .data$main_file_no_
             ),
             contents = {
                 yaml <- list(params = list(
@@ -81,7 +86,7 @@ create_mesos_stubs_from_main_files <- function(
                 yaml <- yaml::as.yaml(x = yaml)
                 paste0("---\n", yaml, "---\n", paste0(
                     "\n{{< include ../",
-                    .data$main_file, ".qmd >}}\n"
+                    .data$main_file, " >}}\n"
                 ), sep = "\n")
             }
         )
@@ -123,7 +128,7 @@ setup_mesos <- function(
     if (is.character(read_syntax_pattern) &&
         is.character(read_syntax_replacement)) {
         search_and_replace_files(
-            files = files_to_be_renamed,
+            files = unname(files_to_be_renamed),
             pattern = read_syntax_pattern, replacement = read_syntax_replacement
         )
     }
