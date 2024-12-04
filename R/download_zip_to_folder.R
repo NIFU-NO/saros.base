@@ -44,6 +44,7 @@ download_zip_to_folder <-
     new_files <- fs::dir_ls(folder_in_temp_path, recurse = TRUE, type = "file", all = TRUE)
     new_files <- gsub(x = new_files, pattern = folder_in_temp_path, replacement = "")
     new_files <- gsub(x = new_files, pattern = "^/", replacement = "")
+    dir.create(out_path, showWarnings = FALSE, recursive = TRUE)
     old_files <- fs::dir_ls(out_path, recurse = TRUE, type = "file", all = TRUE)
     old_files <- gsub(x = old_files, pattern = out_path, replacement = "")
     old_files <- gsub(x = old_files, pattern = "^/", replacement = "")
