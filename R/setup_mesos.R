@@ -68,7 +68,7 @@ create_mesos_stubs_from_main_files <- function(
         dplyr::rowwise() |>
         dplyr::mutate(
             main_file_no_ = stringi::stri_replace_first_regex(.data$main_file,
-                pattern = "^_", replacement = ""
+                pattern = "^_|\\.[r]qmd", replacement = ""
             ),
             new_file_path = fs::path(
                 .env$dir_path,
@@ -76,10 +76,12 @@ create_mesos_stubs_from_main_files <- function(
                 .data$main_file_no_
             ),
             contents = {
-                yaml <- list(params = list(
-                    mesos_var = .env$mesos_var,
-                    mesos_group = .data$mesos_group
-                ))
+                yaml <- list(
+                    params = list(
+                        mesos_var = .env$mesos_var,
+                        mesos_group = .data$mesos_group
+                    )
+                )
                 if (.data$main_file_no_ %in% main_files) {
                     yaml$title <- paste0(.data$mesos_group)
                 }
