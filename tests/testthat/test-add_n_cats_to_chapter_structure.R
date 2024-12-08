@@ -3,9 +3,9 @@ testthat::test_that("add_n_cats_to_chapter_structure works with different catego
   data <- data.frame(var1 = factor(c("a", "b", "c")), var2 = factor(c("d", "e", "f")))
   result <- saros.base:::add_n_cats_to_chapter_structure(chapter_structure, data)
   testthat::expect_true(".n_cats_dep" %in% colnames(result))
-  testthat::expect_true(".max_chars_dep" %in% colnames(result))
+  testthat::expect_true(".max_chars_cats_dep" %in% colnames(result))
   testthat::expect_equal(result$.n_cats_dep, c(6, 6))
-  testthat::expect_equal(result$.max_chars_dep, c(1, 1))
+  testthat::expect_equal(result$.max_chars_cats_dep, c(1, 1))
 })
 
 testthat::test_that("add_n_cats_to_chapter_structure works with overlapping category sets", {
@@ -13,9 +13,9 @@ testthat::test_that("add_n_cats_to_chapter_structure works with overlapping cate
   data <- data.frame(var1 = factor(c("a", "b", "c")), var2 = factor(c("b", "c", "d")))
   result <- saros.base:::add_n_cats_to_chapter_structure(chapter_structure, data)
   testthat::expect_true(".n_cats_dep" %in% colnames(result))
-  testthat::expect_true(".max_chars_dep" %in% colnames(result))
+  testthat::expect_true(".max_chars_cats_dep" %in% colnames(result))
   testthat::expect_equal(result$.n_cats_dep, c(4, 4))
-  testthat::expect_equal(result$.max_chars_dep, c(1, 1))
+  testthat::expect_equal(result$.max_chars_cats_dep, c(1, 1))
 })
 
 
@@ -24,9 +24,9 @@ testthat::test_that("add_n_cats_to_chapter_structure handles drop_na = FALSE", {
   data <- data.frame(var1 = factor(c("a", "b", NA)), var2 = factor(c("x", NA, "z")))
   result <- saros.base:::add_n_cats_to_chapter_structure(chapter_structure, data, drop_na = FALSE)
   testthat::expect_true(".n_cats_dep" %in% colnames(result))
-  testthat::expect_true(".max_chars_dep" %in% colnames(result))
+  testthat::expect_true(".max_chars_cats_dep" %in% colnames(result))
   testthat::expect_equal(result$.n_cats_dep, c(4, 4))
-  testthat::expect_equal(result$.max_chars_dep, c(1, 1))
+  testthat::expect_equal(result$.max_chars_cats_dep, c(1, 1))
 })
 
 testthat::test_that("add_n_cats_to_chapter_structure handles custom target_variable and variable_name_n_cats", {
@@ -43,5 +43,6 @@ testthat::test_that("add_n_cats_to_chapter_structure throws error for missing ta
   chapter_structure <- data.frame(.variable_name_other = c("var1", "var2"))
   data <- data.frame(var1 = factor(c("a", "b", "c")), var2 = factor(c("x", "y", "z")))
   testthat::expect_error(saros.base:::add_n_cats_to_chapter_structure(chapter_structure, data),
-                         regexp = "`target_variable` .* not found in")
+    regexp = "`target_variable` .* not found in"
+  )
 })

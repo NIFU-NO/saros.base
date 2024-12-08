@@ -58,8 +58,7 @@ if (!exists(".saros.env")) .saros.env <- NULL
         "
 ::: {{#fig-{.chunk_name}}}
 
-```{{r}}
-#| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_indep})
+```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_cats_indep}, max_chars_labels_x={.max_chars_labels_indep})}}
 {.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_plot_html')
 nrange <- stringi::stri_c('N = ', n_range2({.obj_name}))
 link <- make_link(data = {.obj_name}$data)
@@ -83,8 +82,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
         "
 ::: {{#fig-{.chunk_name}}}
 
-```{{r}}
-#| fig-height: !expr fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep})
+```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}
 {.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_plot_html')
 nrange <- stringi::stri_c('N = ', n_range2({.obj_name}))
 link <- make_link(data = {.obj_name}$data)
@@ -415,8 +413,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 
 ::: {{#fig-{.chunk_name}-target}}
 
-```{{r}}
-#| fig-height: !expr saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_indep})
+```{{r, fig.height=saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_labels_x={.max_chars_labels_indep}, max_chars_cats_x={.max_chars_cats_indep})}}
 library(saros)
 library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
@@ -436,8 +433,7 @@ girafe(ggobj = plot)
 
 ::: {{#fig-{.chunk_name}-others}}
 
-```{{r}}
-#| fig-height: !expr saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_indep})
+```{{r, fig.height=saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_labels_x={.max_chars_labels_indep}, max_chars_cats_x={.max_chars_cats_indep})}}
 library(saros)
 library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
@@ -472,8 +468,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 
 ::: {{#fig-{.chunk_name}-target}}
 
-```{{r}}
-#| fig-height: !expr saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep})
+```{{r, fig.height=saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}
 library(saros)
 library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_plot_html', \n\tcrowd='target', \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
@@ -493,8 +488,7 @@ girafe(ggobj = plot)
 
 ::: {{#fig-{.chunk_name}-others}}
 
-```{{r}}
-#| fig-height: !expr saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_dep})
+```{{r, fig.height=saros::fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}
 library(saros)
 library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_plot_html', \n\tcrowd='others', \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
