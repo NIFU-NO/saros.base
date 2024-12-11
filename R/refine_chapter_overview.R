@@ -384,7 +384,8 @@ refine_chapter_overview <-
             data = data,
             target_variable = ".variable_name_dep",
             variable_name_n_cats = ".n_cats_dep",
-            variable_name_max_cat_char = ".max_chars_dep",
+            variable_name_max_label_char = ".max_chars_labels_dep",
+            variable_name_max_cat_char = ".max_chars_cats_dep",
             drop_na = TRUE
           )
 
@@ -394,8 +395,23 @@ refine_chapter_overview <-
             data = data,
             target_variable = ".variable_name_indep",
             variable_name_n_cats = ".n_cats_indep",
-            variable_name_max_cat_char = ".max_chars_indep",
+            variable_name_max_label_char = ".max_chars_labels_indep",
+            variable_name_max_cat_char = ".max_chars_cats_indep",
             drop_na = TRUE
+          )
+
+        out <-
+          add_max_chars_labels_to_chapter_structure(
+            chapter_structure = out,
+            target_variable = ".variable_label_suffix_dep",
+            variable_name_max_label_char = ".max_chars_labels_dep"
+          )
+
+        out <-
+          add_max_chars_labels_to_chapter_structure(
+            chapter_structure = out,
+            target_variable = ".variable_label_suffix_indep",
+            variable_name_max_label_char = ".max_chars_labels_indep"
           )
       }
 
