@@ -24,9 +24,8 @@ add_n_range_to_chapter_structure <-
            glue_template_1 = "{n}",
            glue_template_2 = "[{n[1]}-{n[2]}]",
            variable_name = ".n_range") {
-
     chapter_structure |>
-      dplyr::group_map(.keep = TRUE, .f = ~{
+      dplyr::group_map(.keep = TRUE, .f = ~ {
         deps <- as.character(unique(.x$.variable_name_dep))
         deps <- deps[!is.na(deps)]
         n <-
@@ -34,22 +33,21 @@ add_n_range_to_chapter_structure <-
             length(data[[v]][!is.na(data[[v]])])
           }) |>
           unlist()
-        if(!is.null(n)) {
+        if (!is.null(n)) {
           n <-
             range(n, na.rm = TRUE) |>
             unique()
-          if(all(is.na(n))) {
+          if (all(is.na(n))) {
             .x[[variable_name]] <- 0
           } else {
-            template <- if(length(n)==1) glue_template_1 else glue_template_2
-            tryCatch(.x[[variable_name]] <-  glue::glue(template),
-                     error = function(cnd) glue_err(cnd=cnd, arg_name="glue_template_*"))
+            template <- if (length(n) == 1) glue_template_1 else glue_template_2
+            tryCatch(.x[[variable_name]] <- glue::glue(template),
+              error = function(cnd) glue_err(cnd = cnd, arg_name = "glue_template_*")
+            )
           }
-
         }
         .x
       }) |>
       dplyr::bind_rows() |>
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(dplyr::group_vars(chapter_structure))))
+      dplyr::grouped_df(dplyr::group_vars(chapter_structure))
   }
-

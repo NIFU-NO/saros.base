@@ -35,5 +35,5 @@ add_n_cats_to_chapter_structure <-
         }
       ) |>
       dplyr::bind_rows() |>
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(dplyr::group_vars(chapter_structure))))
+      dplyr::grouped_df(dplyr::group_vars(chapter_structure))
   }
