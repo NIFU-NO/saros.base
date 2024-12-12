@@ -1,43 +1,63 @@
-arrange2 <- function(data, arrange_vars = NULL, na_first = FALSE) {
-  if (is.null(arrange_vars)) return(data)
+arrange2 <- function(
+    data,
+    arrange_vars = NULL,
+    organize_by_vars = NULL,
+    na_first = TRUE) {
+  if (is.null(arrange_vars)) {
+    return(data)
+  }
 
 
   if (is.character(arrange_vars)) {
     arrange_vars <- stats::setNames(rep(FALSE, times = length(arrange_vars)), nm = arrange_vars)
   }
-
-
-  check_vars <- names(arrange_vars)[!names(arrange_vars) %in% colnames(data)]
-  if (length(check_vars) > 0) {
-    cli::cli_abort("{.arg arrange_vars} not found in {.arg data}: {check_vars}.")
+  if (is.character(organize_by_vars)) {
+    organize_by_vars <- stats::setNames(rep(FALSE, times = length(organize_by_vars)), nm = organize_by_vars)
   }
 
-  arrange_exprs <- lapply(names(arrange_vars), function(var) {
-    if (is.factor(data[[var]])) {
-      if (na_first) {
-        expr <- rlang::expr(forcats::fct_relevel(forcats::fct_na_value_to_level(.data[[var]]), NA))
-      } else {
-        expr <- rlang::expr(as.integer(.data[[var]]))
-      }
-    } else if (is.character(data[[var]])) {
-      if (na_first) {
-        expr <- rlang::expr(forcats::fct_relevel(forcats::fct_na_value_to_level(factor(.data[[var]])), NA))
-      } else {
-        expr <- rlang::expr(as.integer(.data[[var]]))
-      }
-    } else {
-      if (na_first) {
-        expr <- rlang::expr(dplyr::if_else(is.na(.data[[var]]), -Inf, .data[[var]]))
-      } else {
-        expr <- rlang::expr(.data[[var]])
-      }
+
+  check_arrange_vars <- names(arrange_vars)[!names(arrange_vars) %in% colnames(data)]
+  if (length(check_arrange_vars) > 0) {
+    cli::cli_abort("{.arg arrange_vars} not found in {.arg data}: {check_arrange_vars}.")
+  }
+  check_grouping_vars <- names(organize_by_vars)[!names(organize_by_vars) %in% colnames(data)]
+  if (length(check_grouping_vars) > 0) {
+    cli::cli_abort("{.arg organize_by_vars} not found in {.arg data}: {check_grouping_vars}.")
+  }
+
+  combined <- c(arrange_vars, organize_by_vars)
+  combined <- combined[!duplicated(names(combined))]
+
+  arrange_exprs <- lapply(names(combined), function(var) {
+    if (is.factor(data[[var]]) && isTRUE(na_first)) {
+      expr <- rlang::expr(forcats::fct_relevel(forcats::fct_na_value_to_level(.data[[var]]), NA))
     }
-    if (arrange_vars[[var]]) {
+    if (is.factor(data[[var]]) && isFALSE(na_first)) {
+      expr <- rlang::expr(as.integer(.data[[var]]))
+    }
+    if (is.character(data[[var]]) && isTRUE(na_first)) {
+      expr <- rlang::expr(forcats::fct_relevel(forcats::fct_na_value_to_level(factor(.data[[var]])), NA))
+    }
+    if (is.character(data[[var]]) && isFALSE(na_first)) {
+      expr <- rlang::expr(.data[[var]])
+    }
+    if (isFALSE(is.factor(data[[var]])) && isFALSE(is.character(data[[var]])) && isTRUE(na_first)) {
+      expr <- rlang::expr(dplyr::if_else(is.na(.data[[var]]), -Inf, as.numeric(.data[[var]])))
+    }
+    if (isFALSE(is.factor(data[[var]])) && isFALSE(is.character(data[[var]])) && isFALSE(na_first)) {
+      expr <- rlang::expr(.data[[var]])
+    }
+    if (combined[[var]]) {
       expr <- rlang::expr(dplyr::desc(!!expr))
     }
     expr
   })
 
-  dplyr::arrange(data, !!!arrange_exprs)
-}
+  out <- dplyr::arrange(data, !!!arrange_exprs)
+  # Fix order to avoid that group_by later reorders it
+  # out <- dplyr::mutate(out, dplyr::across(tidyselect::all_of(names(combined)), ~ factor(.x, exclude = character())))
 
+  out <- dplyr::grouped_df(out, vars = names(organize_by_vars)[names(organize_by_vars) %in% colnames(out)])
+
+  list(x = out, expr = arrange_exprs)
+}

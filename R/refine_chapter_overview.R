@@ -270,15 +270,17 @@ refine_chapter_overview <-
         stringi::stri_remove_empty_na(unique(out$.variable_name))
 
       if (length(present_variable_names) > 0) {
+        extended_info <-
+          look_for_extended(
+            data = data,
+            cols = present_variable_names,
+            label_separator = label_separator,
+            name_separator = name_separator
+          )
         out <-
           dplyr::left_join(
             x = out,
-            y = look_for_extended(
-              data = data,
-              cols = present_variable_names,
-              label_separator = label_separator,
-              name_separator = name_separator
-            ),
+            y = extended_info,
             by = dplyr::join_by(".variable_position", ".variable_name")
           )
 
@@ -350,8 +352,13 @@ refine_chapter_overview <-
       }
 
 
-      out <- dplyr::group_by(out, dplyr::pick(tidyselect::all_of(organize_by[organize_by %in% colnames(out)])))
-      out <- arrange2(data = out, arrange_vars = arrange_section_by, na_first = na_first_in_section)
+      list_out <- arrange2(
+        data = out,
+        arrange_vars = arrange_section_by,
+        organize_by_vars = organize_by,
+        na_first = na_first_in_section
+      )
+      out <- list_out[["x"]]
 
 
       if (data_present) {
@@ -479,6 +486,5 @@ refine_chapter_overview <-
     }
 
 
-
-    out
+    dplyr::arrange(out, !!!list_out[["expr"]])
   }
