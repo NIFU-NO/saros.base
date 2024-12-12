@@ -54,7 +54,7 @@ arrange2 <- function(
   })
 
   out <- dplyr::arrange(data, !!!arrange_exprs)
-  # Fix order to avoid that group_by later reorders it
+  # Fix order to avoid that grouped_df later reorders it
   # out <- dplyr::mutate(out, dplyr::across(tidyselect::all_of(names(combined)), ~ factor(.x, exclude = character())))
 
   out <- dplyr::grouped_df(out, vars = names(organize_by_vars)[names(organize_by_vars) %in% colnames(out)])

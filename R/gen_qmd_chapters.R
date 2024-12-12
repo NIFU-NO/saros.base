@@ -36,9 +36,9 @@ gen_qmd_chapters <-
     grouping_structure <- dplyr::group_vars(chapter_structure)
 
     chapter_structure_chapter_groups <-
-      dplyr::group_by(
+      dplyr::grouped_df(
         chapter_structure,
-        dplyr::pick(tidyselect::all_of(grouping_structure[1]))
+        vars = grouping_structure[1]
       )
 
 
@@ -51,9 +51,9 @@ gen_qmd_chapters <-
         .f = function(chapter_structure_chapter,
                       key_chapter) {
           chapter_structure_chapter <-
-            dplyr::group_by(
+            dplyr::grouped_df(
               chapter_structure_chapter,
-              dplyr::pick(tidyselect::all_of(grouping_structure))
+              vars = grouping_structure
             )
 
           # Paths
