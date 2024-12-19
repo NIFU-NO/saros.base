@@ -21,9 +21,26 @@ if (!exists(".saros.env")) .saros.env <- NULL
         ".variable_label_prefix", ".variable_label_suffix",
         ".variable_type"
       ), "_indep"),
-      ".variable_group_id",
-      ".template_name", ".template"
+      ".bi_test",
+      ".p_value",
+      ".template_name",
+      ".template", ".variable_group_id", ".n", ".n_range", ".n_cats_dep",
+      ".max_chars_cats_dep",
+      ".max_chars_labels_dep", ".n_dep",
+      ".n_indep",
+      ".obj_name", ".chunk_name", ".file_name", ".chapter_number",
+      ".chapter_foldername"
     )
+
+  .saros.env$peripheral_chapter_structure_cols <<-
+    c(
+      ".keep_indep",
+      ".keep_bi_rows",
+      ".n_cats_indep",
+      ".max_chars_cats_indep",
+      ".max_chars_labels_indep"
+    )
+
   # These actually do not exist in this form, but contain some suffixes
   .saros.env$core_chapter_structure_pattern <<-
     "\\.template_variable_type_dep|\\.template_variable_type_indep"

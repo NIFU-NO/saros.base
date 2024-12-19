@@ -183,13 +183,9 @@
 #' @export
 #'
 #' @examples
-#' ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
-#' \donttest{
-#' ref_df2 <- refine_chapter_overview(
-#'   chapter_overview = ex_survey_ch_overview,
-#'   data = ex_survey, hide_bi_entry_if_sig_above = .05
+#' ref_df <- refine_chapter_overview(
+#'   chapter_overview = ex_survey_ch_overview
 #' )
-#' }
 refine_chapter_overview <-
   function(chapter_overview = NULL,
            data = NULL,
@@ -252,229 +248,224 @@ refine_chapter_overview <-
 
     out <- add_core_info_to_chapter_structure(chapter_structure = out)
 
-    data_present <- !is.null(data) && is.data.frame(data)
-    if (data_present) {
-      out <- add_parsed_vars_to_chapter_structure(
-        chapter_structure = out,
-        data = data
-      )
-
-
-      out <- remove_from_chapter_structure_if_all_na(
-        chapter_structure = out,
-        data = data,
-        hide_variable_if_all_na = hide_variable_if_all_na
-      )
-
-      present_variable_names <-
-        stringi::stri_remove_empty_na(unique(out$.variable_name))
-
-      if (length(present_variable_names) > 0) {
-        extended_info <-
-          look_for_extended(
-            data = data,
-            cols = present_variable_names,
-            label_separator = label_separator,
-            name_separator = name_separator
-          )
-        out <-
-          dplyr::left_join(
-            x = out,
-            y = extended_info,
-            by = dplyr::join_by(".variable_position", ".variable_name")
-          )
-
-        out <-
-          trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
-        out <-
-          validate_labels(out)
-
-        out <-
-          add_indep_to_chapter_structure(out)
-
-
-        out <-
-          remove_from_chapter_structure_if_non_significant(
-            chapter_structure = out,
-            data = data,
-            hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
-            always_show_bi_for_indep = always_show_bi_for_indep,
-            progress = progress
-          )
-
-
-        out <-
-          add_chunk_templates_to_chapter_structure(
-            chapter_structure = out,
-            chunk_templates = chunk_templates
-          )
-        out <- remove_from_chapter_structure_if_no_type_match(out)
-
-        if (nrow(out) == 0) {
-          return(out)
-        }
-
-        out <-
-          dplyr::distinct(out, dplyr::pick(tidyselect::everything()), .keep_all = TRUE)
-
-
-        validate_chapter_structure_has_not_chapter_with_all_vars(out, data = data)
-
-
-        log_unused_variables(
-          chapter_structure = out,
-          data = data,
-          log_file = log_file
-        )
-
-
-        out <-
-          set_chapter_structure_cols_as_factor_with_na(
-            chapter_structure = out,
-            data = data,
-            chunk_template_names = chunk_templates$name
-          )
-
-        out <-
-          add_group_id_to_chapter_structure(out,
-            grouping_vars = organize_by[organize_by %in% colnames(out)],
-            variable_group_prefix = NULL
-          )
-        out <-
-          split_chapter_structure_groups_if_single_y_bivariates(
-            chapter_structure = out,
-            data = data,
-            single_y_bivariates_if_indep_cats_above = single_y_bivariates_if_indep_cats_above,
-            single_y_bivariates_if_deps_above = single_y_bivariates_if_deps_above,
-            variable_group_dep = variable_group_dep,
-            organize_by = organize_by
-          )
-      }
-
-
-      list_out <- arrange2(
-        data = out,
-        arrange_vars = arrange_section_by,
-        organize_by_vars = organize_by,
-        na_first = na_first_in_section
-      )
-      out <- list_out[["x"]]
-
-
-      if (data_present) {
-        out <-
-          add_n_to_chapter_structure(
-            chapter_structure = out,
-            data = data,
-            variable_name = ".n"
-          )
-
-        out <-
-          remove_from_chapter_structure_if_n_below(
-            chapter_structure = out,
-            n_variable_name = ".n",
-            hide_chunk_if_n_below = hide_chunk_if_n_below
-          )
-
-        out <-
-          add_n_range_to_chapter_structure(
-            chapter_structure = out,
-            data = data,
-            glue_template_1 = n_range_glue_template_1,
-            glue_template_2 = n_range_glue_template_2,
-            variable_name = ".n_range"
-          )
-
-        out <-
-          add_n_cats_to_chapter_structure(
-            chapter_structure = out,
-            data = data,
-            target_variable = ".variable_name_dep",
-            variable_name_n_cats = ".n_cats_dep",
-            variable_name_max_label_char = ".max_chars_labels_dep",
-            variable_name_max_cat_char = ".max_chars_cats_dep",
-            drop_na = TRUE
-          )
-
-        out <-
-          add_n_cats_to_chapter_structure(
-            chapter_structure = out,
-            data = data,
-            target_variable = ".variable_name_indep",
-            variable_name_n_cats = ".n_cats_indep",
-            variable_name_max_label_char = ".max_chars_labels_indep",
-            variable_name_max_cat_char = ".max_chars_cats_indep",
-            drop_na = TRUE
-          )
-
-        out <-
-          add_max_chars_labels_to_chapter_structure(
-            chapter_structure = out,
-            target_variable = ".variable_label_suffix_dep",
-            variable_name_max_label_char = ".max_chars_labels_dep"
-          )
-
-        out <-
-          add_max_chars_labels_to_chapter_structure(
-            chapter_structure = out,
-            target_variable = ".variable_label_suffix_indep",
-            variable_name_max_label_char = ".max_chars_labels_indep"
-          )
-      }
-
-
-      out <-
-        add_n_vars_to_chapter_structure(
-          chapter_structure = out,
-          target_variable = ".variable_name_dep",
-          variable_name = ".n_dep"
-        )
-
-      out <-
-        add_n_vars_to_chapter_structure(
-          chapter_structure = out,
-          target_variable = ".variable_name_indep",
-          variable_name = ".n_indep"
-        )
-
-
-
-      out <-
-        add_obj_name_to_chapter_structure(
-          chapter_structure = out,
-          variable_name = ".obj_name",
-          sep = sep_obj,
-          max_width = max_width_obj,
-          make_unique = TRUE,
-          to_lower = TRUE
-        )
-
-      out <-
-        add_obj_name_to_chapter_structure(
-          chapter_structure = out,
-          variable_name = ".chunk_name",
-          sep = sep_chunk,
-          max_width = max_width_chunk,
-          make_unique = TRUE,
-          to_lower = TRUE
-        )
-
-      out <-
-        add_obj_name_to_chapter_structure(
-          chapter_structure = out,
-          variable_name = ".file_name",
-          sep = sep_file,
-          max_width = max_width_file,
-          make_unique = TRUE,
-          to_lower = TRUE
-        )
-    }
-
-
     out <-
       add_chapter_foldername_to_chapter_structure(
         chapter_structure = out, # Current
         max_width_folder_name = max_width_folder_name
+      )
+
+
+    if (is.null(data) || !is.data.frame(data)) {
+      return(out)
+    }
+
+    out <- add_parsed_vars_to_chapter_structure(
+      chapter_structure = out,
+      data = data
+    )
+
+
+    out <- remove_from_chapter_structure_if_all_na(
+      chapter_structure = out,
+      data = data,
+      hide_variable_if_all_na = hide_variable_if_all_na
+    )
+
+    present_variable_names <-
+      stringi::stri_remove_empty_na(unique(out$.variable_name))
+
+    if (length(present_variable_names) > 0) {
+      extended_info <-
+        look_for_extended(
+          data = data,
+          cols = present_variable_names,
+          label_separator = label_separator,
+          name_separator = name_separator
+        )
+      out <-
+        dplyr::left_join(
+          x = out,
+          y = extended_info,
+          by = dplyr::join_by(".variable_position", ".variable_name")
+        )
+
+      out <-
+        trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
+      out <-
+        validate_labels(out)
+
+      out <-
+        add_indep_to_chapter_structure(out)
+
+
+      out <-
+        remove_from_chapter_structure_if_non_significant(
+          chapter_structure = out,
+          data = data,
+          hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
+          always_show_bi_for_indep = always_show_bi_for_indep,
+          progress = progress
+        )
+
+
+      out <-
+        add_chunk_templates_to_chapter_structure(
+          chapter_structure = out,
+          chunk_templates = chunk_templates
+        )
+      out <- remove_from_chapter_structure_if_no_type_match(out)
+
+      if (nrow(out) == 0) {
+        return(out)
+      }
+
+      out <-
+        dplyr::distinct(out, dplyr::pick(tidyselect::everything()), .keep_all = TRUE)
+
+
+      validate_chapter_structure_has_not_chapter_with_all_vars(chapter_structure = out, data = data)
+
+
+      log_unused_variables(
+        chapter_structure = out,
+        data = data,
+        log_file = log_file
+      )
+
+
+      out <-
+        set_chapter_structure_cols_as_factor_with_na(
+          chapter_structure = out,
+          data = data,
+          chunk_template_names = chunk_templates$name
+        )
+
+      out <-
+        add_group_id_to_chapter_structure(
+          chapter_structure = out,
+          grouping_vars = organize_by[organize_by %in% colnames(out)],
+          variable_group_prefix = NULL
+        )
+      out <-
+        split_chapter_structure_groups_if_single_y_bivariates(
+          chapter_structure = out,
+          data = data,
+          single_y_bivariates_if_indep_cats_above = single_y_bivariates_if_indep_cats_above,
+          single_y_bivariates_if_deps_above = single_y_bivariates_if_deps_above,
+          variable_group_dep = variable_group_dep,
+          organize_by = organize_by
+        )
+    }
+
+
+    out <- dplyr::grouped_df(data = out, vars = if (is.character(organize_by)) organize_by else character())
+
+
+    out <-
+      add_n_to_chapter_structure(
+        chapter_structure = out,
+        data = data,
+        variable_name = ".n"
+      )
+
+    out <-
+      remove_from_chapter_structure_if_n_below(
+        chapter_structure = out,
+        n_variable_name = ".n",
+        hide_chunk_if_n_below = hide_chunk_if_n_below
+      )
+
+    out <-
+      add_n_range_to_chapter_structure(
+        chapter_structure = out,
+        data = data,
+        glue_template_1 = n_range_glue_template_1,
+        glue_template_2 = n_range_glue_template_2,
+        variable_name = ".n_range"
+      )
+
+    out <-
+      add_n_cats_to_chapter_structure(
+        chapter_structure = out,
+        data = data,
+        target_variable = ".variable_name_dep",
+        variable_name_n_cats = ".n_cats_dep",
+        variable_name_max_label_char = ".max_chars_labels_dep",
+        variable_name_max_cat_char = ".max_chars_cats_dep",
+        drop_na = TRUE
+      )
+
+    out <-
+      add_n_cats_to_chapter_structure(
+        chapter_structure = out,
+        data = data,
+        target_variable = ".variable_name_indep",
+        variable_name_n_cats = ".n_cats_indep",
+        variable_name_max_label_char = ".max_chars_labels_indep",
+        variable_name_max_cat_char = ".max_chars_cats_indep",
+        drop_na = TRUE
+      )
+
+    out <-
+      add_max_chars_labels_to_chapter_structure(
+        chapter_structure = out,
+        target_variable = ".variable_label_suffix_dep",
+        variable_name_max_label_char = ".max_chars_labels_dep"
+      )
+
+    out <-
+      add_max_chars_labels_to_chapter_structure(
+        chapter_structure = out,
+        target_variable = ".variable_label_suffix_indep",
+        variable_name_max_label_char = ".max_chars_labels_indep"
+      )
+
+
+
+    out <-
+      add_n_vars_to_chapter_structure(
+        chapter_structure = out,
+        target_variable = ".variable_name_dep",
+        variable_name = ".n_dep"
+      )
+
+    out <-
+      add_n_vars_to_chapter_structure(
+        chapter_structure = out,
+        target_variable = ".variable_name_indep",
+        variable_name = ".n_indep"
+      )
+
+
+
+    out <-
+      add_obj_name_to_chapter_structure(
+        chapter_structure = out,
+        variable_name = ".obj_name",
+        sep = sep_obj,
+        max_width = max_width_obj,
+        make_unique = TRUE,
+        to_lower = TRUE
+      )
+
+    out <-
+      add_obj_name_to_chapter_structure(
+        chapter_structure = out,
+        variable_name = ".chunk_name",
+        sep = sep_chunk,
+        max_width = max_width_chunk,
+        make_unique = TRUE,
+        to_lower = TRUE
+      )
+
+    out <-
+      add_obj_name_to_chapter_structure(
+        chapter_structure = out,
+        variable_name = ".file_name",
+        sep = sep_file,
+        max_width = max_width_file,
+        make_unique = TRUE,
+        to_lower = TRUE
       )
 
     if (FALSE && isFALSE(keep_dep_indep_if_no_overlap)) {
@@ -485,6 +476,11 @@ refine_chapter_overview <-
         )
     }
 
-
-    dplyr::arrange(out, !!!list_out[["expr"]])
+    out <- arrange_arrangers_and_groups(
+      chapter_structure = out,
+      arrange_vars = arrange_section_by,
+      group_by_vars = organize_by,
+      na_first = na_first_in_section
+    )
+    out
   }
