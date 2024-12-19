@@ -6,7 +6,11 @@ add_chapter_foldername_to_chapter_structure <-
     # Handles NA acceptably, as these are converted to string
 
     if (!is.null(chapter_structure$chapter)) {
-      chapter_structure$.chapter_number <- as.integer(as.factor(chapter_structure$chapter))
+      chapter_structure$.chapter_number <-
+        as.integer(factor(chapter_structure$chapter,
+          levels = unique(chapter_structure$chapter),
+          exclude = character()
+        ))
 
       digits <- floor(log10(length(unique(chapter_structure$chapter)))) + 1
       chapter_number_text <- sprintf(
