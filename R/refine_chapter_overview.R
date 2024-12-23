@@ -215,7 +215,7 @@ refine_chapter_overview <-
              ".template_name"
            ),
            arrange_section_by = c(
-             chapter = FALSE,
+             .chapter_number = FALSE,
              .variable_name_dep = FALSE,
              .variable_name_indep = FALSE,
              .template_name = FALSE

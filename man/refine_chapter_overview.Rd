@@ -19,7 +19,7 @@ refine_chapter_overview(
   keep_dep_indep_if_no_overlap = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".template_name"),
-  arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
+  arrange_section_by = c(.chapter_number = FALSE, .variable_name_dep = FALSE,
     .variable_name_indep = FALSE, .template_name = FALSE),
   na_first_in_section = TRUE,
   max_width_obj = 128,
