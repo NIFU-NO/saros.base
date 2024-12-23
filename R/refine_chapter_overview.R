@@ -265,6 +265,7 @@ refine_chapter_overview <-
 
 
     if (is.null(data) || !is.data.frame(data)) {
+      cli::cli_warn("{.arg data} is empty")
       return(out)
     }
 
