@@ -138,6 +138,13 @@
 #'   Separator to use between grouping variables. Defaults to underscore for
 #'   object names and hyphen for chunk labels and file names.
 #'
+#' @param filename_prefix *Prefix string for all qmd filenames*
+#'
+#'   `scalar<character>` // *default:* `""` (`optional`)
+#'
+#'   For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+#'   (`filename_prefix = "_"`) in front as other stub files will include these main qmd files.
+#'
 #' @param max_width_folder_name *Maximum clean folder name length*
 #'
 #'   `scalar<integer>` // *default:* `NULL` (`optional`)
@@ -222,6 +229,7 @@ refine_chapter_overview <-
            sep_obj = "_",
            sep_chunk = "-",
            sep_file = "-",
+           filename_prefix = "",
            ...,
            progress = TRUE,
            variable_group_dep = ".variable_group_dep",
@@ -251,7 +259,8 @@ refine_chapter_overview <-
     out <-
       add_chapter_foldername_to_chapter_structure(
         chapter_structure = out, # Current
-        max_width_folder_name = max_width_folder_name
+        max_width_folder_name = max_width_folder_name,
+        filename_prefix = filename_prefix
       )
 
 

@@ -1,20 +1,20 @@
 validate_draft_report_args <- function(params) {
-
-  if(!"data" %in% names(params) || is.null(params$data)) cli::cli_abort("{.arg data} argument must be provided.")
+  if (!"data" %in% names(params) || is.null(params$data)) cli::cli_abort("{.arg data} argument must be provided.")
 
   unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
-  if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+  if (length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
 
   env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args], eval)
   check_and_set_default <- function(target,
                                     param_name,
                                     validation_fun) {
-
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
       cli::cli_warn(paste0("{.arg {(param_name)}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
       default
-    } else target[[param_name]]
+    } else {
+      target[[param_name]]
+    }
   }
   is_scalar_finite_doubleish <- function(x) {
     is.numeric(x) && length(x) == 1 && is.finite(x)
@@ -34,7 +34,6 @@ validate_draft_report_args <- function(params) {
       # Character vectors (not enums)
       auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       path = list(fun = function(x) is_string(x)),
-
       chapter_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
       index_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
       report_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
@@ -47,10 +46,11 @@ validate_draft_report_args <- function(params) {
       index_filename = list(fun = function(x) is_string(x) || is.null(x)),
       report_filename = list(fun = function(x) is_string(x) || is.null(x)),
       ignore_heading_for_group = list(fun = function(x) is.null(x) || is.character(x) && !rlang::is_named(x)),
-      replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
-      prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
-      suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x)))==0)),
-
+      replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+      prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+      suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+      filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
+      data_filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
       log_file = list(fun = function(x) is.null(x) || is_string(x)),
 
 
@@ -64,24 +64,25 @@ validate_draft_report_args <- function(params) {
 
       # Enums
       serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1]))
-
     )
 
-  for(par in names(arg_params)) {
-
+  for (par in names(arg_params)) {
     params[[par]] <-
-      check_and_set_default(target = params,
-                            param_name = par,
-                            validation_fun = arg_params[[par]]$fun)
+      check_and_set_default(
+        target = params,
+        param_name = par,
+        validation_fun = arg_params[[par]]$fun
+      )
   }
 
   params$serialized_format <- params$serialized_format[1]
 
 
   pkg <- switch(params$serialized_format,
-                "qs" = "qs",
-                "rds" = "base")
-  if(!requireNamespace(pkg, quietly = TRUE)) {
+    "qs" = "qs",
+    "rds" = "base"
+  )
+  if (!requireNamespace(pkg, quietly = TRUE)) {
     cli::cli_abort("Needs {.pkg {pkg}} to use {.arg serialized_format}={params$serialized_format}: {.run [install.packages(pkg)](install.packages())}")
   }
 

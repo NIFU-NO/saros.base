@@ -30,7 +30,9 @@ gen_qmd_chapters <-
            chapter_qmd_end_section_filepath = NULL,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
-           serialized_format = "rds") {
+           serialized_format = "rds",
+           filename_prefix = "",
+           data_filename_prefix = "data_") {
     path <- fs::as_fs_path(path)
 
     grouping_structure <- dplyr::group_vars(chapter_structure)
@@ -136,7 +138,9 @@ gen_qmd_chapters <-
                 chapter_foldername_clean = chapter_foldername_clean,
                 path = path,
                 auxiliary_variables = auxiliary_variables,
-                serialized_format = serialized_format
+                serialized_format = serialized_format,
+                filename_prefix = filename_prefix,
+                data_filename_prefix = data_filename_prefix
               )
             }
 

@@ -168,6 +168,12 @@
 #'   `"qs"` is usually the fastest and most space efficient, but sets package
 #'   dependencies on the report project.
 #'
+#' @param data_filename_prefix *String attached to beginning of data-file and data-object*
+#'
+#'   `scalar<string>` // *default:* `"data_"`
+#'
+#'
+#'
 #' @importFrom rlang !!!
 #'
 #' @return The `path`-argument.
@@ -227,6 +233,8 @@ draft_report <-
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
            max_path_warning_threshold = 260, # Tidy up argument name: max_width_path_warning. Keep here
            # Debugging
+           filename_prefix = "",
+           data_filename_prefix = "data_",
            log_file = NULL) {
     args <- utils::modifyList(
       as.list(environment()),

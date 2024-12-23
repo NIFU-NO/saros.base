@@ -29,6 +29,7 @@ refine_chapter_overview(
   sep_obj = "_",
   sep_chunk = "-",
   sep_file = "-",
+  filename_prefix = "",
   ...,
   progress = TRUE,
   variable_group_dep = ".variable_group_dep",
@@ -180,6 +181,13 @@ only the folders.}
 
 Separator to use between grouping variables. Defaults to underscore for
 object names and hyphen for chunk labels and file names.}
+
+\item{filename_prefix}{\emph{Prefix string for all qmd filenames}
+
+\verb{scalar<character>} // \emph{default:} \code{""} (\code{optional})
+
+For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(\code{filename_prefix = "_"}) in front as other stub files will include these main qmd files.}
 
 \item{...}{\emph{Dynamic dots}
 

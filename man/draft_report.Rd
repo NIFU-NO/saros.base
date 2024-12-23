@@ -35,6 +35,8 @@ draft_report(
   auxiliary_variables = NULL,
   serialized_format = c("rds", "qs"),
   max_path_warning_threshold = 260,
+  filename_prefix = "",
+  data_filename_prefix = "data_",
   log_file = NULL
 )
 }
@@ -189,6 +191,13 @@ file paths. This will mean that files with cache (hash suffixes are added) will
 quickly breach this limit. When set, a warning will be returned if files are found
 to be longer than this threshold. Also note that spaces count as three characters
 due to its URL-conversion: \%20. To avoid test, set to Inf}
+
+\item{filename_prefix}{\emph{Prefix string for all qmd filenames}
+
+\verb{scalar<character>} // \emph{default:} \code{""} (\code{optional})
+
+For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(\code{filename_prefix = "_"}) in front as other stub files will include these main qmd files.}
 
 \item{log_file}{\emph{Path to log file}
 
