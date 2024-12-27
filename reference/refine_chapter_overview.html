@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros.base</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
 <span>  keep_dep_indep_if_no_overlap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  organize_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix_dep"</span>, <span class="st">".variable_name_indep"</span>,</span>
 <span>    <span class="st">".template_name"</span><span class="op">)</span>,</span>
-<span>  arrange_section_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>chapter <span class="op">=</span> <span class="cn">FALSE</span>, .variable_name_dep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  arrange_section_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.chapter_number <span class="op">=</span> <span class="cn">FALSE</span>, .variable_name_dep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    .variable_name_indep <span class="op">=</span> <span class="cn">FALSE</span>, .template_name <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
 <span>  na_first_in_section <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  max_width_obj <span class="op">=</span> <span class="fl">128</span>,</span>
@@ -82,6 +82,7 @@
 <span>  sep_obj <span class="op">=</span> <span class="st">"_"</span>,</span>
 <span>  sep_chunk <span class="op">=</span> <span class="st">"-"</span>,</span>
 <span>  sep_file <span class="op">=</span> <span class="st">"-"</span>,</span>
+<span>  filename_prefix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  variable_group_dep <span class="op">=</span> <span class="st">".variable_group_dep"</span>,</span>
@@ -238,6 +239,13 @@ only the folders.</p></dd>
 object names and hyphen for chunk labels and file names.</p></dd>
 
 
+<dt id="arg-filename-prefix">filename_prefix<a class="anchor" aria-label="anchor" href="#arg-filename-prefix"></a></dt>
+<dd><p><em>Prefix string for all qmd filenames</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>""</code> (<code>optional</code>)</p>
+<p>For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(<code>filename_prefix = "_"</code>) in front as other stub files will include these main qmd files.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p><em>Dynamic dots</em></p>
 <p>&lt;<a href="https://rlang.r-lib.org/reference/dyn-dots.html" class="external-link"><code>dynamic-dots</code></a>&gt;</p>
@@ -283,21 +291,12 @@ as "Group" to distinguish this column from other columns in the chapter_structur
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ref_df</span> <span class="op">&lt;-</span> <span class="fu">refine_chapter_overview</span><span class="op">(</span>chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `chunk_templates` is NULL. Using global defaults.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Refining chapter_overview into a chapter_structure ...</span>
-<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">ref_df2</span> <span class="op">&lt;-</span> <span class="fu">refine_chapter_overview</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">ex_survey</span>, hide_bi_entry_if_sig_above <span class="op">=</span> <span class="fl">.05</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ref_df</span> <span class="op">&lt;-</span> <span class="fu">refine_chapter_overview</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `chunk_templates` is NULL. Using global defaults.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Refining chapter_overview into a chapter_structure ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removing bivariate occurences if `hide_bi_entry_if_sig_above`: `0.05`, except .</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Refining chapter_overview into a chapter_structure ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Not using the following variables in `data`: `x1_sex, x2_human, a_7, a_8, c_1,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> c_2, f_uni, and resp_status`.</span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`data` is empty</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

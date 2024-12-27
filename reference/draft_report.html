@@ -17,7 +17,7 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 
     <a class="navbar-brand me-2" href="../index.html">saros.base</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,6 +103,8 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 <span>  auxiliary_variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  serialized_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"qs"</span><span class="op">)</span>,</span>
 <span>  max_path_warning_threshold <span class="op">=</span> <span class="fl">260</span>,</span>
+<span>  filename_prefix <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  data_filename_prefix <span class="op">=</span> <span class="st">"data_"</span>,</span>
 <span>  log_file <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -260,6 +262,18 @@ file paths. This will mean that files with cache (hash suffixes are added) will
 quickly breach this limit. When set, a warning will be returned if files are found
 to be longer than this threshold. Also note that spaces count as three characters
 due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
+
+
+<dt id="arg-filename-prefix">filename_prefix<a class="anchor" aria-label="anchor" href="#arg-filename-prefix"></a></dt>
+<dd><p><em>Prefix string for all qmd filenames</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>""</code> (<code>optional</code>)</p>
+<p>For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(<code>filename_prefix = "_"</code>) in front as other stub files will include these main qmd files.</p></dd>
+
+
+<dt id="arg-data-filename-prefix">data_filename_prefix<a class="anchor" aria-label="anchor" href="#arg-data-filename-prefix"></a></dt>
+<dd><p><em>String attached to beginning of data-file and data-object</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"data_"</code></p></dd>
 
 
 <dt id="arg-log-file">log_file<a class="anchor" aria-label="anchor" href="#arg-log-file"></a></dt>
