@@ -18,7 +18,9 @@ gen_qmd_chapters(
   chapter_qmd_end_section_filepath = NULL,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
-  serialized_format = "rds"
+  serialized_format = "rds",
+  filename_prefix = "",
+  data_filename_prefix = "data_"
 )
 }
 \arguments{
@@ -101,6 +103,17 @@ One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
 The latter two requires the respective packages to be installed.
 \code{"qs"} is usually the fastest and most space efficient, but sets package
 dependencies on the report project.}
+
+\item{filename_prefix}{\emph{Prefix string for all qmd filenames}
+
+\verb{scalar<character>} // \emph{default:} \code{""} (\code{optional})
+
+For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(\code{filename_prefix = "_"}) in front as other stub files will include these main qmd files.}
+
+\item{data_filename_prefix}{\emph{String attached to beginning of data-file and data-object}
+
+\verb{scalar<string>} // \emph{default:} \code{"data_"}}
 }
 \value{
 Side-effects: qmd-files generated in the specified working directory.

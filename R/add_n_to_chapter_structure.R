@@ -4,7 +4,7 @@ add_n_to_chapter_structure <- function(chapter_structure,
   target_grouping_variables <- c(".variable_name_dep", ".variable_name_indep")
   out <-
     chapter_structure |>
-    dplyr::group_by(dplyr::pick(tidyselect::all_of(target_grouping_variables))) |>
+    dplyr::grouped_df(vars = target_grouping_variables) |>
     dplyr::group_map(.keep = TRUE, .f = ~ {
       target_grouping_variables_tmp <-
         lapply(target_grouping_variables, function(chapter_structure_col) {
@@ -38,7 +38,7 @@ add_n_to_chapter_structure <- function(chapter_structure,
   if (length(out) > 0) {
     out |>
       dplyr::bind_rows() |>
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(dplyr::group_vars(chapter_structure))))
+      dplyr::grouped_df(vars = dplyr::group_vars(chapter_structure))
   } else {
     attr(out, "ptype")
   }

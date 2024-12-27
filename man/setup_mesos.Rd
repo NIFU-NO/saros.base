@@ -2,12 +2,12 @@
 % Please edit documentation in R/setup_mesos.R
 \name{setup_mesos}
 \alias{setup_mesos}
-\title{Simply create qmd-files for mesos reports}
+\title{Simply create qmd-files and yml-files for mesos reports}
 \usage{
 setup_mesos(
+  main_directory,
   files_to_process,
-  mesos_var,
-  mesos_groups,
+  mesos_df,
   main_files = c("index", "report"),
   read_syntax_pattern = "qs::qread\\\\('",
   read_syntax_replacement = "qs::qread('../",
@@ -15,11 +15,11 @@ setup_mesos(
 )
 }
 \arguments{
+\item{main_directory}{String, path to where the _metadata.yml, stub QMD-files and their subfolders are created.}
+
 \item{files_to_process}{Character vector of files used as templates for the mesos stubs.}
 
-\item{mesos_var}{String, variable used during rendering with saros::makeme() to obtain the column in the dataset which it will filter on.}
-
-\item{mesos_groups}{Character vector for which stub-qmd files will be made}
+\item{mesos_df}{List of single-column data frames where each variable is a mesos variable, optionally with a variable label indicating its pretty name. The values in each variable are the mesos groups. NA is silently ignored.}
 
 \item{main_files}{Character vector of files for which titles should be set as the mesos_group. Optional but recommended.}
 
@@ -28,5 +28,5 @@ setup_mesos(
 \item{qmd_regex}{String. Experimental feature for allowing Rmarkdown, not yet tested.}
 }
 \description{
-Simply create qmd-files for mesos reports
+Simply create qmd-files and yml-files for mesos reports
 }

@@ -106,7 +106,7 @@ gen_qmd_structure <-
 
     grouped_data <-
       chapter_structure |>
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(grouping_structure))) |>
+      dplyr::grouped_df(vars = grouping_structure) |>
       dplyr::distinct(dplyr::pick(tidyselect::all_of(grouping_structure)))
 
     out <-

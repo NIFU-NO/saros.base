@@ -19,7 +19,7 @@ refine_chapter_overview(
   keep_dep_indep_if_no_overlap = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".template_name"),
-  arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
+  arrange_section_by = c(.chapter_number = FALSE, .variable_name_dep = FALSE,
     .variable_name_indep = FALSE, .template_name = FALSE),
   na_first_in_section = TRUE,
   max_width_obj = 128,
@@ -29,6 +29,7 @@ refine_chapter_overview(
   sep_obj = "_",
   sep_chunk = "-",
   sep_file = "-",
+  filename_prefix = "",
   ...,
   progress = TRUE,
   variable_group_dep = ".variable_group_dep",
@@ -181,6 +182,13 @@ only the folders.}
 Separator to use between grouping variables. Defaults to underscore for
 object names and hyphen for chunk labels and file names.}
 
+\item{filename_prefix}{\emph{Prefix string for all qmd filenames}
+
+\verb{scalar<character>} // \emph{default:} \code{""} (\code{optional})
+
+For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
+(\code{filename_prefix = "_"}) in front as other stub files will include these main qmd files.}
+
 \item{...}{\emph{Dynamic dots}
 
 <\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
@@ -225,11 +233,7 @@ Grouped tibble.
 Processes A 'chapter_overview' Data Frame
 }
 \examples{
-ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
-\donttest{
-ref_df2 <- refine_chapter_overview(
-  chapter_overview = ex_survey_ch_overview,
-  data = ex_survey, hide_bi_entry_if_sig_above = .05
+ref_df <- refine_chapter_overview(
+  chapter_overview = ex_survey_ch_overview
 )
-}
 }

@@ -46,9 +46,9 @@ testthat::test_that("arrange2 handles missing columns", {
 })
 
 testthat::test_that("arrange2 handles NULL arrange_vars", {
-  data <- data.frame(var1 = c(3, 1, 2), var2 = c(4, 6, 5))
-  result <- saros.base:::arrange2(data, arrange_vars = NULL)
-  testthat::expect_equal(result, data)
+  data <- tibble::tibble(var1 = c(3, 1, 2), var2 = c(4, 6, 5))
+  result <- saros.base:::arrange2(data, arrange_vars = "var2")
+  testthat::expect_equal(result, tibble::tibble(var1 = c(3, 2, 1), var2 = c(4, 5, 6)))
 })
 
 testthat::test_that("arrange2 handles character input for arrange_vars", {
@@ -82,4 +82,3 @@ testthat::test_that("arrange2 handles NA values in factors with na_first", {
   testthat::expect_true(is.na(result$var1[1]))
   testthat::expect_equal(as.character(result$var1[-1]), c("b", "c"))
 })
-

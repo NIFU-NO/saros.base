@@ -35,6 +35,7 @@ validate_refine_chapter_overview_args <- function(params) {
       sep_obj = list(fun = function(x) is_string(x)),
       sep_chunk = list(fun = function(x) is_string(x)),
       sep_file = list(fun = function(x) is_string(x)),
+      filename_prefix = list(fun = function(x) is_string(x)),
       always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       n_range_glue_template_1 = list(fun = function(x) is_string(x)),
