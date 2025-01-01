@@ -492,5 +492,8 @@ refine_chapter_overview <-
       group_by_vars = organize_by,
       na_first = na_first_in_section
     )
+
+    check_chapter_structure_for_duplicates(chapter_structure = out, organize_by = organize_by)
+
     out
   }
