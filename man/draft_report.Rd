@@ -9,7 +9,7 @@ draft_report(
   chapter_structure,
   ...,
   path = tempdir(),
-  title = "Report",
+  title = NULL,
   authors = NULL,
   authors_col = "author",
   chapter_yaml_file = NULL,
@@ -101,7 +101,7 @@ Path to qmd-snippet placed before/after body of all chapter/index/report qmd-fil
 
 \item{index_filename}{\emph{Index filename}
 
-\verb{scalar<character>} // \emph{default:} \code{"index.qmd"} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{"index"} (\code{optional})
 
 The name of the main index Quarto file used as landing
 page for each report. Will link to a PDF (report.qmd) which collects all chapters.}
@@ -114,7 +114,7 @@ Path to file used to insert header YAML, in index and report files.}
 
 \item{report_filename}{\emph{Report filename}
 
-\verb{scalar<character>} // \emph{default:} \code{"report.qmd"} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{"report"} (\code{optional})
 
 The name of the main report QMD-file used when compiling a complete report
 collecting all chapters in its folder (except itself).

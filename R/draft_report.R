@@ -61,14 +61,14 @@
 #'
 #' @param index_filename *Index filename*
 #'
-#'   `scalar<character>` // *default:* `"index.qmd"` (`optional`)
+#'   `scalar<character>` // *default:* `"index"` (`optional`)
 #'
 #'   The name of the main index Quarto file used as landing
 #'   page for each report. Will link to a PDF (report.qmd) which collects all chapters.
 #'
 #' @param report_filename *Report filename*
 #'
-#'   `scalar<character>` // *default:* `"report.qmd"` (`optional`)
+#'   `scalar<character>` // *default:* `"report"` (`optional`)
 #'
 #'   The name of the main report QMD-file used when compiling a complete report
 #'   collecting all chapters in its folder (except itself).
@@ -198,7 +198,7 @@ draft_report <-
            chapter_structure,
            ...,
            path = tempdir(),
-           title = "Report",
+           title = NULL,
            authors = NULL,
            authors_col = "author",
            chapter_yaml_file = NULL,
