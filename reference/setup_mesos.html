@@ -64,7 +64,8 @@
 <span>  main_files <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"index"</span>, <span class="st">"report"</span><span class="op">)</span>,</span>
 <span>  read_syntax_pattern <span class="op">=</span> <span class="st">"qs::qread\\('"</span>,</span>
 <span>  read_syntax_replacement <span class="op">=</span> <span class="st">"qs::qread('../"</span>,</span>
-<span>  qmd_regex <span class="op">=</span> <span class="st">"\\.qmd"</span></span>
+<span>  qmd_regex <span class="op">=</span> <span class="st">"\\.qmd"</span>,</span>
+<span>  subtitle_separator <span class="op">=</span> <span class="st">" - "</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -94,6 +95,10 @@
 
 <dt id="arg-qmd-regex">qmd_regex<a class="anchor" aria-label="anchor" href="#arg-qmd-regex"></a></dt>
 <dd><p>String. Experimental feature for allowing Rmarkdown, not yet tested.</p></dd>
+
+
+<dt id="arg-subtitle-separator">subtitle_separator<a class="anchor" aria-label="anchor" href="#arg-subtitle-separator"></a></dt>
+<dd><p>String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.</p></dd>
 
 </dl></div>
 
