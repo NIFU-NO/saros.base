@@ -11,7 +11,8 @@ setup_mesos(
   main_files = c("index", "report"),
   read_syntax_pattern = "qs::qread\\\\('",
   read_syntax_replacement = "qs::qread('../",
-  qmd_regex = "\\\\.qmd"
+  qmd_regex = "\\\\.qmd",
+  subtitle_separator = " - "
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ setup_mesos(
 \item{read_syntax_pattern, read_syntax_replacement}{Optional strings, any regex pattern to search and replace in the qmd-files. If NULL, will ignore it.}
 
 \item{qmd_regex}{String. Experimental feature for allowing Rmarkdown, not yet tested.}
+
+\item{subtitle_separator}{String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.}
 }
 \description{
 Simply create qmd-files and yml-files for mesos reports

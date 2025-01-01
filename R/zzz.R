@@ -637,7 +637,7 @@ _{.variable_label_prefix_dep}_
 ```{{r}}
 library(saros)
 library(gt)
-table <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_group, \n\t\tmesos_group = params$mesos_group)
+table <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 gt(table)
 ```
 

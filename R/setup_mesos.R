@@ -20,7 +20,8 @@ search_and_replace_files <- function(
 
 create_mesos_stubs_from_main_files <- function(mesos_df,
                                                main_directory,
-                                               files_to_process) {
+                                               files_to_process,
+                                               subtitle_separator = " - ") {
     for (j in seq_len(length(mesos_df))) {
         mesos_var <- names(mesos_df[[j]])[1]
         mesos_var_pretty <- unname(get_raw_labels(mesos_df[[j]], col_pos = 1))
@@ -53,8 +54,15 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
             mesos_group <- mesos_groups_pretty[i]
 
             # Write _metadata.yml in each mesos_group foldre
+            yml_contents <- list(
+                params = list(mesos_group = mesos_group)
+            )
+            if (rlang::is_string(subtitle_separator)) {
+                yml_contents$title <- mesos_group
+                yml_contents$subtitle <- paste0(basename(main_directory), subtitle_separator, mesos_var_pretty)
+            }
             yaml::write_yaml(
-                x = list(params = list(mesos_group = mesos_group)),
+                x = yml_contents,
                 file = fs::path(mesos_groups_base_paths[i], "_metadata.yml")
             )
             # Write chapter stubs in each mesos_group folder
@@ -84,6 +92,7 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 #' @param main_files Character vector of files for which titles should be set as the mesos_group. Optional but recommended.
 #' @param read_syntax_pattern,read_syntax_replacement Optional strings, any regex pattern to search and replace in the qmd-files. If NULL, will ignore it.
 #' @param qmd_regex String. Experimental feature for allowing Rmarkdown, not yet tested.
+#' @param subtitle_separator String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.
 #' @export
 setup_mesos <- function(
     main_directory,
@@ -92,7 +101,8 @@ setup_mesos <- function(
     main_files = c("index", "report"),
     read_syntax_pattern = "qs::qread\\('",
     read_syntax_replacement = "qs::qread('../",
-    qmd_regex = "\\.qmd") {
+    qmd_regex = "\\.qmd",
+    subtitle_separator = " - ") {
     ## Checks
 
     if (!inherits(main_directory, "character") || length(main_directory) == 0) cli::cli_abort("{.arg main_directory} must be a string, not {.obj_type_friendly {main_directory}}")
@@ -119,7 +129,8 @@ setup_mesos <- function(
     create_mesos_stubs_from_main_files(
         mesos_df = mesos_df,
         main_directory = main_directory,
-        files_to_process = files_to_process
+        files_to_process = files_to_process,
+        subtitle_separator = subtitle_separator
     )
 
     if (is.character(read_syntax_pattern) &&
@@ -131,7 +142,6 @@ setup_mesos <- function(
         )
     }
 
-    cli::cli_inform("Successfully made files!")
 
     list(
         files_renamed = files_to_process

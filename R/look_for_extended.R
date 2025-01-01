@@ -28,12 +28,7 @@ look_for_extended <- function(data,
     .variable_type = .variable_type,
     row.names = NULL
   )
-  check_duplicates <- duplicated(x$.variable_label)
-  if (any(check_duplicates)) {
-    duplicates <- unique(x$.variable_label[check_duplicates])
-    cli::cli_warn(c(i = "Found duplicated variable labels, which will likely cause problems if you only group on variable_label(_prefix):"))
-    cli::cli_ul(duplicates)
-  }
+
 
   if (is.character(name_separator)) {
     if (is.character(names(name_separator)) &&
