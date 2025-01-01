@@ -4,16 +4,17 @@ process_yaml <- function(yaml_file = NULL,
                          authors = NULL,
                          add_fences = TRUE,
                          chapter_number = NA_integer_) {
-
-  if(!is_string(yaml_file)) {
+  if (!is_string(yaml_file)) {
     yaml_section <-
-      list(format = format,
-           echo = FALSE,
-           `fig-dpi` = 800,
-           authors = authors)
+      list(
+        format = format,
+        echo = FALSE,
+        `fig-dpi` = 800,
+        authors = authors
+      )
   } else {
     yaml_section <- yaml::read_yaml(file = yaml_file)
-    if(any(names(yaml_section) == "translations")) {
+    if (any(names(yaml_section) == "translations")) {
       yaml_section$translations <- unlist(yaml_section$translations, recursive = FALSE)
     }
     yaml_section$title <- title
@@ -24,36 +25,38 @@ process_yaml <- function(yaml_file = NULL,
     #                              ignore_null=TRUE)
 
     # if(length(new_title)>0)  yaml_section$title <- new_title
-    if(is.character(authors)) {
+    if (is.character(authors)) {
       yaml_section$authors <- authors
     }
-
   }
   # if(is.null(yaml_section$title)) {
   #   yaml_section$title <-  as.character(chapter_number)
   # }
-  if(is.null(yaml_section$authors) || all(nchar(yaml_section$authors)==0)) {
+  if (is.null(yaml_section$authors) || all(nchar(yaml_section$authors) == 0)) {
     yaml_section$authors <- NULL
   }
-  if(!is.na(chapter_number)) {
+  if (!is.na(chapter_number)) {
     yaml_section[["number-offset"]] <- chapter_number - 1
   }
 
 
   yaml_section <- yaml::as.yaml(yaml_section,
-                               handlers = list(
-    logical = function(x) {
-      result <- ifelse(x, "true", "false")
-      class(result) <- "verbatim"
-      result
-    }))
+    handlers = list(
+      logical = function(x) {
+        result <- ifelse(x, "true", "false")
+        class(result) <- "verbatim"
+        result
+      }
+    )
+  )
 
-  if(add_fences) {
+  if (add_fences) {
     yaml_section <- stringi::stri_c("---",
-                                   yaml_section,
-                                   "---",
-                                   sep="\n",
-                                   ignore_null = TRUE)
+      yaml_section,
+      "---",
+      sep = "\n",
+      ignore_null = TRUE
+    )
   }
   yaml_section
 }
