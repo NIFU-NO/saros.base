@@ -6,17 +6,22 @@
 \usage{
 setup_mesos(
   main_directory,
+  mesos_var_subfolder = "",
   files_to_process,
   mesos_df,
   main_files = c("index", "report"),
   read_syntax_pattern = "qs::qread\\\\('",
   read_syntax_replacement = "qs::qread('../",
   qmd_regex = "\\\\.qmd",
-  subtitle_separator = " - "
+  subtitle_separator = " - ",
+  prefix = "{{< include \\"../",
+  suffix = "\\" >}}"
 )
 }
 \arguments{
 \item{main_directory}{String, path to where the _metadata.yml, stub QMD-files and their subfolders are created.}
+
+\item{mesos_var_subfolder}{String, optional name of a subfolder of the mesos_var folder in where to place all mesos_group folders.}
 
 \item{files_to_process}{Character vector of files used as templates for the mesos stubs.}
 
@@ -29,6 +34,8 @@ setup_mesos(
 \item{qmd_regex}{String. Experimental feature for allowing Rmarkdown, not yet tested.}
 
 \item{subtitle_separator}{String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.}
+
+\item{prefix, suffix}{String for the include section of the stub qmd files.}
 }
 \description{
 Simply create qmd-files and yml-files for mesos reports
