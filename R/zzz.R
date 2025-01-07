@@ -426,7 +426,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
         "
 ::: {{.panel-tabset}}
 
-## Target
+##### Target
 
 ::: {{#fig-{.chunk_name}-target}}
 
@@ -446,7 +446,7 @@ girafe(ggobj = plot)
 :::
 
 
-## Others
+##### Others
 
 ::: {{#fig-{.chunk_name}-others}}
 
@@ -481,7 +481,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
         "
 ::: {{.panel-tabset}}
 
-## Target
+##### Target
 
 ::: {{#fig-{.chunk_name}-target}}
 
@@ -501,7 +501,7 @@ girafe(ggobj = plot)
 :::
 
 
-## Others
+##### Others
 
 ::: {{#fig-{.chunk_name}-others}}
 
@@ -535,7 +535,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_
         "
 ::: {{.panel-tabset}}
 
-## Target
+##### Target
 
 ::: {{#tbl-{.chunk_name}-target}}
 
@@ -553,7 +553,7 @@ gt(table)
 :::
 
 
-## Others
+##### Others
 
 ::: {{#tbl-{.chunk_name}-others}}
 
@@ -586,7 +586,7 @@ _{.variable_label_prefix_dep}_
         "
 ::: {{.panel-tabset}}
 
-## Target
+##### Target
 
 ::: {{#tbl-{.chunk_name}-target}}
 
@@ -604,7 +604,7 @@ gt(table)
 :::
 
 
-## Others
+##### Others
 
 ::: {{#tbl-{.chunk_name}-others}}
 
