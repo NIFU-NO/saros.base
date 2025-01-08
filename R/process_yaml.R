@@ -51,14 +51,18 @@ process_yaml <- function(yaml_file = NULL,
   )
 
   if (add_fences) {
-    yaml_section <- stringi::stri_c("---",
-      yaml_section,
-      "---",
-      sep = "\n",
-      ignore_null = TRUE
-    )
+    yaml_section <- add_yaml_fences(yaml_section)
   }
   yaml_section
+}
+
+add_yaml_fences <- function(x) {
+  stringi::stri_c("---",
+    x,
+    "---",
+    sep = "\n",
+    ignore_null = TRUE
+  )
 }
 
 

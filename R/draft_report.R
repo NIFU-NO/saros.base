@@ -77,6 +77,12 @@
 #'   To turn off, set `pdf=FALSE`.
 #'
 #'
+#' @param report_includes_files *Whether report.qmd includes {{< include chapter.qmd >}}*
+#'
+#'   `scalar<logical>` // *default:* `FALSE`
+#'
+#'   Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.
+#'
 #' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
@@ -212,6 +218,7 @@ draft_report <-
            report_yaml_file = NULL,
            report_qmd_start_section_filepath = NULL,
            report_qmd_end_section_filepath = NULL,
+           report_includes_files = FALSE,
            ignore_heading_for_group = c(
              ".template_name",
              ".variable_type_dep",
@@ -281,6 +288,7 @@ draft_report <-
           qmd_start_section_filepath = args$report_qmd_start_section_filepath,
           qmd_end_section_filepath = args$report_qmd_end_section_filepath,
           chapter_structure = args$chapter_structure,
+          include_files = if (isTRUE(args$report_includes_files)) sort(basename(chapter_filepaths)),
           title = args$title,
           authors = all_authors,
           output_formats = NULL,

@@ -58,6 +58,7 @@ validate_draft_report_args <- function(params) {
       attach_chapter_dataset = list(fun = is_bool),
       require_common_categories = list(fun = is_bool),
       combined_report = list(fun = is_bool),
+      report_includes_files = list(fun = is_bool),
 
       # Numeric and integer
       # hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
