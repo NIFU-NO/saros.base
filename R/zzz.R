@@ -397,7 +397,7 @@ _{.variable_label_prefix_dep}_.
 
 ```{{r}}
 library(gt)
-{.obj_name} <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'), \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
+{.obj_name} <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'),\n\thide_for_crowd_if_valid_n_below = 0,\n\thide_for_crowd_if_category_n_below = 0,\n\thide_for_crowd_if_cell_n_below = 0,\n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
 gt({.obj_name})
 ```
 
@@ -436,7 +436,7 @@ library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd='target', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 nrange <- stringi::stri_c('N = ', n_range2(plot))
 link <- make_link(data = plot$data)
-link_plot <- make_link(data = plot, link_prefix='[PNG](', save_fn = ggsaver)
+link_plot <- make_link(data = plot, link_prefix='[PNG](', \n\t\tfile_suffix = '.png', save_fn = ggsaver)
 x <-  I(paste0(c(nrange, link, link_plot), collapse = ', '))
 girafe(ggobj = plot)
 ```
@@ -456,7 +456,7 @@ library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd='others', \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 nrange <- stringi::stri_c('N = ', n_range2(plot))
 link <- make_link(data = plot$data)
-link_plot <- make_link(data = plot, link_prefix='[PNG](', save_fn = ggsaver)
+link_plot <- make_link(data = plot, link_prefix='[PNG](', \n\t\tfile_suffix = '.png', save_fn = ggsaver)
 x <-  I(paste0(c(nrange, link, link_plot), collapse = ', '))
 girafe(ggobj = plot)
 
@@ -491,7 +491,7 @@ library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_plot_html', \n\tcrowd='target', \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
 nrange <- stringi::stri_c('N = ', n_range2(plot))
 link <- make_link(data = plot$data)
-link_plot <- make_link(data = plot, link_prefix='[PNG](', save_fn = ggsaver)
+link_plot <- make_link(data = plot, link_prefix='[PNG](', \n\t\tfile_suffix = '.png', save_fn = ggsaver)
 x <-  I(paste0(c(nrange, link, link_plot), collapse = ', '))
 girafe(ggobj = plot)
 ```
@@ -511,7 +511,7 @@ library(ggiraph)
 plot <- \n\tmakeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype='cat_plot_html', \n\tcrowd='others', \n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
 nrange <- stringi::stri_c('N = ', n_range2(plot))
 link <- make_link(data = plot$data)
-link_plot <- make_link(data = plot, link_prefix='[PNG](', save_fn = ggsaver)
+link_plot <- make_link(data = plot, link_prefix='[PNG](', \n\t\tfile_suffix = '.png', save_fn = ggsaver)
 x <-  I(paste0(c(nrange, link, link_plot), collapse = ', '))
 girafe(ggobj = plot)
 ```
@@ -520,7 +520,7 @@ girafe(ggobj = plot)
 
 :::
 
-_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_
+_{.variable_label_prefix_dep}_.
 
 :::
 
@@ -571,7 +571,8 @@ gt(table)
 
 :::
 
-_{.variable_label_prefix_dep}_
+_{.variable_label_prefix_dep}_ by _{.variable_label_prefix_dep}_.
+
 
 :::
 
