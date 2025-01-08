@@ -42,12 +42,12 @@ download_zip_to_folder <-
     zip_temp_path <- zip::unzip(zipfile = zip_path, files = files, exdir = tmpfolder, junkpaths = FALSE, overwrite = TRUE)
     folder_in_temp_path <- fs::dir_ls(path = tmpfolder, recurse = FALSE, type = "directory")
     new_files <- fs::dir_ls(folder_in_temp_path, recurse = TRUE, type = "file", all = TRUE)
-    new_files <- gsub(x = new_files, pattern = folder_in_temp_path, replacement = "")
-    new_files <- gsub(x = new_files, pattern = "^/", replacement = "")
+    new_files <- stringi::stri_replace_first_fixed(new_files, pattern = folder_in_temp_path, replacement = "")
+    new_files <- stringi::stri_replace_first_regex(new_files, pattern = "^/", replacement = "")
     dir.create(out_path, showWarnings = FALSE, recursive = TRUE)
     old_files <- fs::dir_ls(out_path, recurse = TRUE, type = "file", all = TRUE)
-    old_files <- gsub(x = old_files, pattern = out_path, replacement = "")
-    old_files <- gsub(x = old_files, pattern = "^/", replacement = "")
+    old_files <- stringi::stri_replace_first_fixed(old_files, pattern = out_path, replacement = "")
+    old_files <- stringi::stri_replace_first_regex(old_files, pattern = "^/", replacement = "")
     intersects <- new_files[new_files %in% old_files]
     if (isTRUE(prompt) && length(intersects) > 0 && isTRUE(overwrite)) {
       cli::cli_inform(intersects)
