@@ -77,7 +77,7 @@
 #'   To turn off, set `pdf=FALSE`.
 #'
 #'
-#' @param report_includes_files *Whether report.qmd includes {{< include chapter.qmd >}}*
+#' @param report_includes_files *Whether report.qmd includes \{\{< include chapter.qmd >\}\}*
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
 #'

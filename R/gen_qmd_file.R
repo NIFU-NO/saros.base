@@ -100,7 +100,7 @@ gen_qmd_file <-
       }
     if (!is.null(include_files)) {
       include_files <-
-        paste('{{< include "', include_files, '">}}', collapse = "\n\n")
+        paste0('{{< include "', include_files, '">}}', collapse = "\n\n")
     }
 
     out <-

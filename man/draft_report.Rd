@@ -23,6 +23,7 @@ draft_report(
   report_yaml_file = NULL,
   report_qmd_start_section_filepath = NULL,
   report_qmd_end_section_filepath = NULL,
+  report_includes_files = FALSE,
   ignore_heading_for_group = c(".template_name", ".variable_type_dep",
     ".variable_type_indep", ".variable_group_dep", "chapter"),
   replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
@@ -121,6 +122,12 @@ collecting all chapters in its folder (except itself).
 If provided, will be linked to in the index.
 If NULL, will generate a filename based on the report title, prefixed with "0_".
 To turn off, set \code{pdf=FALSE}.}
+
+\item{report_includes_files}{\emph{Whether report.qmd includes \{\{< include chapter.qmd >\}\}}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
