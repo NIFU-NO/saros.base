@@ -309,7 +309,7 @@ draft_report <-
         title = args$title,
         authors = all_authors,
         output_formats = if (!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
-        output_filename = args$report_filename,
+        output_filename = stringi::stri_replace_first_regex(str = args$report_filename, pattern = "^_", replacement = ""),
         call = rlang::caller_env()
       )
     processed_files <- c(processed_files, index_filepath)
