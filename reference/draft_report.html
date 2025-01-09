@@ -91,6 +91,7 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 <span>  report_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  report_qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  report_qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  report_includes_files <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".template_name"</span>, <span class="st">".variable_type_dep"</span>,</span>
 <span>    <span class="st">".variable_type_indep"</span>, <span class="st">".variable_group_dep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
 <span>  replace_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.variable_label_suffix_dep <span class="op">=</span> <span class="st">".variable_name_dep"</span>,</span>
@@ -192,6 +193,12 @@ collecting all chapters in its folder (except itself).
 If provided, will be linked to in the index.
 If NULL, will generate a filename based on the report title, prefixed with "0_".
 To turn off, set <code>pdf=FALSE</code>.</p></dd>
+
+
+<dt id="arg-report-includes-files">report_includes_files<a class="anchor" aria-label="anchor" href="#arg-report-includes-files"></a></dt>
+<dd><p><em>Whether report.qmd includes {{&lt; include chapter.qmd &gt;}}</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p>Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.</p></dd>
 
 
 <dt id="arg-ignore-heading-for-group">ignore_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-ignore-heading-for-group"></a></dt>
