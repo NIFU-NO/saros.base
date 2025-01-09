@@ -22,14 +22,13 @@ testthat::test_that("add_chapter_foldername_to_chapter_structure handles charact
 testthat::test_that("add_chapter_foldername_to_chapter_structure handles max_width_folder_name", {
   chapter_structure <- data.frame(chapter = c("This is a long chapter", "This is an even longer chapter", "This is by far the longest chapter"))
   result <- saros.base:::add_chapter_foldername_to_chapter_structure(chapter_structure, max_width_folder_name = 10)
-  testthat::expect_equal(result$.chapter_foldername, c("1_This_is_a_", "2_This_is_an", "3_This_is_by"))
-  testthat::expect_true(all(nchar(result$.chapter_foldername) <= 2+10))
+  testthat::expect_equal(result$.chapter_foldername, c("1_This_is_a", "2_This_is_an", "3_This_is_by"))
+  testthat::expect_true(all(nchar(result$.chapter_foldername) <= 2 + 10))
 })
 
 testthat::test_that("add_chapter_foldername_to_chapter_structure creates unique folder names", {
   chapter_structure <- data.frame(chapter = c("This is a long chapter", "This is a very long chapter", "This is by far the longest chapter"))
   result <- saros.base:::add_chapter_foldername_to_chapter_structure(chapter_structure, max_width_folder_name = 10)
-  testthat::expect_equal(result$.chapter_foldername, c("1_This_is_a_", "2_This_is_a_", "3_This_is_by"))
-  testthat::expect_true(all(nchar(result$.chapter_foldername) <= 2+10))
-
+  testthat::expect_equal(result$.chapter_foldername, c("1_This_is_a", "2_This_is_a", "3_This_is_by"))
+  testthat::expect_true(all(nchar(result$.chapter_foldername) <= 2 + 10))
 })

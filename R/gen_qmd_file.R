@@ -1,5 +1,3 @@
-
-
 #' Generate Quarto Index File That Merges All Chapters
 #'
 #' This function creates an index Quarto file (QMD) that merges all chapters in the specified order. It can also include optional title and author(s) information.
@@ -18,21 +16,20 @@
 #' @return A string containing the filepath to the generated Quarto report file.
 #' @keywords internal
 gen_qmd_file <-
-  function(
-    path = NULL,
-    filename = "report",
-    yaml_file = NULL,
-    qmd_start_section_filepath = NULL,
-    qmd_end_section_filepath = NULL,
-    chapter_structure = NULL,
-    title = NULL,
-    authors = NULL,
-    output_formats = NULL,
-    output_filename = NULL,
-    call = rlang::caller_env()) {
-
-    check_string(path, n = 1, null.ok = TRUE,  call = call)
-    check_string(filename, n = 1, null.ok = TRUE,  call = call)
+  function(path = NULL,
+           filename = "report",
+           yaml_file = NULL,
+           qmd_start_section_filepath = NULL,
+           qmd_end_section_filepath = NULL,
+           chapter_structure = NULL,
+           include_files = NULL,
+           title = NULL,
+           authors = NULL,
+           output_formats = NULL,
+           output_filename = NULL,
+           call = rlang::caller_env()) {
+    check_string(path, n = 1, null.ok = TRUE, call = call)
+    check_string(filename, n = 1, null.ok = TRUE, call = call)
     check_string(yaml_file, n = 1, null.ok = TRUE, call = call)
     check_string(qmd_start_section_filepath, n = 1, null.ok = TRUE, call = call)
     check_string(qmd_end_section_filepath, n = 1, null.ok = TRUE, call = call)
@@ -40,75 +37,92 @@ gen_qmd_file <-
     check_string(authors, n = NULL, null.ok = TRUE, call = call)
     check_string(output_formats, n = NULL, null.ok = TRUE, call = call)
     check_string(output_filename, n = 1, null.ok = TRUE, call = call)
-    if(is.null(title) && is.null(filename)) {
+    if (is.null(title) && is.null(filename)) {
       cli::cli_abort("{.arg filename} and {.arg title} cannot be both `NULL`.")
     }
 
     yaml_section <-
-      process_yaml(yaml_file = yaml_file,
-                   title = title,
-                   authors = authors[!is.na(authors)])
+      process_yaml(
+        yaml_file = yaml_file,
+        title = title,
+        authors = authors[!is.na(authors)]
+      )
 
 
     report_links <-
-      if(is.character(output_filename) &&
-         is.character(output_formats)) {
-
+      if (is.character(output_filename) &&
+        is.character(output_formats)) {
         stringi::stri_c(
-        lapply(output_formats, function(frmt) {
-          if(frmt == "typst") frmt <- "pdf"
+          lapply(output_formats, function(frmt) {
+            if (frmt == "typst") frmt <- "pdf"
 
-          stringi::stri_c("-\t[(", toupper(frmt), ")](", output_filename, ".", frmt, ")")
-        }), collapse="\n")
+            stringi::stri_c("-\t[(", toupper(frmt), ")](", output_filename, ".", frmt, ")")
+          }),
+          collapse = "\n"
+        )
       }
 
-    if(inherits(chapter_structure, "data.frame")) {
+    if (inherits(chapter_structure, "data.frame")) {
       chapter_structure_simplified <-
         collapse_chapter_structure_to_chr(chapter_structure)
     }
 
     qmd_start_section <-
-      if(!is.null(qmd_start_section_filepath)) {
-        out <- stringi::stri_c(collapse="\n",
-                               ignore_null=TRUE,
-                               readLines(con = qmd_start_section_filepath)
-                               )
-        if(inherits(chapter_structure, "data.frame")) {
+      if (!is.null(qmd_start_section_filepath)) {
+        out <- stringi::stri_c(
+          collapse = "\n",
+          ignore_null = TRUE,
+          readLines(con = qmd_start_section_filepath)
+        )
+        if (inherits(chapter_structure, "data.frame")) {
           tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
-                   error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_start_section")))
-        } else out
+            error = function(cnd) glue_err(cnd = cnd, arg_name = paste0(filename, "_qmd_start_section"))
+          )
+        } else {
+          out
+        }
       }
     qmd_end_section <-
-      if(!is.null(qmd_end_section_filepath)) {
+      if (!is.null(qmd_end_section_filepath)) {
         out <-
-          stringi::stri_c(collapse="\n",
-                          ignore_null=TRUE,
-                          readLines(con = qmd_end_section_filepath)
-                          )
-        if(inherits(chapter_structure, "data.frame")) {
+          stringi::stri_c(
+            collapse = "\n",
+            ignore_null = TRUE,
+            readLines(con = qmd_end_section_filepath)
+          )
+        if (inherits(chapter_structure, "data.frame")) {
           tryCatch(glue::glue_data(chapter_structure_simplified, out, .na = ""),
-                   error = function(cnd) glue_err(cnd=cnd, arg_name=paste0(filename, "_qmd_end_section")))
-        } else out
+            error = function(cnd) glue_err(cnd = cnd, arg_name = paste0(filename, "_qmd_end_section"))
+          )
+        } else {
+          out
+        }
       }
-
+    if (!is.null(include_files)) {
+      include_files <-
+        paste0('{{< include "', include_files, '">}}', collapse = "\n\n")
+    }
 
     out <-
-      c(yaml_section, "\n",
+      c(
+        yaml_section, "\n",
         qmd_start_section,
         report_links,
-        qmd_end_section)
+        include_files,
+        qmd_end_section
+      )
     out <- stringi::stri_remove_na(out)
-    out <- stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
+    out <- stringi::stri_c(out, collapse = "\n", ignore_null = TRUE)
     out <- stringi::stri_replace_all_regex(out,
-                                           pattern = "\n{3,}",
-                                           replacement = "\n\n\n")
+      pattern = "\n{3,}",
+      replacement = "\n\n\n"
+    )
     filepath <-
-      if(is.character(filename)) {
+      if (is.character(filename)) {
         file.path(path, stringi::stri_c(filename, ".qmd"))
-      } else if(is.null(filename)) { # Produce unique report file name based on title
+      } else if (is.null(filename)) { # Produce unique report file name based on title
         file.path(path, stringi::stri_c("0_", filename_sanitizer(title), ".qmd", ignore_null = TRUE))
       }
     cat(out, file = filepath, append = FALSE)
     filepath
   }
-

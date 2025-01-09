@@ -5,16 +5,16 @@
 \title{Simply create qmd-files and yml-files for mesos reports}
 \usage{
 setup_mesos(
-  main_directory,
-  mesos_var_subfolder = "",
+  main_directory = character(),
+  mesos_var_subfolder = character(),
   files_to_process,
   mesos_df,
-  main_files = c("index", "report"),
+  files_taking_title = c("index.qmd", "report.qmd"),
   read_syntax_pattern = "qs::qread\\\\('",
-  read_syntax_replacement = "qs::qread('../",
+  read_syntax_replacement = "qs::qread('../../",
   qmd_regex = "\\\\.qmd",
   subtitle_separator = " - ",
-  prefix = "{{< include \\"../",
+  prefix = "{{< include \\"",
   suffix = "\\" >}}"
 )
 }
@@ -27,7 +27,7 @@ setup_mesos(
 
 \item{mesos_df}{List of single-column data frames where each variable is a mesos variable, optionally with a variable label indicating its pretty name. The values in each variable are the mesos groups. NA is silently ignored.}
 
-\item{main_files}{Character vector of files for which titles should be set as the mesos_group. Optional but recommended.}
+\item{files_taking_title}{Character vector of files for which titles should be set. Optional but recommended.}
 
 \item{read_syntax_pattern, read_syntax_replacement}{Optional strings, any regex pattern to search and replace in the qmd-files. If NULL, will ignore it.}
 
