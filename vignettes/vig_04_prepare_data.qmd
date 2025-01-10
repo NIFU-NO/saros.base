@@ -27,7 +27,7 @@ The principles of variable names and variable labels aim to allow Saros to autom
 
  -  Try to avoid letters that look the same in upper and lower case.
 
-    -  See \[standard variable names in longitudinal projects\](vig_05_standard_variable_names.qmd)
+    -  See [standard variable names in longitudinal projects](vig_05_standard_variable_names.qmd)
 
 -   Optimally, all batteries should share the same prefix in the variable name, which is unique from all other batteries/variables. For example, one can name the variables s_100-s_120 for one battery, g_121-g_129 for another battery, etc. and specify that `variable_name_separator = "_"`. However, another equally fine approach is to name variables in a self-explanatory
 
@@ -80,7 +80,7 @@ ex_survey |>
    map(~levels(.x))
 ```
 
--   All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. `character()` or `integer()` (something you should definitely avoid at all costs as it is time-consuming to restore the data.
+-   All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. `character()` or `integer()` (something you should definitely avoid at all costs as it is time-consuming to restore the data).
 
 ```{r}
 data <-
@@ -118,7 +118,7 @@ data <-
 
 Variable labels are typically the actual question formulation in a questionnaire, or a definition of how data has been collected.
 
-- All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the [`{labelled}`](https://cran.r-project.org/web/packages/labelled/index.html) package for functions to easily set labels if something is missing. 
+- All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the [`{labelled}`](https://CRAN.R-project.org/package=labelled) package for functions to easily set labels if something is missing. 
 
 - Note that in R, variable labels are not considered to be still valid if you have changed the variable's content (with e.g. `mutate()`), and **the labels therefore unfortunately disappear**. However, you can copy them back in afterwards with `labelled::copy_labels_from(original_data)`.
 
