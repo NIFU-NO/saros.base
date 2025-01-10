@@ -27,7 +27,7 @@ The principles of variable names and variable labels aim to allow Saros to autom
 
  -  Try to avoid letters that look the same in upper and lower case.
 
-    -  See \[standard variable names in longitudinal projects\](vig_05_standard_variable_names.qmd)
+    -  See [standard variable names in longitudinal projects](vig_05_standard_variable_names.qmd)
 
 -   Optimally, all batteries should share the same prefix in the variable name, which is unique from all other batteries/variables. For example, one can name the variables s_100-s_120 for one battery, g_121-g_129 for another battery, etc. and specify that `variable_name_separator = "_"`. However, another equally fine approach is to name variables in a self-explanatory
 
@@ -80,7 +80,7 @@ ex_survey |>
    map(~levels(.x))
 ```
 
--   All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. `character()` or `integer()` (something you should definitely avoid at all costs as it is time-consuming to restore the data.
+-   All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. `character()` or `integer()` (something you should definitely avoid at all costs as it is time-consuming to restore the data).
 
 ```{r}
 data <-
