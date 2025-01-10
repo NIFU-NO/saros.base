@@ -118,7 +118,7 @@ data <-
 
 Variable labels are typically the actual question formulation in a questionnaire, or a definition of how data has been collected.
 
-- All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the [`{labelled}`](https://cran.r-project.org/web/packages/labelled/index.html) package for functions to easily set labels if something is missing. 
+- All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the [`{labelled}`](https://CRAN.R-project.org/package=labelled) package for functions to easily set labels if something is missing. 
 
 - Note that in R, variable labels are not considered to be still valid if you have changed the variable's content (with e.g. `mutate()`), and **the labels therefore unfortunately disappear**. However, you can copy them back in afterwards with `labelled::copy_labels_from(original_data)`.
 

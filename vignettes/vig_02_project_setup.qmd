@@ -16,7 +16,7 @@ setwd(tempdir())
 # Create a research project folder from scratch
 
 -   The following is intended for creating and maintaining a consistent and well-organized folder structure, based on some international "standards".
--   If you have already set up a project structure or data collection, jump to [step 2]().
+-   If you have already set up a project structure or data collection, jump to @sec-tailor-project-settings.
 
 ## Whatever you chose...
 
@@ -85,7 +85,7 @@ saros.base::initialize_saros_project(
 ```
 
 
-# Tailor project settings 
+# Tailor project settings{#sec-tailor-project-settings}
 
 -   Saros expands upon the inheritance idea in Quarto and allows setting and exempting settings inheritance-wise: organization level, project level, report cycle, chapter and chunk. This means that one can set defaults which can be overridden per project or per report.
 -   For instance, [NIFU](www.nifu.no) sets its organization-level settings that apply to all projects in one global R-file, which contains figure colour palette rules, special functions, and so forth.
