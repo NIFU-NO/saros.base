@@ -11,7 +11,7 @@ Although these are requirements for effective Saros use, there are also general 
 
 # What variables do Saros need?
 
-The data set needs the variables stated in the [chapter overview](vig_05_prepare_chapter_overview.qmd), and possibly the mesos variable if mesos reports are created. Variables that are not used are ignored, but logged in a txt file (and in the R console) when you run `saros.base::draft_report()` so that you can check that things went as expected - maybe you entered the wrong variable name.
+The data set needs the variables stated in the @sec-chapter-overview, and possibly the mesos variable if mesos reports are created. Variables that are not used are ignored, but logged in a txt file (and in the R console) when you run `saros.base::draft_report()` so that you can check that things went as expected - maybe you entered the wrong variable name.
 
 # Variable name {#sec-variable-name}
 
@@ -27,7 +27,7 @@ The principles of variable names and variable labels aim to allow Saros to autom
 
  -  Try to avoid letters that look the same in upper and lower case.
 
-    -  See [standard variable names in longitudinal projects](vig_05_standard_variable_names.qmd)
+    -  See @sec-standard-variable-names 
 
 -   Optimally, all batteries should share the same prefix in the variable name, which is unique from all other batteries/variables. For example, one can name the variables s_100-s_120 for one battery, g_121-g_129 for another battery, etc. and specify that `variable_name_separator = "_"`. However, another equally fine approach is to name variables in a self-explanatory
 

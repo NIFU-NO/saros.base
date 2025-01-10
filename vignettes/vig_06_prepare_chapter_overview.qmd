@@ -6,6 +6,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+# Chapter overview{#sec-chapter-overview}
 The chapter overview can be made when variable names have been determined.
 
 Each report must have a table, where each line is a chapter. This is typically an Excel file that is easy to edit manually, or create a data frame in R. 
