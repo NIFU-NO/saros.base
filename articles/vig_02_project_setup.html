@@ -89,7 +89,7 @@
 </h2>
 <ul>
 <li>The following is intended for creating and maintaining a consistent and well-organized folder structure, based on some international “standards”.</li>
-<li>If you have already set up a project structure or data collection, jump to <a href="">step 2</a>.</li>
+<li>If you have already set up a project structure or data collection, jump to <a href="#sec-tailor-project-settings" class="quarto-xref">Section 2</a>.</li>
 </ul>
 <section class="level2" data-number="1.1"><h3 data-number="1.1" id="whatever-you-chose">
 <span class="header-section-number">1.1</span> Whatever you chose…<a class="anchor" aria-label="anchor" href="#whatever-you-chose"></a>
@@ -154,12 +154,12 @@
 <span>  r_files_out_path <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">saros_folder_name</span>, <span class="va">project_initials</span><span class="op">)</span>, <span class="st">"01_script"</span>, <span class="st">"script_templates"</span><span class="op">)</span>, </span>
 <span>  create <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># SET create = TRUE when you are satisfied with the folder structure</span></span></code></pre></div>
 </div>
-</section></section><section class="section level2" data-number="2"><h2 data-number="2" id="tailor-project-settings">
-<span class="header-section-number">2</span> Tailor project settings<a class="anchor" aria-label="anchor" href="#tailor-project-settings"></a>
+</section></section><section class="section level2" data-number="2"><h2 data-number="2" id="sec-tailor-project-settings">
+<span class="header-section-number">2</span> Tailor project settings<a class="anchor" aria-label="anchor" href="#sec-tailor-project-settings"></a>
 </h2>
 <ul>
 <li>Saros expands upon the inheritance idea in Quarto and allows setting and exempting settings inheritance-wise: organization level, project level, report cycle, chapter and chunk. This means that one can set defaults which can be overridden per project or per report.</li>
-<li>For instance, <a href="www.nifu.no">NIFU</a> sets its organization-level settings that apply to all projects in one global R-file, which contains figure colour palette rules, special functions, and so forth.
+<li>For instance, <a href="https:://www.nifu.no">NIFU</a> sets its organization-level settings that apply to all projects in one global R-file, which contains figure colour palette rules, special functions, and so forth.
 <ul>
 <li>This is currently limited to R-files used for generating reports and for rendering reports. The yaml metadata is currently duplicated per project, and will be in the future centralized in one location.</li>
 </ul>

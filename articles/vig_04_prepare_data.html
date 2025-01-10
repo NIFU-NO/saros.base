@@ -99,7 +99,8 @@
 <li>
 <p>Try to avoid letters that look the same in upper and lower case.</p>
 <ul>
-<li>See [standard variable names in longitudinal projects](vig_05_standard_variable_names.qmd)</li>
+<li>See <a href="vig_05_standard_variable_names.qmd">standard variable names in longitudinal projects</a>
+</li>
 </ul>
 </li>
 <li><p>Optimally, all batteries should share the same prefix in the variable name, which is unique from all other batteries/variables. For example, one can name the variables s_100-s_120 for one battery, g_121-g_129 for another battery, etc. and specify that <code>variable_name_separator = "_"</code>. However, another equally fine approach is to name variables in a self-explanatory</p></li>
@@ -506,7 +507,7 @@ $p_4
 </div>
 </div>
 <ul>
-<li>All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> or <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> (something you should definitely avoid at all costs as it is time-consuming to restore the data.</li>
+<li>All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> or <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> (something you should definitely avoid at all costs as it is time-consuming to restore the data).</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
@@ -540,7 +541,7 @@ $p_4
 </h2>
 <p>Variable labels are typically the actual question formulation in a questionnaire, or a definition of how data has been collected.</p>
 <ul>
-<li><p>All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the <a href="https://cran.r-project.org/web/packages/labelled/index.html" class="external-link"><code>{labelled}</code></a> package for functions to easily set labels if something is missing.</p></li>
+<li><p>All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the <a href="https://CRAN.R-project.org/package=labelled" class="external-link"><code>{labelled}</code></a> package for functions to easily set labels if something is missing.</p></li>
 <li><p>Note that in R, variable labels are not considered to be still valid if you have changed the variable’s content (with e.g. <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate()</a></code>), and <strong>the labels therefore unfortunately disappear</strong>. However, you can copy them back in afterwards with <code>labelled::copy_labels_from(original_data)</code>.</p></li>
 </ul>
 <div class="cell">

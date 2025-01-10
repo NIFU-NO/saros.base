@@ -1,0 +1,25 @@
+---
+title: "Standard variable naming in longitudinal projects"
+vignette: >
+  %\VignetteIndexEntry{Standard variable naming in longitudinal projects}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+::: callout-note
+## Under development
+
+Objectives:
+- Check existing standards and principles used by, for example, the IEA, OECD and Statistics Norway.
+
+:::
+
+
+Although there is no compulsion, there are great advantages over time if the variables are named in a systematic way so that you can later create a pattern for which variables are the same over time, which have changed somewhat but approximately the same, etc. This enables trend displays.
+
+# General advice
+
+- Use English as far as possible
+- Underline to separate words, not lower/uppercase letters. But numbers vs letters can make a difference
+- Avoid years. A survey can last over the New Year. Is it the year of publication, data acquisition, or the "litter" you have indicated?!...
+- Use either cycle numbering, or preferably cohort (year of birth), which is more stable. Alternatively, more information in the dataset's metadata.
