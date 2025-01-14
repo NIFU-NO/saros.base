@@ -122,14 +122,15 @@ create_metadata_yml <- function(main_directory = character(),
     if (length(mesos_groups_pretty) != length(mesos_groups_abbr)) cli::cli_abort("{.arg mesos_groups_pretty} must be of same length as {.arg mesos_groups_abbr}")
     ###
     main_dir <- if (is.null(main_directory)) character() else main_directory
+    mesos_var_subfolder <- if (is.null(mesos_var_subfolder)) character() else mesos_var_subfolder
     base_path <- fs::path_join(stringi::stri_remove_empty_na(c(main_dir, mesos_var, mesos_var_subfolder)))
 
 
-    lapply(mesos_groups_pretty, function(mesos_group) {
-        out <- list(params = list(mesos_group = mesos_group))
+    lapply(mesos_groups_pretty, function(mesos_group_pretty) {
+        out <- list(params = list(mesos_group = mesos_group_pretty))
         if (rlang::is_string(subtitle_separator)) {
             # out$title <- mesos_group
-            out$subtitle <- paste(c(basename(main_dir), mesos_var_pretty, mesos_group), collapse = subtitle_separator)
+            out$subtitle <- paste(c(basename(main_dir), mesos_var_pretty, mesos_group_pretty), collapse = subtitle_separator)
         }
         out
     }) |>
@@ -209,7 +210,7 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
             main_directory = main_directory,
             mesos_var = mesos_var,
             mesos_var_pretty = mesos_var_pretty,
-            mesos_var_subfolder = mesos_var_subfolder,
+            mesos_var_subfolder = mesos_var_subfolders,
             mesos_groups_pretty = mesos_groups_pretty,
             mesos_groups_abbr = mesos_groups_abbr,
             subtitle_separator = subtitle_separator
