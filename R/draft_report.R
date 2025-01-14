@@ -77,11 +77,18 @@
 #'   To turn off, set `pdf=FALSE`.
 #'
 #'
-#' @param report_includes_files *Whether report.qmd includes \{\{< include chapter.qmd >\}\}*
+#' @param report_includes_files *Whether report.qmd includes \{\{< include 'chapter.qmd' >\}\}*
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
 #'
 #'   Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.
+#'
+#'
+#' @param report_includes_prefix,report_includes_suffix *Strings around files in report.qmd*
+#'
+#'   `scalar<string>` // *default:* `"\{\{< include "` and `" >\}\}"`
+#'
+#'   The prefix and suffix for each of the chapters being included in the report.qmd file if `report_includes_files = TRUE`.
 #'
 #' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
 #'
@@ -179,7 +186,6 @@
 #'   `scalar<string>` // *default:* `"data_"`
 #'
 #'
-#'
 #' @importFrom rlang !!!
 #'
 #' @return The `path`-argument.
@@ -239,9 +245,10 @@ draft_report <-
            auxiliary_variables = NULL,
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
            max_path_warning_threshold = 260, # Tidy up argument name: max_width_path_warning. Keep here
-           # Debugging
            filename_prefix = "",
            data_filename_prefix = "data_",
+           report_includes_prefix = '{{< include "',
+           report_includes_suffix = '" >}}',
            log_file = NULL) {
     args <- utils::modifyList(
       as.list(environment()),
@@ -293,6 +300,8 @@ draft_report <-
           authors = all_authors,
           output_formats = NULL,
           output_filename = NULL,
+          includes_prefix = report_includes_prefix,
+          includes_suffix = report_includes_suffix,
           call = rlang::caller_env()
         )
       processed_files <- c(processed_files, report_filepath)

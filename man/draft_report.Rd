@@ -38,6 +38,8 @@ draft_report(
   max_path_warning_threshold = 260,
   filename_prefix = "",
   data_filename_prefix = "data_",
+  report_includes_prefix = "{{< include \\"",
+  report_includes_suffix = "\\" >}}",
   log_file = NULL
 )
 }
@@ -123,7 +125,7 @@ If provided, will be linked to in the index.
 If NULL, will generate a filename based on the report title, prefixed with "0_".
 To turn off, set \code{pdf=FALSE}.}
 
-\item{report_includes_files}{\emph{Whether report.qmd includes \{\{< include chapter.qmd >\}\}}
+\item{report_includes_files}{\emph{Whether report.qmd includes \{\{< include 'chapter.qmd' >\}\}}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE}
 
@@ -209,6 +211,12 @@ For mesos setup it might be useful to set these files (and related sub-folders) 
 \item{data_filename_prefix}{\emph{String attached to beginning of data-file and data-object}
 
 \verb{scalar<string>} // \emph{default:} \code{"data_"}}
+
+\item{report_includes_prefix, report_includes_suffix}{\emph{Strings around files in report.qmd}
+
+\verb{scalar<string>} // \emph{default:} \code{"\\{\\{< include "} and \code{" >\\}\\}"}
+
+The prefix and suffix for each of the chapters being included in the report.qmd file if \code{report_includes_files = TRUE}.}
 
 \item{log_file}{\emph{Path to log file}
 
