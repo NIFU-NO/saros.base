@@ -75,7 +75,7 @@
 
 
 
-      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros.base/blob/main/vignettes/vig_04_prepare_data.qmd" class="external-link"><code>vignettes/vig_04_prepare_data.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros.base/blob/v1.0.0/vignettes/vig_04_prepare_data.qmd" class="external-link"><code>vignettes/vig_04_prepare_data.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -87,7 +87,7 @@
     <p>Although these are requirements for effective Saros use, there are also general good recommendations for documenting data. One should therefore implement the checkpoints from day 1, i.e. already when programming the questionnaire, documenting the instruments used, as well as obtaining register data used to draw samples.</p>
 <section class="section level2"><h2 id="what-variables-do-saros-need">What variables do Saros need?<a class="anchor" aria-label="anchor" href="#what-variables-do-saros-need"></a>
 </h2>
-<p>The data set needs the variables stated in the <a href="vig_05_prepare_chapter_overview.qmd">chapter overview</a>, and possibly the mesos variable if mesos reports are created. Variables that are not used are ignored, but logged in a txt file (and in the R console) when you run <code><a href="../reference/draft_report.html">saros.base::draft_report()</a></code> so that you can check that things went as expected - maybe you entered the wrong variable name.</p>
+<p>The data set needs the variables stated in the <strong>?@sec-chapter-overview</strong>, and possibly the mesos variable if mesos reports are created. Variables that are not used are ignored, but logged in a txt file (and in the R console) when you run <code><a href="../reference/draft_report.html">saros.base::draft_report()</a></code> so that you can check that things went as expected - maybe you entered the wrong variable name.</p>
 </section><section class="section level2"><h2 id="sec-variable-name">Variable name<a class="anchor" aria-label="anchor" href="#sec-variable-name"></a>
 </h2>
 <p>The principles of variable names and variable labels aim to allow Saros to automatically handle similar variables together, and different variables separately. They may seem draconian but ensure that confusion is avoided and Saros offer benefits by cleaning the output for you.</p>
@@ -99,7 +99,7 @@
 <li>
 <p>Try to avoid letters that look the same in upper and lower case.</p>
 <ul>
-<li>See <a href="vig_05_standard_variable_names.qmd">standard variable names in longitudinal projects</a>
+<li>See <strong>?@sec-standard-variable-names</strong>
 </li>
 </ul>
 </li>
