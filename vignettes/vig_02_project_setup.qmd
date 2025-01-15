@@ -88,7 +88,7 @@ saros.base::initialize_saros_project(
 # Tailor project settings{#sec-tailor-project-settings}
 
 -   Saros expands upon the inheritance idea in Quarto and allows setting and exempting settings inheritance-wise: organization level, project level, report cycle, chapter and chunk. This means that one can set defaults which can be overridden per project or per report.
--   For instance, [NIFU](https:://www.nifu.no) sets its organization-level settings that apply to all projects in one global R-file, which contains figure colour palette rules, special functions, and so forth.
+-   For instance, [NIFU](https://www.nifu.no) sets its organization-level settings that apply to all projects in one global R-file, which contains figure colour palette rules, special functions, and so forth.
     -   This is currently limited to R-files used for generating reports and for rendering reports. The yaml metadata is currently duplicated per project, and will be in the future centralized in one location.
 -   File lanes in particular must be standardized across data collection cycles. Avoid that each implementation has its own folder in the project's main folder - experience shows that it is very difficult to keep consistent folder structures across years when you are rarely confronted with how things have been done in the past. Try as much as possible to have the year folder at the bottom of the hierarchy - even if this means that you have to copy a number of subfolders every year.
 

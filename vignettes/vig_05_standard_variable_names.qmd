@@ -13,11 +13,11 @@ Objectives:
 - Check existing standards and principles used by, for example, the IEA, OECD and Statistics Norway.
 
 :::
-
+# Standard variable names in longitudinal projects{#sec-standard-variable-names}
 
 Although there is no compulsion, there are great advantages over time if the variables are named in a systematic way so that you can later create a pattern for which variables are the same over time, which have changed somewhat but approximately the same, etc. This enables trend displays.
 
-# General advice
+## General advice
 
 - Use English as far as possible
 - Underline to separate words, not lower/uppercase letters. But numbers vs letters can make a difference

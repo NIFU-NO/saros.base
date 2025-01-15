@@ -27,6 +27,8 @@ gen_qmd_file <-
            authors = NULL,
            output_formats = NULL,
            output_filename = NULL,
+           includes_prefix = '{{< include "',
+           includes_suffix = '" >}}',
            call = rlang::caller_env()) {
     check_string(path, n = 1, null.ok = TRUE, call = call)
     check_string(filename, n = 1, null.ok = TRUE, call = call)
@@ -100,7 +102,7 @@ gen_qmd_file <-
       }
     if (!is.null(include_files)) {
       include_files <-
-        paste0('{{< include "', include_files, '">}}', collapse = "\n\n")
+        paste0(includes_prefix, include_files, includes_suffix, collapse = "\n\n")
     }
 
     out <-

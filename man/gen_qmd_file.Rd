@@ -16,6 +16,8 @@ gen_qmd_file(
   authors = NULL,
   output_formats = NULL,
   output_filename = NULL,
+  includes_prefix = "{{< include \\"",
+  includes_suffix = "\\" >}}",
   call = rlang::caller_env()
 )
 }
