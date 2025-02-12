@@ -1,3 +1,7 @@
+# saros.base 1.0.1
+
+* Templates for mesos output now include newlines between target and others. Thanks to Jon Furuholt for the suggestion.
+
 # saros.base 1.0.0
 
 ## Major changes
