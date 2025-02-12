@@ -227,6 +227,9 @@ if(!all(sapply(plots, is.null))) {{
 
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
+      '',
+      '\\newpage',
+      '',
       '##### `r .x`',
       '```{{r}}',
       'library(saros)',
@@ -274,6 +277,9 @@ if(!all(sapply(plots, is.null))) {{
 
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
+      '',
+      '\\newpage',
+      '',
       '##### `r .x`',
       '',
       '',
@@ -321,6 +327,9 @@ if(!all(sapply(tbls, is.null))) {{
 
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
+      '',
+      '\\newpage',
+      '',
     '##### `r .x`',
     '',
     '```{{r}}',
@@ -362,6 +371,9 @@ if(!all(sapply(tbls, is.null))) {{
 
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
+      '',
+      '\\newpage',
+      '',
     '##### `r .x`',
     '',
     '```{{r}}',
@@ -445,6 +457,7 @@ girafe(ggobj = plot)
 
 :::
 
+{{{{< pagebreak >}}}}
 
 ##### Others
 
@@ -500,6 +513,7 @@ girafe(ggobj = plot)
 
 :::
 
+{{{{< pagebreak >}}}}
 
 ##### Others
 
@@ -552,6 +566,7 @@ gt(table)
 
 :::
 
+{{{{< pagebreak >}}}}
 
 ##### Others
 
@@ -604,6 +619,7 @@ gt(table)
 
 :::
 
+{{{{< pagebreak >}}}}
 
 ##### Others
 
