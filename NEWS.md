@@ -1,6 +1,7 @@
-# saros.base 1.0.1
+# saros.base 1.1.0
 
 * Templates for mesos output now include newlines between target and others. Thanks to Jon Furuholt for the suggestion.
+* `draft_report()` now has argument `write_qmd` to toggle the creation of qmd-files.
 
 # saros.base 1.0.0
 

@@ -134,6 +134,13 @@
 #'  that prefixes should end with a `\n` as headings must begin on a new line.
 #'
 #'
+#' @param write_qmd *Toggle whether to make qmd-files*
+#'
+#'   `scalar<logical>` // *default:* `TRUE`
+#'
+#'   Sometimes it is useful to only create chapter_dataset files if these have been updated,
+#'   without having to overwrite the qmd files.
+#'
 #' @param attach_chapter_dataset *Toggle inclusion of chapter-specific datasets in qmd-files*
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
@@ -241,6 +248,7 @@ draft_report <-
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
            # Formats and attachments
            combined_report = TRUE,
+           write_qmd = TRUE,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
@@ -277,6 +285,7 @@ draft_report <-
         chapter_yaml_file = args$chapter_yaml_file,
         chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
         chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,
+        write_qmd = args$write_qmd,
         attach_chapter_dataset = args$attach_chapter_dataset,
         auxiliary_variables = args$auxiliary_variables,
         serialized_format = args$serialized_format
