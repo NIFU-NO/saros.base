@@ -77,11 +77,11 @@ arrange_arrangers_and_groups <- function(
   group_by_vars_expr <-
     arrange_expr_producer(
       data = chapter_structure,
-      arrange_vars = arrange_vars,
+      arrange_vars = group_by_vars,
       na_first = na_first
     )
 
-  combined <- c(arrange_vars_expr, group_by_vars_expr)
+  combined <- c(arrange_vars_expr)
   combined <- combined[!duplicated(names(combined))]
 
   data_sorted <- dplyr::arrange(chapter_structure, !!!combined)
