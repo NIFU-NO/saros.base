@@ -4,6 +4,7 @@ CMD
 Codecov
 DOCXs
 Ethon
+Furuholt
 Github
 HOMEPATH
 IEA
@@ -37,6 +38,7 @@ apache
 asis
 basepath
 bcrypt
+bugfixes
 callout
 chr
 cmd
@@ -70,7 +72,6 @@ subfolder
 subfolders
 tibble
 tidyselect
-vig
 yaml
 yml
 ÆØÅ

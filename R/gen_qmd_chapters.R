@@ -28,6 +28,7 @@ gen_qmd_chapters <-
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
+           write_qmd = TRUE,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
            serialized_format = "rds",
@@ -159,7 +160,9 @@ gen_qmd_chapters <-
             replacement = "\n\n\n"
           )
 
-          cat(out, file = chapter_filepath_absolute, append = FALSE)
+          if(isTRUE(write_qmd)) {
+            cat(out, file = chapter_filepath_absolute, append = FALSE)
+          }
 
           chapter_filepath_absolute
         }

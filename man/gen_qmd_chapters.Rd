@@ -16,6 +16,7 @@ gen_qmd_chapters(
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
+  write_qmd = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
   serialized_format = "rds",
@@ -79,6 +80,13 @@ that prefixes should end with a \verb{\\n} as headings must begin on a new line.
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Path to file used to insert header YAML, in each chapter.}
+
+\item{write_qmd}{\emph{Toggle whether to make qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE}
+
+Sometimes it is useful to only create chapter_dataset files if these have been updated,
+without having to overwrite the qmd files.}
 
 \item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
 

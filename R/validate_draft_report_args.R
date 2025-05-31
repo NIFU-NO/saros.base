@@ -57,6 +57,7 @@ validate_draft_report_args <- function(params) {
 
 
       # Boolean
+      write_qmd = list(fun = is_bool),
       attach_chapter_dataset = list(fun = is_bool),
       require_common_categories = list(fun = is_bool),
       combined_report = list(fun = is_bool),

@@ -32,6 +32,7 @@ draft_report(
   suffix_heading_for_group = NULL,
   require_common_categories = TRUE,
   combined_report = TRUE,
+  write_qmd = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
   serialized_format = c("rds", "qs"),
@@ -166,6 +167,13 @@ Whether to check if all items share common categories.}
 
 Whether to create a qmd file that merges all chapters into
 a combined report.}
+
+\item{write_qmd}{\emph{Toggle whether to make qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE}
+
+Sometimes it is useful to only create chapter_dataset files if these have been updated,
+without having to overwrite the qmd files.}
 
 \item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
 
