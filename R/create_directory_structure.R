@@ -124,7 +124,7 @@ find_longest_list_length <- function(lst) {
 #'
 #' @export
 #' @examples
-#' create_directory_structure(path = tempdir())
+#' struct <- create_directory_structure(path = tempdir(), create = FALSE)
 create_directory_structure <- function(
     path,
     structure_path = system.file("templates", "_project_structure_en.yaml", package = "saros.base"),

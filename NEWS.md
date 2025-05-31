@@ -1,5 +1,6 @@
 # saros.base 1.1.0
 
+* `create_directory_structure()` example does not create files and folders on disk to save time. 
 * Templates for mesos output now include newlines between target and others. Thanks to Jon Furuholt for the suggestion.
 * `draft_report()` now has argument `write_qmd` to toggle the creation of qmd-files.
 

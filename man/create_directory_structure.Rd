@@ -49,5 +49,5 @@ No return value, called for side effects
 Create a Pre-defined Directory Hierarchy on Disk
 }
 \examples{
-create_directory_structure(path = tempdir())
+struct <- create_directory_structure(path = tempdir(), create = FALSE)
 }
