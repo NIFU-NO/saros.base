@@ -6,6 +6,7 @@ reference:
 - title: Used to create the structure of your report(s)
   contents: 
   - refine_chapter_overview
+  - check_variable_labels
 - title: Main use
   desc: |
     The only functions you will probably use, in the order listed
