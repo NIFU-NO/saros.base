@@ -2,6 +2,9 @@ search_and_replace_files <- function(
     files,
     pattern,
     replacement) {
+    if (is.null(pattern) || is.null(replacement)) {
+        return(files)
+    }
     if (!is.character(pattern) ||
         !is.character(replacement) ||
         length(pattern) != length(replacement)) {
@@ -153,7 +156,12 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
         if (is.null(mesos_var_pretty)) mesos_var_pretty <- mesos_var
         mesos_groups_pretty <- as.character(mesos_df[[j]][[1]])
         mesos_groups_pretty <- mesos_groups_pretty[!is.na(mesos_groups_pretty)]
-        mesos_groups_abbr <- filename_sanitizer(mesos_groups_pretty, max_chars = 12, accept_hyphen = TRUE, make_unique = TRUE)
+        if (!is.null(mesos_df[[j]][[2]])) {
+            mesos_groups_abbr <- as.character(mesos_df[[j]][[2]])
+            mesos_groups_abbr <- mesos_groups_abbr[!is.na(mesos_groups_abbr)]
+        } else {
+            mesos_groups_abbr <- filename_sanitizer(mesos_groups_pretty, max_chars = 12, accept_hyphen = TRUE, make_unique = TRUE)
+        }
         # mesos_groups_base_paths <- fs::path(main_directory, mesos_var, mesos_var_subfolder, mesos_groups_abbr)
 
         ## Assumes pre-cleaning of mesos_var_subfolder
@@ -266,8 +274,8 @@ setup_mesos <- function(
     }
     if (!is.list(mesos_df)) cli::cli_abort("{.arg mesos_df} must be a list of single-column data.frames, not {.obj_type_friendly {mesos_df}}")
     if (!inherits(files_taking_title, "character")) cli::cli_abort("{.arg files_taking_title} must be a character vector, not a {.obj_type_friendly {files_taking_title}}")
-    if (!inherits(read_syntax_pattern, "character")) cli::cli_abort("{.arg read_syntax_pattern} must be a string (regex), not a {.obj_type_friendly {read_syntax_pattern}}")
-    if (!inherits(read_syntax_replacement, "character")) cli::cli_abort("{.arg read_syntax_replacement} must be a string (regex), not a {.obj_type_friendly {read_syntax_replacement}}")
+    if (!is.null(read_syntax_pattern) && !inherits(read_syntax_pattern, "character")) cli::cli_abort("{.arg read_syntax_pattern} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_pattern}}")
+    if (!is.null(read_syntax_replacement) && !inherits(read_syntax_replacement, "character")) cli::cli_abort("{.arg read_syntax_replacement} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_replacement}}")
     if (!inherits(qmd_regex, "character") || length(qmd_regex) != 1) cli::cli_abort("{.arg qmd_regex} must be a string, not a {.obj_type_friendly {qmd_regex}}")
     if (!inherits(prefix, "character") || length(prefix) != 1) cli::cli_abort("{.arg prefix} must be a string, not a {.obj_type_friendly {prefix}}")
     if (!inherits(suffix, "character") || length(suffix) != 1) cli::cli_abort("{.arg suffix} must be a string, not a {.obj_type_friendly {suffix}}")
@@ -285,7 +293,10 @@ setup_mesos <- function(
     )
 
     if (is.character(read_syntax_pattern) &&
-        is.character(read_syntax_replacement)) {
+        is.character(read_syntax_replacement) &&
+        nchar(read_syntax_pattern) > 0 &&
+        nchar(read_syntax_replacement) > 0) {
+        files_to_process <- list.files
         search_and_replace_files(
             files = files_to_process,
             pattern = read_syntax_pattern,
