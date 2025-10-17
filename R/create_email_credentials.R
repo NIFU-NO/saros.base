@@ -21,6 +21,8 @@ create_email_credentials <-
            ...) {
 
     # MUST READ IN THE PLAINTEXT PASSWORDS WITH THIS FUNCTION
+    if(!username_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {username_col}} in email_data_frame")
+    if(!email_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {email_col}} in email_data_frame")
     credentials <- read_main_password_file(file=local_main_password_path)
 
     colnames(credentials) <- c(username_col, "password")

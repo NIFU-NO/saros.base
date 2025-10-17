@@ -1,7 +1,7 @@
 Type: Package
 Package: saros.base
 Title: Base Tools for Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -26,6 +26,7 @@ BugReports: https://github.com/NIFU-NO/saros.base/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
+    stats,
     utils,
     vctrs,
     rlang,
@@ -61,7 +62,7 @@ SystemRequirements: None.
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Language: en-US
 VignetteBuilder: quarto
