@@ -95,41 +95,18 @@ gen_qmd_chapters <-
           }
 
           ###
-          if (inherits(chapter_structure_chapter, "data.frame")) {
-            chapter_structure_chapter_simplified <-
-              collapse_chapter_structure_to_chr(chapter_structure_chapter)
-          }
+          # Process template sections
+          qmd_start_section <- process_template_section(
+            filepath = chapter_qmd_start_section_filepath,
+            chapter_structure = chapter_structure_chapter,
+            arg_name = "chapter_qmd_start_section"
+          )
 
-          qmd_start_section <-
-            if (rlang::is_string(chapter_qmd_start_section_filepath)) {
-              out <-
-                stringi::stri_c(
-                  collapse = "\n",
-                  ignore_null = TRUE,
-                  readLines(con = chapter_qmd_start_section_filepath)
-                )
-
-              if (inherits(chapter_structure_chapter, "data.frame")) {
-                tryCatch(glue::glue_data(chapter_structure_chapter_simplified, out, .na = ""),
-                  error = function(cnd) glue_err(cnd = cnd, arg_name = "chapter_qmd_start_section")
-                )
-              }
-            }
-
-          qmd_end_section <-
-            if (rlang::is_string(chapter_qmd_end_section_filepath)) {
-              out <-
-                stringi::stri_c(
-                  collapse = "\n",
-                  ignore_null = TRUE,
-                  readLines(con = chapter_qmd_end_section_filepath)
-                )
-              if (inherits(chapter_structure_chapter, "data.frame")) {
-                tryCatch(glue::glue_data(chapter_structure_chapter_simplified, out, .na = ""),
-                  error = function(cnd) glue_err(cnd = cnd, arg_name = "chapter_qmd_end_section")
-                )
-              }
-            }
+          qmd_end_section <- process_template_section(
+            filepath = chapter_qmd_end_section_filepath,
+            chapter_structure = chapter_structure_chapter,
+            arg_name = "chapter_qmd_end_section"
+          )
 
           load_dataset <-
             if (isTRUE(attach_chapter_dataset)) {
@@ -153,14 +130,11 @@ gen_qmd_chapters <-
             chapter_contents,
             qmd_end_section
           )
-          out <- stringi::stri_remove_na(out)
-          out <- stringi::stri_c(out, collapse = "\n", ignore_null = TRUE)
-          out <- stringi::stri_replace_all_regex(out,
-            pattern = "\n{3,}",
-            replacement = "\n\n\n"
-          )
 
-          if(isTRUE(write_qmd)) {
+          # Finalize content
+          out <- finalize_qmd_content(out)
+
+          if (isTRUE(write_qmd)) {
             cat(out, file = chapter_filepath_absolute, append = FALSE)
           }
 

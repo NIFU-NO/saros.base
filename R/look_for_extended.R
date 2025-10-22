@@ -1,3 +1,83 @@
+# Helper function to split variable names or labels using separator
+split_by_separator <- function(x, col_name, separator,
+                               prefix_name, suffix_name,
+                               context = "variable") {
+  if (!is.character(separator)) {
+    # No separator - use the same value for both prefix and suffix
+    x[[prefix_name]] <- x[[col_name]]
+    x[[suffix_name]] <- x[[col_name]]
+    return(x)
+  }
+
+  if (is.character(names(separator)) &&
+    all(c(prefix_name, suffix_name) %in% names(separator))) {
+    # Named separator pattern (regex)
+    x <- tidyr::separate_wider_regex(x,
+      cols = tidyselect::all_of(col_name),
+      patterns = separator,
+      cols_remove = FALSE,
+      too_few = "align_start"
+    )
+  } else if (is_string(separator) && is.null(names(separator))) {
+    # Simple string delimiter
+    x <- tidyr::separate_wider_delim(x,
+      cols = tidyselect::all_of(col_name),
+      delim = separator,
+      names = c(prefix_name, suffix_name),
+      cols_remove = FALSE,
+      too_few = "align_end",
+      too_many = "merge"
+    )
+
+    # Warn if separator appears multiple times
+    if (sum(stringi::stri_count_fixed(
+      str = x[[suffix_name]],
+      pattern = separator
+    ), na.rm = TRUE) > 0) {
+      suggestion <- if (context == "variable") {
+        "Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."
+      } else {
+        "Consider renaming your variables with e.g. {.fun labelled::set_variable_labels}."
+      }
+      cli::cli_warn(c(
+        "{.arg {context}_separator} matches more than one delimiter, your output is likely ugly.",
+        i = suggestion
+      ))
+    }
+  } else {
+    cli::cli_abort("Unrecognizable {.arg {context}_separator}: {separator}.")
+  }
+
+  return(x)
+}
+
+# Helper function to fill missing prefix/suffix values
+fill_missing_prefix_suffix <- function(x) {
+  x |>
+    dplyr::mutate(
+      .variable_name_prefix = dplyr::if_else(
+        is.na(.data$.variable_name_prefix) & !is.na(.data$.variable_name_suffix),
+        .data$.variable_name_suffix,
+        .data$.variable_name_prefix
+      ),
+      .variable_name_suffix = dplyr::if_else(
+        is.na(.data$.variable_name_suffix) & !is.na(.data$.variable_name_prefix),
+        .data$.variable_name_prefix,
+        .data$.variable_name_suffix
+      ),
+      .variable_label_prefix = dplyr::if_else(
+        is.na(.data$.variable_label_prefix) & !is.na(.data$.variable_label_suffix),
+        .data$.variable_label_suffix,
+        .data$.variable_label_prefix
+      ),
+      .variable_label_suffix = dplyr::if_else(
+        is.na(.data$.variable_label_suffix) & !is.na(.data$.variable_label_prefix),
+        .data$.variable_label_prefix,
+        .data$.variable_label_suffix
+      )
+    )
+}
+
 look_for_extended <- function(data,
                               cols = colnames(data),
                               label_separator = NULL,
@@ -29,109 +109,29 @@ look_for_extended <- function(data,
     row.names = NULL
   )
 
+  # Split variable names by separator
+  x <- split_by_separator(x,
+    col_name = ".variable_name",
+    separator = name_separator,
+    prefix_name = ".variable_name_prefix",
+    suffix_name = ".variable_name_suffix",
+    context = "name"
+  )
 
-  if (is.character(name_separator)) {
-    if (is.character(names(name_separator)) &&
-      all(c(".variable_name_prefix", ".variable_name_suffix") %in% names(name_separator))) {
-      x <-
-        tidyr::separate_wider_regex(x,
-          cols = ".variable_name",
-          patterns = name_separator,
-          cols_remove = FALSE,
-          too_few = "align_start"
-        )
-      # if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
-      #   cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
-      #                   i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
-      # }
-    } else if (is_string(name_separator) &&
-      is.null(names(name_separator))) {
-      x <-
-        tidyr::separate_wider_delim(x,
-          cols = ".variable_name",
-          delim = name_separator,
-          names = c(".variable_name_prefix", ".variable_name_suffix"),
-          cols_remove = FALSE,
-          too_few = "align_end",
-          too_many = "merge"
-        )
-      if (sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm = TRUE) > 0) {
-        cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
-          i = "Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."
-        ))
-      }
-    } else {
-      cli::cli_abort("Unrecognizable {.arg name_separator}: {name_separator}.")
-    }
-  } else {
-    x$.variable_name_prefix <- x$.variable_name
-    x$.variable_name_suffix <- x$.variable_name
-  }
+  # Split variable labels by separator
+  x <- split_by_separator(x,
+    col_name = ".variable_label",
+    separator = label_separator,
+    prefix_name = ".variable_label_prefix",
+    suffix_name = ".variable_label_suffix",
+    context = "label"
+  )
 
-  if (is.character(label_separator)) {
-    separator_fun <-
-      if (is.character(names(label_separator)) &&
-        all(c(".variable_label_prefix", ".variable_label_suffix") %in% names(label_separator))) {
-        x <-
-          tidyr::separate_wider_regex(x,
-            cols = ".variable_label",
-            patterns = label_separator,
-            cols_remove = FALSE,
-            too_few = "align_start"
-          )
-      } else if (is_string(label_separator) &&
-        is.null(names(label_separator))) {
-        x <-
-          tidyr::separate_wider_delim(x,
-            cols = ".variable_label",
-            delim = label_separator,
-            names = c(".variable_label_prefix", ".variable_label_suffix"),
-            cols_remove = FALSE,
-            too_few = "align_end",
-            too_many = "merge"
-          )
-        if (sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = label_separator), na.rm = TRUE) > 0) {
-          cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
-            i = "Consider renaming your variables with e.g. {.fun labelled::set_variable_labels}."
-          ))
-        }
-      } else {
-        cli::cli_abort("Unrecognizable {.arg label_separator}: {label_separator}.")
-      }
-  } else {
-    x$.variable_label_prefix <- x$.variable_label
-    x$.variable_label_suffix <- x$.variable_label
-  }
+  # Fill missing prefix/suffix values
+  x <- fill_missing_prefix_suffix(x)
 
-  # grouping_vars <-
-  #   c(
-  #     if (!is.null(label_separator)) ".variable_label_prefix",
-  #     if (!is.null(name_separator)) ".variable_name_prefix"
-  #   )
-
+  # Return organized data frame
   x |>
-    dplyr::mutate(
-      .variable_name_prefix = dplyr::if_else(
-        is.na(.data$.variable_name_prefix) & !is.na(.data$.variable_name_suffix),
-        .data$.variable_name_suffix,
-        .data$.variable_name_prefix
-      ),
-      .variable_name_suffix = dplyr::if_else(
-        is.na(.data$.variable_name_suffix) & !is.na(.data$.variable_name_prefix),
-        .data$.variable_name_prefix,
-        .data$.variable_name_suffix
-      ),
-      .variable_label_prefix = dplyr::if_else(
-        is.na(.data$.variable_label_prefix) & !is.na(.data$.variable_label_suffix),
-        .data$.variable_label_suffix,
-        .data$.variable_label_prefix
-      ),
-      .variable_label_suffix = dplyr::if_else(
-        is.na(.data$.variable_label_suffix) & !is.na(.data$.variable_label_prefix),
-        .data$.variable_label_prefix,
-        .data$.variable_label_suffix
-      ),
-    ) |>
     dplyr::relocate(tidyselect::any_of(c(
       ".variable_position", ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
       ".variable_label", ".variable_label_prefix", ".variable_label_suffix",

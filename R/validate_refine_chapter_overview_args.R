@@ -1,11 +1,16 @@
-validate_refine_chapter_overview_args <- function(params) {
-  unwanted_args <- names(params)[!names(params) %in% c(names(formals(refine_chapter_overview)))]
-  if (length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+# Helper: Check if argument is a scalar finite numeric
+is_scalar_finite_doubleish <- function(x) {
+  is.numeric(x) && length(x) == 1 && is.finite(x)
+}
 
-  env <- lapply(formals(refine_chapter_overview)[!names(formals(refine_chapter_overview)) %in% .saros.env$ignore_args], eval)
-  check_and_abort <- function(target,
-                              param_name,
-                              validation_fun) {
+# Helper: Check if argument is a boolean
+is_bool <- function(x) {
+  is.logical(x) && length(x) == 1 && !is.na(x)
+}
+
+# Helper: Create argument validator with default values
+create_arg_validator <- function(env) {
+  function(target, param_name, validation_fun) {
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
       cli::cli_abort(c("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}).",
@@ -16,73 +21,59 @@ validate_refine_chapter_overview_args <- function(params) {
       target[[param_name]]
     }
   }
-  is_scalar_finite_doubleish <- function(x) {
-    is.numeric(x) && length(x) == 1 && is.finite(x)
-  }
-  is_bool <- function(x) is.logical(x) && length(x) == 1 && !is.na(x)
+}
 
+# Helper: Get validation rules for all parameters
+get_arg_validation_rules <- function(params) {
+  list(
+    # Data frames
+    chapter_overview = list(fun = function(x) inherits(x, "data.frame") && nrow(x) > 0),
+    data = list(fun = function(x) is.null(x) || inherits(x, "data.frame") || inherits(x, "survey")),
+    chunk_templates = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
-  arg_params <-
-    list(
-      # Data frames
-      chapter_overview = list(fun = function(x) inherits(x, "data.frame") && nrow(x) > 0),
-      data = list(fun = function(x) is.null(x) || inherits(x, "data.frame") || inherits(x, "survey")),
-      chunk_templates = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
+    # Character vectors (not enums)
+    label_separator = list(fun = function(x) is.null(x) || is.character(x)),
+    name_separator = list(fun = function(x) is.null(x) || is.character(x)),
+    sep_obj = list(fun = function(x) is_string(x)),
+    sep_chunk = list(fun = function(x) is_string(x)),
+    sep_file = list(fun = function(x) is_string(x)),
+    filename_prefix = list(fun = function(x) is_string(x)),
+    always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+    variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+    n_range_glue_template_1 = list(fun = function(x) is_string(x)),
+    n_range_glue_template_2 = list(fun = function(x) is_string(x)),
+    variable_group_dep = list(fun = function(x) is_string(x)),
+    variable_group_prefix = list(fun = function(x) is.null(x) || is_string(x)),
+    log_file = list(fun = function(x) is.null(x) || is_string(x)),
 
-      # Character vectors (not enums)
-      label_separator = list(fun = function(x) is.null(x) || is.character(x)),
-      name_separator = list(fun = function(x) is.null(x) || is.character(x)),
-      sep_obj = list(fun = function(x) is_string(x)),
-      sep_chunk = list(fun = function(x) is_string(x)),
-      sep_file = list(fun = function(x) is_string(x)),
-      filename_prefix = list(fun = function(x) is_string(x)),
-      always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
-      variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
-      n_range_glue_template_1 = list(fun = function(x) is_string(x)),
-      n_range_glue_template_2 = list(fun = function(x) is_string(x)),
-      variable_group_dep = list(fun = function(x) is_string(x)),
-      variable_group_prefix = list(fun = function(x) is.null(x) || is_string(x)),
-      log_file = list(fun = function(x) is.null(x) || is_string(x)),
+    # Boolean
+    hide_variable_if_all_na = list(fun = is_bool),
+    keep_dep_indep_if_no_overlap = list(fun = is_bool),
+    na_first_in_section = list(fun = is_bool),
+    progress = list(fun = is_bool),
 
+    # Numeric and integer
+    hide_bi_entry_if_sig_above = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
+    hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
+    single_y_bivariates_if_indep_cats_above = list(fun = function(x) length(x) == 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
+    single_y_bivariates_if_deps_above = list(fun = function(x) length(x) == 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
+    max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
+    max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
+    max_width_chunk = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
+    max_width_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
 
-      # Boolean
-      hide_variable_if_all_na = list(fun = is_bool),
-      keep_dep_indep_if_no_overlap = list(fun = is_bool),
-      na_first_in_section = list(fun = is_bool),
-      progress = list(fun = is_bool),
+    # Enums
+    organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
+    arrange_section_by = list(fun = function(x) {
+      is.null(x) ||
+        (is.character(x) && all(x %in% .saros.env$core_chapter_structure_cols)) ||
+        (is.logical(x) && rlang::is_named(x) && all(names(x) %in% .saros.env$core_chapter_structure_cols))
+    })
+  )
+}
 
-      # Numeric and integer
-      hide_bi_entry_if_sig_above = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
-      hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
-      single_y_bivariates_if_indep_cats_above = list(fun = function(x) length(x) == 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
-      single_y_bivariates_if_deps_above = list(fun = function(x) length(x) == 1 && (rlang::is_scalar_integerish(x) && x >= 0) || is.na(x)),
-      max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-      max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-      max_width_chunk = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-      max_width_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-
-      # Enums
-      organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
-      arrange_section_by = list(fun = function(x) {
-        is.null(x) ||
-          (is.character(x) && all(x %in% .saros.env$core_chapter_structure_cols)) ||
-          (is.logical(x) && rlang::is_named(x) && all(names(x) %in% .saros.env$core_chapter_structure_cols))
-      })
-    )
-
-  for (par in names(arg_params)) {
-    params[[par]] <-
-      check_and_abort(
-        target = params,
-        param_name = par,
-        validation_fun = arg_params[[par]]$fun
-      )
-  }
-
-
-  params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
-
-
+# Helper: Validate organize_by and arrange_section_by parameters
+validate_organize_arrange_params <- function(params) {
   if (!all(c("chapter", ".template_name") %in% params$organize_by)) {
     cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.template_name')}}.",
       i = "You provided {.arg {params$organize_by}}."
@@ -99,10 +90,10 @@ validate_refine_chapter_overview_args <- function(params) {
       i = "You provided {.arg {params$arrange_section_by}}."
     ))
   }
+}
 
-  # params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
-
-
+# Helper: Validate chapter_overview parameter
+validate_chapter_overview_param <- function(params) {
   if (all(.saros.env$core_chapter_structure_cols %in% names(params$chapter_overview))) {
     cli::cli_abort("{.arg chapter_overview} is already converted to a chapter_structure.")
   }
@@ -118,6 +109,35 @@ validate_refine_chapter_overview_args <- function(params) {
     params$chapter_overview <- data.frame(chapter = "All", dep = "everything()")
   }
 
-
   params
+}
+
+validate_refine_chapter_overview_args <- function(params) {
+  # Check for unwanted arguments
+  unwanted_args <- names(params)[!names(params) %in% c(names(formals(refine_chapter_overview)))]
+  if (length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+
+  # Get default values and create validator
+  env <- lapply(formals(refine_chapter_overview)[!names(formals(refine_chapter_overview)) %in% .saros.env$ignore_args], eval)
+  check_and_abort <- create_arg_validator(env)
+
+  # Get validation rules and validate all parameters
+  arg_params <- get_arg_validation_rules(params)
+  for (par in names(arg_params)) {
+    params[[par]] <-
+      check_and_abort(
+        target = params,
+        param_name = par,
+        validation_fun = arg_params[[par]]$fun
+      )
+  }
+
+  # Validate chunk templates
+  params$chunk_templates <- validate_chunk_templates(params$chunk_templates)
+
+  # Validate organize_by and arrange_section_by
+  validate_organize_arrange_params(params)
+
+  # Validate chapter_overview and return
+  validate_chapter_overview_param(params)
 }
