@@ -33,3 +33,23 @@ finalize_qmd_content <- function(sections) {
   )
   out
 }
+
+# Helper: Generate markdown links to output files in different formats
+generate_report_links <- function(output_filename, output_formats) {
+  if (!is.character(output_filename) || !is.character(output_formats)) {
+    return(NULL)
+  }
+
+  stringi::stri_c(
+    lapply(output_formats, function(frmt) {
+      # Convert typst to pdf for link purposes
+      display_format <- if (frmt == "typst") "pdf" else frmt
+
+      stringi::stri_c(
+        "-\t[(", toupper(display_format), ")](",
+        output_filename, ".", display_format, ")"
+      )
+    }),
+    collapse = "\n"
+  )
+}

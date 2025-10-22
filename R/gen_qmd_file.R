@@ -50,19 +50,8 @@ gen_qmd_file <-
         authors = authors[!is.na(authors)]
       )
 
-
-    report_links <-
-      if (is.character(output_filename) &&
-        is.character(output_formats)) {
-        stringi::stri_c(
-          lapply(output_formats, function(frmt) {
-            if (frmt == "typst") frmt <- "pdf"
-
-            stringi::stri_c("-\t[(", toupper(frmt), ")](", output_filename, ".", frmt, ")")
-          }),
-          collapse = "\n"
-        )
-      }
+    # Generate links to output files
+    report_links <- generate_report_links(output_filename, output_formats)
 
     # Process template sections
     qmd_start_section <- process_template_section(
