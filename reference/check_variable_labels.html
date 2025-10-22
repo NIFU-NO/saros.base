@@ -60,7 +60,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_variable_labels</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  separator <span class="op">=</span> <span class="st">" - "</span>,</span>
-<span>  special_chars <span class="op">=</span> <span class="st">"[^\\p{L}\\p{N}\\s!?'#%&amp;/()\\[\\]{}=+\\-*]"</span></span>
+<span>  special_chars <span class="op">=</span> <span class="st">"[^\\p{L}\\p{N}\\s!?'#%&amp;/()\\[\\]{}=+\\-*.,:;]"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -107,19 +107,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> b        b                Age integer                  FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> d        d               &lt;NA&gt; integer                   TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> e        e Gender - Male -  2 integer                  FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> f        f Gender - Female... integer                  FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   issue_duplicate_labels issue_multiple_separators issue_whitespace issue_html</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a                   TRUE                     FALSE            FALSE      FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b                   TRUE                     FALSE            FALSE      FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> d                  FALSE                     FALSE            FALSE      FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> e                  FALSE                      TRUE             TRUE      FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> f                  FALSE                     FALSE            FALSE      FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   issue_special_char issue_ellipsis</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a              FALSE          FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b              FALSE          FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> d              FALSE          FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> e              FALSE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> f               TRUE           TRUE</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
