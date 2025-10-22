@@ -2,6 +2,8 @@
 
 ## Testing Workflow
 
+Immediately alert the user if there exist no tests for the given functions they are working on.
+
 ### Quick Testing (Preferred)
 Use this for faster iteration during development:
 ```r
