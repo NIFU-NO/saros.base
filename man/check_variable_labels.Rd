@@ -7,7 +7,7 @@
 check_variable_labels(
   data,
   separator = " - ",
-  special_chars = "[^\\\\p{L}\\\\p{N}\\\\s!?'#\%&/()\\\\[\\\\]{}=+\\\\-*]"
+  special_chars = "[^\\\\p{L}\\\\p{N}\\\\s!?'#\%&/()\\\\[\\\\]{}=+\\\\-*.,:;]"
 )
 }
 \arguments{
