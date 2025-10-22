@@ -1,13 +1,16 @@
-validate_draft_report_args <- function(params) {
-  if (!"data" %in% names(params) || is.null(params$data)) cli::cli_abort("{.arg data} argument must be provided.")
+# Helper: Check if argument is a scalar finite numeric
+is_scalar_finite_doubleish <- function(x) {
+  is.numeric(x) && length(x) == 1 && is.finite(x)
+}
 
-  unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
-  if (length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+# Helper: Check if argument is a boolean
+is_bool <- function(x) {
+  is.logical(x) && length(x) == 1 && !is.na(x)
+}
 
-  env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args], eval)
-  check_and_set_default <- function(target,
-                                    param_name,
-                                    validation_fun) {
+# Helper: Create validator that warns and uses defaults instead of aborting
+create_arg_validator_with_default <- function(env) {
+  function(target, param_name, validation_fun) {
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
       cli::cli_warn(paste0("{.arg {(param_name)}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
@@ -16,60 +19,90 @@ validate_draft_report_args <- function(params) {
       target[[param_name]]
     }
   }
-  is_scalar_finite_doubleish <- function(x) {
-    is.numeric(x) && length(x) == 1 && is.finite(x)
+}
+
+# Helper: Get validation rules for draft_report parameters
+get_draft_report_validation_rules <- function(params, env, core_chapter_structure_cols) {
+  list(
+    # Data frames
+    data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
+    chapter_structure = list(fun = function(x) validate_chapter_structure(x, core_chapter_structure_cols = core_chapter_structure_cols)),
+
+    # Character vectors (not enums)
+    auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+    path = list(fun = function(x) is_string(x)),
+    chapter_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    index_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    report_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    chapter_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    chapter_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    index_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    index_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    report_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    report_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
+    index_filename = list(fun = function(x) is_string(x) || is.null(x)),
+    report_filename = list(fun = function(x) is_string(x) || is.null(x)),
+    ignore_heading_for_group = list(fun = function(x) is.null(x) || is.character(x) && !rlang::is_named(x)),
+    replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+    prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+    suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
+    filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
+    data_filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
+    report_includes_prefix = list(fun = function(x) is_string(x)),
+    report_includes_suffix = list(fun = function(x) is_string(x)),
+    log_file = list(fun = function(x) is.null(x) || is_string(x)),
+
+    # Boolean
+    write_qmd = list(fun = is_bool),
+    attach_chapter_dataset = list(fun = is_bool),
+    require_common_categories = list(fun = is_bool),
+    combined_report = list(fun = is_bool),
+    report_includes_files = list(fun = is_bool),
+
+    # Numeric and integer
+    # hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
+
+    # Enums
+    serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1]))
+  )
+}
+
+# Helper: Validate serialized format and check package availability
+validate_serialized_format <- function(serialized_format) {
+  serialized_format <- serialized_format[1]
+  
+  pkg <- switch(serialized_format,
+    "qs" = "qs",
+    "rds" = "base"
+  )
+  
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg serialized_format}={serialized_format}: {.run [install.packages(pkg)](install.packages())}")
   }
-  is_bool <- function(x) is.logical(x) && length(x) == 1 && !is.na(x)
+  
+  serialized_format
+}
 
-  core_chapter_structure_cols <-
-    .saros.env$core_chapter_structure_cols
+validate_draft_report_args <- function(params) {
+  # Check for required data argument
+  if (!"data" %in% names(params) || is.null(params$data)) {
+    cli::cli_abort("{.arg data} argument must be provided.")
+  }
 
+  # Check for unwanted arguments
+  unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)))]
+  if (length(unwanted_args) > 0) {
+    cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+  }
 
-  arg_params <-
-    list(
-      # Data frames
-      data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
-      chapter_structure = list(fun = function(x) validate_chapter_structure(x, core_chapter_structure_cols = core_chapter_structure_cols)),
+  # Get default values and create validator
+  env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args], eval)
+  check_and_set_default <- create_arg_validator_with_default(env)
 
-      # Character vectors (not enums)
-      auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
-      path = list(fun = function(x) is_string(x)),
-      chapter_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      index_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      report_yaml_file = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      chapter_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      chapter_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      index_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      index_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      report_qmd_start_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      report_qmd_end_section_filepath = list(fun = function(x) is.null(x) || (is_string(x) && file.exists(x))),
-      index_filename = list(fun = function(x) is_string(x) || is.null(x)),
-      report_filename = list(fun = function(x) is_string(x) || is.null(x)),
-      ignore_heading_for_group = list(fun = function(x) is.null(x) || is.character(x) && !rlang::is_named(x)),
-      replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
-      prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
-      suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
-      filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
-      data_filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
-      report_includes_prefix = list(fun = function(x) is_string(x)),
-      report_includes_suffix = list(fun = function(x) is_string(x)),
-      log_file = list(fun = function(x) is.null(x) || is_string(x)),
+  core_chapter_structure_cols <- .saros.env$core_chapter_structure_cols
 
-
-      # Boolean
-      write_qmd = list(fun = is_bool),
-      attach_chapter_dataset = list(fun = is_bool),
-      require_common_categories = list(fun = is_bool),
-      combined_report = list(fun = is_bool),
-      report_includes_files = list(fun = is_bool),
-
-      # Numeric and integer
-      # hide_chunk_if_n_below = list(fun = function(x) rlang::is_scalar_integerish(x) && x >= 0),
-
-      # Enums
-      serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1]))
-    )
-
+  # Get validation rules and validate all parameters
+  arg_params <- get_draft_report_validation_rules(params, env, core_chapter_structure_cols)
   for (par in names(arg_params)) {
     params[[par]] <-
       check_and_set_default(
@@ -79,16 +112,8 @@ validate_draft_report_args <- function(params) {
       )
   }
 
-  params$serialized_format <- params$serialized_format[1]
-
-
-  pkg <- switch(params$serialized_format,
-    "qs" = "qs",
-    "rds" = "base"
-  )
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg serialized_format}={params$serialized_format}: {.run [install.packages(pkg)](install.packages())}")
-  }
+  # Validate serialized format and check package availability
+  params$serialized_format <- validate_serialized_format(params$serialized_format)
 
   params
 }
