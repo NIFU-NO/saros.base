@@ -9,3 +9,5 @@ TODO
 .quarto
 CRAN-SUBMISSION
 copilot-analysis-*.md
+coverage-report.html
+lib

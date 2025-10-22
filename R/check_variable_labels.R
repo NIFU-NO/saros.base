@@ -27,7 +27,7 @@
 
 check_variable_labels <- function(data,
                                   separator = " - ",
-                                  special_chars = "[^\\p{L}\\p{N}\\s!?'#%&/()\\[\\]{}=+\\-*]") {
+                                  special_chars = "[^\\p{L}\\p{N}\\s!?'#%&/()\\[\\]{}=+\\-*.,:;]") {
   stopifnot(is.data.frame(data))
 
 
@@ -47,7 +47,7 @@ check_variable_labels <- function(data,
     issue_whitespace = !is.na(stringi::stri_detect_regex(labels, pattern = "^\\s|\\s$|\\s{2,}")) & stringi::stri_detect_regex(labels, pattern = "^\\s|\\s$|\\s{2,}"),
     issue_html = !is.na(stringi::stri_detect_regex(labels, pattern = "<[^>]+>")) & stringi::stri_detect_regex(labels, pattern = "<[^>]+>"),
     issue_special_char =  !is.na(stringi::stri_detect_regex(labels, pattern = special_chars)) & stringi::stri_detect_regex(labels, pattern = special_chars),
-    issue_ellipsis = !is.na(stringi::stri_detect_regex(labels, pattern = "\\.\\.(?!\\.)|(?<!\\.)\\.\\.\\.")) & stringi::stri_detect_regex(labels, pattern = "\\.\\.(?!\\.)|(?<!\\.)\\.\\.\\.")  # catches .. or more than 3 dots
+    issue_ellipsis = !is.na(stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}")) & stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}")  # catches exactly 2 dots or 4+ dots (not 3)
   )
 
   # Any issue?

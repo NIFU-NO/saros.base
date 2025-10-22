@@ -22,3 +22,5 @@
 data-raw/goodpractice
 air\.toml
 copilot-analysis-.*\.md$
+coverage-report\.html$
+^lib$
