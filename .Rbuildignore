@@ -21,4 +21,4 @@
 ^CRAN-SUBMISSION$
 data-raw/goodpractice
 air\.toml
-.*analysis\.md$
+copilot-analysis-.*\.md$
