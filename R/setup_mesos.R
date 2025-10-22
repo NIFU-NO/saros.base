@@ -21,6 +21,81 @@ search_and_replace_files <- function(
     files
 }
 
+# Helper: Validate input parameters for includes creation
+validate_includes_params <- function(prefix, suffix, files_to_process) {
+    if (!rlang::is_string(prefix)) cli::cli_abort("{.arg prefix} must be a string.")
+    if (!rlang::is_string(suffix)) cli::cli_abort("{.arg suffix} must be a string.")
+    if (missing(files_to_process) || !is.character(files_to_process)) cli::cli_abort("{.arg files_to_process} must be a character vector.")
+}
+
+# Helper: Process filename based on path level
+process_filename_by_level <- function(filename, path_lvl, total_levels, is_child = TRUE) {
+    if (is_child && path_lvl == 1) {
+        # Inner-most child: remove leading underscore
+        stringi::stri_replace_first_regex(filename, pattern = "^_", replacement = "")
+    } else if (is_child && path_lvl != 1) {
+        # Add leading underscore if not present
+        stringi::stri_replace_first_regex(filename, pattern = "^(?!_)", replacement = "_")
+    } else if (!is_child && path_lvl != total_levels) {
+        # Parent file: add leading underscore if not at top level
+        stringi::stri_replace_first_regex(filename, pattern = "^(?!_)", replacement = "_")
+    } else {
+        filename
+    }
+}
+
+# Helper: Create include content with relative path
+create_include_content <- function(filename_parent, path_lvl, prefix, suffix) {
+    relative_path <- paste0(rep("../", times = path_lvl), collapse = "")
+    paste0(prefix, relative_path, filename_parent, suffix)
+}
+
+# Helper: Add title YAML if file requires it
+add_title_if_needed <- function(content, path, mesos_group_pretty, files_taking_title) {
+    if (basename(path) %in% files_taking_title && !is.na(mesos_group_pretty)) {
+        yaml_header <- add_yaml_fences(yaml::as.yaml(list(title = mesos_group_pretty)))
+        paste(yaml_header, content, sep = "\n\n")
+    } else {
+        content
+    }
+}
+
+# Helper: Process a single file at a specific path level
+process_file_at_level <- function(filename_parent, path_lvl, total_levels,
+                                  mesos_groups_abbr, mesos_groups_pretty,
+                                  prefix, suffix, files_taking_title) {
+    filename_child <- process_filename_by_level(filename_parent, path_lvl, total_levels, is_child = TRUE)
+    filename_parent_processed <- process_filename_by_level(filename_parent, path_lvl, total_levels, is_child = FALSE)
+
+    mesos_group <- NA_character_
+    mesos_group_pretty <- NA_character_
+
+    # Add mesos group folders for innermost level
+    if (path_lvl == 1 && length(mesos_groups_abbr) > 0) {
+        mesos_group <- mesos_groups_abbr
+        mesos_group_pretty <- mesos_groups_pretty
+        filename_child <- fs::path(mesos_groups_abbr, filename_child)
+    }
+
+    content <- create_include_content(filename_parent_processed, path_lvl, prefix, suffix)
+
+    data.frame(
+        content = content,
+        mesos_group = mesos_group,
+        mesos_group_pretty = mesos_group_pretty,
+        path = filename_child,
+        stringsAsFactors = FALSE
+    ) |>
+        dplyr::rowwise() |>
+        dplyr::mutate(
+            content = add_title_if_needed(
+                .data$content, .data$path,
+                .data$mesos_group_pretty, files_taking_title
+            )
+        ) |>
+        dplyr::ungroup()
+}
+
 create_includes_content_path_df <-
     function(files_to_process,
              main_directory = character(),
@@ -31,64 +106,28 @@ create_includes_content_path_df <-
              files_taking_title = c("index.qmd", "report.qmd"),
              prefix = '{{< include \"',
              suffix = '\" >}}') {
-        if (!rlang::is_string(prefix)) cli::cli_abort("{.arg prefix} must be a string.")
-        if (!rlang::is_string(suffix)) cli::cli_abort("{.arg suffix} must be a string.")
-        if (missing(files_to_process) || !is.character(files_to_process)) cli::cli_abort("{.arg files_to_process} must be a character vector.")
+        validate_includes_params(prefix, suffix, files_to_process)
+
         ## By design, the order of this vector does not match the working order
-        full_dir_path <- c(main_directory, mesos_var, mesos_var_subfolders, if (length(mesos_groups_abbr) > 0) "")
+        full_dir_path <- c(
+            main_directory, mesos_var, mesos_var_subfolders,
+            if (length(mesos_groups_abbr) > 0) ""
+        )
+        total_levels <- length(full_dir_path)
 
         includes_df <-
             seq_along(full_dir_path) |>
             lapply(FUN = function(path_lvl) {
-                dir_path <- fs::path_join(stringi::stri_remove_empty_na(full_dir_path[seq_len(length(full_dir_path) - path_lvl + 1)]))
+                dir_path <- fs::path_join(stringi::stri_remove_empty_na(
+                    full_dir_path[seq_len(total_levels - path_lvl + 1)]
+                ))
 
                 lapply(files_to_process, function(filename_parent) {
-                    filename_child <- filename_parent
-                    mesos_group <- NA_character_
-                    mesos_group_pretty <- NA_character_
-
-                    if (path_lvl == 1) {
-                        # If inner-most child path, remove leading underscore, and add mesos_group folders
-                        filename_child <-
-                            stringi::stri_replace_first_regex(filename_child,
-                                pattern = "^_",
-                                replacement = ""
-                            )
-                        if (length(mesos_groups_abbr) > 0) {
-                            mesos_group <- mesos_groups_abbr
-                            mesos_group_pretty <- mesos_groups_pretty
-                            filename_child <- fs::path(mesos_groups_abbr, filename_child)
-                        }
-                    } else {
-                        filename_child <-
-                            stringi::stri_replace_first_regex(filename_child,
-                                pattern = , "^(?!_)",
-                                replacement = "_"
-                            )
-                    }
-                    if (path_lvl != length(full_dir_path)) {
-                        filename_parent <-
-                            stringi::stri_replace_first_regex(filename_parent,
-                                pattern = "^(?!_)",
-                                replacement = "_"
-                            )
-                    }
-
-
-                    data.frame(
-                        content = paste0(prefix, paste0(rep("../", times = path_lvl), collapse = ""), filename_parent, suffix),
-                        mesos_group = mesos_group,
-                        mesos_group_pretty = mesos_group_pretty,
-                        path = filename_child
-                    ) |>
-                        dplyr::rowwise() |>
-                        dplyr::mutate(
-                            content = ifelse(basename(.data$path) %in% files_taking_title,
-                                paste(add_yaml_fences(yaml::as.yaml(list(title = .data$mesos_group_pretty))), .data$content, sep = "\n\n"),
-                                .data$content
-                            )
-                        ) |>
-                        dplyr::ungroup()
+                    process_file_at_level(
+                        filename_parent, path_lvl, total_levels,
+                        mesos_groups_abbr, mesos_groups_pretty,
+                        prefix, suffix, files_taking_title
+                    )
                 }) |>
                     dplyr::bind_rows() |>
                     dplyr::mutate(
@@ -96,10 +135,7 @@ create_includes_content_path_df <-
                     )
             }) |>
             dplyr::bind_rows()
-        # if (nrow(includes_df) > 0) {
-        #    includes_df[["content"]] <- paste0(, includes_df[["content"]], )
-        #    includes_df
-        # }
+
         includes_df
     }
 
