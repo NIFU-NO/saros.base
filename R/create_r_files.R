@@ -33,11 +33,6 @@ create_r_files <- function(r_files_out_path,
   data_folders <- data[unique(data$folder_name), ]
 
   for (i in seq_len(nrow(data_folders))) {
-    # if(numbering_prefix %in% c("max_local", "max_global")) {
-    #   data_folders$folder_name <- paste0(seq_along(data_folders$folder_name),
-    #                                      numbering_name_separator,
-    #                                      data_folders$folder_name)
-    # }
     dir.create(path = paste0(r_files_out_path, .Platform$file.sep, data_folders[i, "folder_name"]), showWarnings = FALSE, recursive = TRUE)
     if (r_add_folder_scope_as_README) {
       README_filepath <- file.path(r_files_out_path, data[i, "folder_name"], "README.txt")
@@ -47,7 +42,6 @@ create_r_files <- function(r_files_out_path,
 
 
   # Files stuff
-  counter <- 1
   for (i in seq_len(nrow(data))) {
     r_filepath <- file.path(r_files_out_path, paste0(data[i, "file_name"], ".R"))
     if (!file.exists(r_filepath)) cat(r_prefix_file_scope, data[i, "file_scope"], "\n", file = r_filepath)

@@ -1,4 +1,3 @@
-
 #' Create Data Frame Containing Email Drafts with User Credentials
 #'
 #' @param email_data_frame Data.frame/tibble with (at least) emails and usernames
@@ -12,42 +11,41 @@
 #' @export
 create_email_credentials <-
   function(email_data_frame,
-           email_col= "email",
+           email_col = "email",
            username_col = "username",
            local_main_password_path = ".htpasswd_private",
            ignore_missing_emails = FALSE,
            email_body = "Login credentials are \nUsername: {username},\nPassword: {password}",
            email_subject = "User credentials for website example.net.",
            ...) {
-
     # MUST READ IN THE PLAINTEXT PASSWORDS WITH THIS FUNCTION
-    if(!username_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {username_col}} in email_data_frame")
-    if(!email_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {email_col}} in email_data_frame")
-    credentials <- read_main_password_file(file=local_main_password_path)
+    if (!username_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {username_col}} in email_data_frame")
+    if (!email_col %in% names(email_data_frame)) cli::cli_abort("Cannot find {.var {email_col}} in email_data_frame")
+    credentials <- read_main_password_file(file = local_main_password_path)
 
     colnames(credentials) <- c(username_col, "password")
-    emails <- vctrs::vec_slice(email_data_frame,
-                               !is.na(email_data_frame[[username_col]]) &
-                                 !is.na(email_data_frame[[email_col]]))
+    emails <- vctrs::vec_slice(
+      email_data_frame,
+      !is.na(email_data_frame[[username_col]]) &
+        !is.na(email_data_frame[[email_col]])
+    )
 
     in_email_not_in_cred <- setdiff(emails[[username_col]], credentials[[username_col]])
-    if(length(in_email_not_in_cred)>0) {
+    if (length(in_email_not_in_cred) > 0) {
       cli::cli_warn("Usernames in emails data set not found in password file ({.path {local_main_password_path}}): {in_email_not_in_cred}")
     }
-    # in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
-    # if(length(in_cred_not_in_email)>0 && isFALSE(ignore_missing_emails)) {
-    #   cli::cli_warn("Usernames in password file ({.path {local_main_password_path}}) not found in emails data set: {in_cred_not_in_email}")
-    # }
 
-    out <- dplyr::inner_join(emails, credentials, by=username_col, relationship = "many-to-one")
+
+    out <- dplyr::inner_join(emails, credentials, by = username_col, relationship = "many-to-one")
 
     body <- as.character(glue::glue_data(.x = out, email_body))
-    if(length(body)==1) body <- rep(body, length=nrow(out))
+    if (length(body) == 1) body <- rep(body, length = nrow(out))
     subject <- as.character(glue::glue_data(.x = out, email_subject))
-    if(length(subject)==1) subject <- rep(subject, length=nrow(out))
+    if (length(subject) == 1) subject <- rep(subject, length = nrow(out))
 
-    data.frame(body = body,
-               to = out[[email_col]],
-               subject = subject)
-
+    data.frame(
+      body = body,
+      to = out[[email_col]],
+      subject = subject
+    )
   }
