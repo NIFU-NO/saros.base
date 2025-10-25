@@ -211,15 +211,16 @@ refine_chapter_overview <-
            hide_variable_if_all_na = TRUE,
            keep_dep_indep_if_no_overlap = FALSE,
            organize_by = c(
-             "chapter",
+             ".chapter_number",
              ".variable_label_prefix_dep",
              ".variable_name_indep",
              ".template_name"
            ),
            arrange_section_by = c(
              .chapter_number = FALSE,
-             .variable_name_dep = FALSE,
-             .variable_name_indep = FALSE,
+             chapter = FALSE,
+             .variable_position_dep = FALSE,
+             .variable_position_indep = FALSE,
              .template_name = FALSE
            ),
            na_first_in_section = TRUE,
@@ -286,6 +287,14 @@ refine_chapter_overview <-
 
     present_variable_names <-
       stringi::stri_remove_empty_na(unique(out$.variable_name))
+
+    if (length(present_variable_names) == 0) {
+      # No variables were selected from the provided chapter_overview selectors.
+      # This is almost always unintended (e.g. matches('non_existent_cols')).
+      cli::cli_abort(c("No variables were selected from {.arg chapter_overview$dep}.",
+        i = "This usually means the selector(s) do not match any columns in {.arg data}."
+      ))
+    }
 
     if (length(present_variable_names) > 0) {
       extended_info <-
