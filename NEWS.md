@@ -1,3 +1,6 @@
+# saros.base 1.2.0
+* Added file logging for excluded/ignored variables via `log_file` parameter in `refine_chapter_overview()`. All removal functions now log which variables/entries are excluded and why (all NA, low n, non-significant, no overlap, type mismatch).
+
 # saros.base 1.1.0
 
 * `create_directory_structure()` example does not create files and folders on disk to save time. 
