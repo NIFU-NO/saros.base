@@ -240,6 +240,7 @@ draft_report <-
              "chapter"
            ),
            replace_heading_for_group = c(
+             "chapter" = ".chapter_number",
              ".variable_label_suffix_dep" = ".variable_name_dep",
              ".variable_label_suffix_indep" = ".variable_name_indep"
            ),

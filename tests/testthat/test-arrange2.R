@@ -42,7 +42,7 @@ testthat::test_that("arrange2 handles na_first argument", {
 testthat::test_that("arrange2 handles missing columns", {
   data <- data.frame(var1 = c(3, 1, 2), var2 = c(4, 6, 5))
   arrange_vars <- c("var1", "var3")
-  testthat::expect_error(saros.base:::arrange2(data, arrange_vars), regexp = "`arrange_vars` not found in `data`: var3")
+  testthat::expect_error(saros.base:::arrange2(data, arrange_vars), regexp = "`arrange_vars` not found in `data`: `var3`")
 })
 
 testthat::test_that("arrange2 handles NULL arrange_vars", {

@@ -32,6 +32,7 @@ Sharepoint
 Stata
 SurveyXact
 UoM
+Vectorized
 YAML
 anonymization
 apache
@@ -59,6 +60,7 @@ kbd
 labelled
 mesos
 netlify
+pkgdown
 pre
 programatically
 qmd

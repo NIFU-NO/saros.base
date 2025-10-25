@@ -378,3 +378,10 @@ testthat::test_that("refine_chapter_overview with always_show_bi_for_indep overr
     testthat::expect_true(TRUE)
   }
 })
+
+testthat::test_that("refine_chapter_overview with always_show_bi_for_indep overrides significance filtering", {
+  testthat::expect_error(saros.base::refine_chapter_overview(
+    data = saros.base::ex_survey,
+    chapter_overview = data.frame(chapter = "D", dep = "matches('non_existent_cols')")
+  ), regexp = "No variables were selected from ")
+})

@@ -65,17 +65,15 @@ get_arg_validation_rules <- function(params) {
     # Enums
     organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
     arrange_section_by = list(fun = function(x) {
-      is.null(x) ||
-        (is.character(x) && all(x %in% .saros.env$core_chapter_structure_cols)) ||
-        (is.logical(x) && rlang::is_named(x) && all(names(x) %in% .saros.env$core_chapter_structure_cols))
+      is.null(x) || is.character(x) || (is.logical(x) && rlang::is_named(x))
     })
   )
 }
 
 # Helper: Validate organize_by and arrange_section_by parameters
 validate_organize_arrange_params <- function(params) {
-  if (!all(c("chapter", ".template_name") %in% params$organize_by)) {
-    cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.template_name')}}.",
+  if (!all(c(".template_name") %in% params$organize_by)) {
+    cli::cli_abort(c("{.arg organize_by} must contain {.var {c('.template_name')}}.",
       i = "You provided {.arg {params$organize_by}}."
     ))
   }
@@ -84,12 +82,8 @@ validate_organize_arrange_params <- function(params) {
       i = "You provided {.arg {params$organize_by}}."
     ))
   }
-  if (!all(params$arrange_section_by %in% .saros.env$core_chapter_structure_cols) &&
-    !all(names(params$arrange_section_by %in% .saros.env$core_chapter_structure_cols))) {
-    cli::cli_abort(c("{.arg arrange_section_by} is not valid. Must be one or more of {(.saros.env$core_chapter_structure_cols)}.",
-      i = "You provided {.arg {params$arrange_section_by}}."
-    ))
-  }
+  # Note: arrange_section_by validation is deferred until arrange_arrangers_and_groups()
+  # is called, as it can include any column in the final output dataframe
 }
 
 # Helper: Validate chapter_overview parameter

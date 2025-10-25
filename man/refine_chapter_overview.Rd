@@ -17,10 +17,10 @@ refine_chapter_overview(
   hide_chunk_if_n_below = 10,
   hide_variable_if_all_na = TRUE,
   keep_dep_indep_if_no_overlap = FALSE,
-  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
-    ".template_name"),
-  arrange_section_by = c(.chapter_number = FALSE, .variable_name_dep = FALSE,
-    .variable_name_indep = FALSE, .template_name = FALSE),
+  organize_by = c(".chapter_number", ".variable_label_prefix_dep",
+    ".variable_name_indep", ".template_name"),
+  arrange_section_by = c(.chapter_number = FALSE, chapter = FALSE, .variable_position_dep
+    = FALSE, .variable_position_indep = FALSE, .template_name = FALSE),
   na_first_in_section = TRUE,
   max_width_obj = 128,
   max_width_chunk = 128,
@@ -135,13 +135,15 @@ Whether to keep dep-indep rows if there is no overlap.}
 
 Column names used for identifying chapters and sections.}
 
-\item{arrange_section_by}{\emph{Grouping columns}
+\item{arrange_section_by}{\emph{Sorting columns}
 
 \verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
 
-Column names used for sorting section within each organize_by group. If
-character vector, will assume all are to be arranged in ascending order.
+Column names used for sorting sections within each organize_by group. Can include
+any column present in the output dataframe (both original and generated columns).
+If character vector, will assume all are to be arranged in ascending order.
 If a named logical vector, FALSE will indicate ascending, TRUE descending.
+An error will be thrown if any specified column does not exist in the output.
 Defaults to sorting in ascending order (alphabetical) for commonly needed
 variable name/label info, and in descending order for chunk_templates as one
 typically wants \emph{u}nivariates before \emph{b}ivariates.}

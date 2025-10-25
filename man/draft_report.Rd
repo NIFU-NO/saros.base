@@ -26,8 +26,8 @@ draft_report(
   report_includes_files = FALSE,
   ignore_heading_for_group = c(".template_name", ".variable_type_dep",
     ".variable_type_indep", ".variable_group_dep", "chapter"),
-  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
-    .variable_label_suffix_indep = ".variable_name_indep"),
+  replace_heading_for_group = c(chapter = ".chapter_number", .variable_label_suffix_dep =
+    ".variable_name_dep", .variable_label_suffix_indep = ".variable_name_indep"),
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
   require_common_categories = TRUE,
