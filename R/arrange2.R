@@ -12,9 +12,11 @@ arrange_expr_producer <- function(
   if (is.character(arrange_vars)) {
     arrange_vars <- stats::setNames(rep(FALSE, times = length(arrange_vars)), nm = arrange_vars)
   }
+  
+  # Check that arrange_vars exist in data
   check_arrange_vars <- names(arrange_vars)[!names(arrange_vars) %in% colnames(data)]
   if (length(check_arrange_vars) > 0) {
-    cli::cli_abort("{.arg arrange_vars} not found in {.arg data}: {check_arrange_vars}.")
+    cli::cli_abort("{.arg arrange_vars} not found in {.arg data}: {.var {check_arrange_vars}}.")
   }
 
 

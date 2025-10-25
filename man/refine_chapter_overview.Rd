@@ -135,13 +135,15 @@ Whether to keep dep-indep rows if there is no overlap.}
 
 Column names used for identifying chapters and sections.}
 
-\item{arrange_section_by}{\emph{Grouping columns}
+\item{arrange_section_by}{\emph{Sorting columns}
 
 \verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
 
-Column names used for sorting section within each organize_by group. If
-character vector, will assume all are to be arranged in ascending order.
+Column names used for sorting sections within each organize_by group. Can include
+any column present in the output dataframe (both original and generated columns).
+If character vector, will assume all are to be arranged in ascending order.
 If a named logical vector, FALSE will indicate ascending, TRUE descending.
+An error will be thrown if any specified column does not exist in the output.
 Defaults to sorting in ascending order (alphabetical) for commonly needed
 variable name/label info, and in descending order for chunk_templates as one
 typically wants \emph{u}nivariates before \emph{b}ivariates.}
