@@ -52,8 +52,50 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="sarosbase-120">saros.base 1.2.0<a class="anchor" aria-label="anchor" href="#sarosbase-120"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-2-0"></a></h3>
 <ul><li>Added file logging for excluded/ignored variables via <code>log_file</code> parameter in <code><a href="../reference/refine_chapter_overview.html">refine_chapter_overview()</a></code>. All removal functions now log which variables/entries are excluded and why (all NA, low n, non-significant, no overlap, type mismatch).</li>
+<li>New function <code><a href="../reference/check_variable_labels.html">check_variable_labels()</a></code> to validate variable labels for saros compatibility.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="performance-improvements-1-2-0">Performance improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-1-2-0"></a></h3>
+<ul><li>Vectorized password lookup in <code>refer_main_password_file()</code> for better performance.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-0"></a></h3>
+<ul><li>Fixed regex bugs in <code><a href="../reference/check_variable_labels.html">check_variable_labels()</a></code>.</li>
+<li>Fixed tidyselect warnings in <code>look_for_extended()</code>.</li>
+<li>Improved robustness of <code><a href="../reference/setup_mesos.html">setup_mesos()</a></code>.</li>
+<li>Added validation checks for email and username columns in <code><a href="../reference/create_email_credentials.html">create_email_credentials()</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="code-quality-improvements-1-2-0">Code quality improvements<a class="anchor" aria-label="anchor" href="#code-quality-improvements-1-2-0"></a></h3>
+<ul><li>Refactored long functions by extracting helper functions:
+<ul><li><code>validate_refine_chapter_overview_args()</code></li>
+<li><code>validate_draft_report_args()</code></li>
+<li><code>create_mesos_stubs_from_main_files()</code></li>
+<li><code><a href="../reference/gen_qmd_file.html">gen_qmd_file()</a></code></li>
+<li><code>create_includes_content_path_df()</code></li>
+<li><code>validate_chapter_structure()</code></li>
+<li><code>look_for_extended()</code></li>
+<li><code>process_yaml()</code></li>
+</ul></li>
+<li>Removed broken and unused <code>create_heading()</code> function.</li>
+<li>Removed commented-out and unused code.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="testing-1-2-0">Testing<a class="anchor" aria-label="anchor" href="#testing-1-2-0"></a></h3>
+<ul><li>Added 169 comprehensive tests across multiple modules (from 331 to 500+ tests).</li>
+<li>Added 16 tests for <code><a href="../reference/refine_chapter_overview.html">refine_chapter_overview()</a></code>.</li>
+<li>Added 27 tests for logging functionality.</li>
+<li>Added tests for setup_mesos helper functions, utility functions, access restriction setup, and directory structure helpers.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-1-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/check_variable_labels.html">check_variable_labels()</a></code> to pkgdown reference.</li>
+<li>Added Copilot instructions for testing and git workflows.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="sarosbase-110">saros.base 1.1.0<a class="anchor" aria-label="anchor" href="#sarosbase-110"></a></h2><p class="text-muted">CRAN release: 2025-06-01</p>
 <ul><li>
