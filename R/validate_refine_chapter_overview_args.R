@@ -72,8 +72,8 @@ get_arg_validation_rules <- function(params) {
 
 # Helper: Validate organize_by and arrange_section_by parameters
 validate_organize_arrange_params <- function(params) {
-  if (!all(c("chapter", ".template_name") %in% params$organize_by)) {
-    cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.template_name')}}.",
+  if (!all(c(".template_name") %in% params$organize_by)) {
+    cli::cli_abort(c("{.arg organize_by} must contain {.var {c('.template_name')}}.",
       i = "You provided {.arg {params$organize_by}}."
     ))
   }
