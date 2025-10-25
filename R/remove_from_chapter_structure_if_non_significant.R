@@ -4,6 +4,7 @@ remove_from_chapter_structure_if_non_significant <-
            hide_bi_entry_if_sig_above = .05,
            always_show_bi_for_indep = c(),
            progress = TRUE,
+           log_file = NULL,
            call = rlang::caller_env()) {
     check_data_frame(chapter_structure)
     check_data_frame(data)
@@ -87,7 +88,26 @@ remove_from_chapter_structure_if_non_significant <-
             out_bivariates$.p_value <= hide_bi_entry_if_sig_above) |
             (out_bivariates$.variable_name_indep %in% always_show_bi_for_indep)
 
-        # browser()
+        # Log removed bivariate entries
+        removed_bivariates <- out_bivariates[!out_bivariates$.keep_bi_rows, ]
+        if (nrow(removed_bivariates) > 0) {
+          removed_pairs <- paste0(
+            removed_bivariates$.variable_name_dep,
+            " \u00D7 ",
+            removed_bivariates$.variable_name_indep,
+            " (p=",
+            round(removed_bivariates$.p_value, 3),
+            ")"
+          )
+          cli::cli_inform("Hiding {nrow(removed_bivariates)} non-significant bivariate{?s} (p > {hide_bi_entry_if_sig_above}): {.var {cli::ansi_collapse(removed_pairs, trunc = 100)}}.")
+          if (is_string(log_file)) {
+            cat("\nHiding non-significant bivariate entries (p > ", hide_bi_entry_if_sig_above, "):\n", file = log_file, append = TRUE, sep = "")
+            cat(removed_pairs, sep = "; ", file = log_file, append = TRUE)
+            cat("\n", file = log_file, append = TRUE)
+          }
+        }
+
+
         out_bivariates <- vctrs::vec_slice(out_bivariates,
           out_bivariates$.keep_bi_rows,
           error_call = call

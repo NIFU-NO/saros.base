@@ -14,6 +14,7 @@ log_unused_variables <- function(data,
     if (is_string(log_file)) {
       cat("\nNot using the following variables:\n", file = log_file, append = TRUE)
       cat(not_used_vars, sep = "; ", file = log_file, append = TRUE)
+      cat("\n", file = log_file, append = TRUE)
     }
   }
 }
