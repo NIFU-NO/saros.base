@@ -1,4 +1,4 @@
-remove_from_chapter_structure_if_no_overlap <- function(chapter_structure, data) {
+remove_from_chapter_structure_if_no_overlap <- function(chapter_structure, data, log_file = NULL) {
     if (is.null(chapter_structure) ||
         is.null(chapter_structure$.variable_name_dep) ||
         is.null(chapter_structure$.variable_name_indep)
@@ -29,6 +29,23 @@ remove_from_chapter_structure_if_no_overlap <- function(chapter_structure, data)
     # Create logical vector for all rows
     all_rows_keep <- rep(TRUE, nrow(chapter_structure))
     all_rows_keep[rows_with_both] <- to_keep
+
+    # Log removed entries
+    removed_entries <- chapter_structure[!all_rows_keep, ]
+    if (nrow(removed_entries) > 0) {
+        removed_pairs <- paste0(
+            removed_entries$.variable_name_dep,
+            " \u00D7 ",
+            removed_entries$.variable_name_indep,
+            " (no overlap)"
+        )
+        cli::cli_inform("Hiding {nrow(removed_entries)} bivariate{?s} with no non-NA overlap: {.var {cli::ansi_collapse(removed_pairs, trunc = 100)}}.")
+        if (is_string(log_file)) {
+            cat("\nHiding bivariate entries with no non-NA overlap:\n", file = log_file, append = TRUE)
+            cat(removed_pairs, sep = "; ", file = log_file, append = TRUE)
+            cat("\n", file = log_file, append = TRUE)
+        }
+    }
 
     # Filter the chapter_structure, ensuring we maintain data.frame/tibble properties
     chapter_structure[all_rows_keep, , drop = FALSE]

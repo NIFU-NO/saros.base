@@ -278,7 +278,8 @@ refine_chapter_overview <-
     out <- remove_from_chapter_structure_if_all_na(
       chapter_structure = out,
       data = data,
-      hide_variable_if_all_na = hide_variable_if_all_na
+      hide_variable_if_all_na = hide_variable_if_all_na,
+      log_file = log_file
     )
 
     present_variable_names <-
@@ -314,7 +315,8 @@ refine_chapter_overview <-
           data = data,
           hide_bi_entry_if_sig_above = hide_bi_entry_if_sig_above,
           always_show_bi_for_indep = always_show_bi_for_indep,
-          progress = progress
+          progress = progress,
+          log_file = log_file
         )
 
 
@@ -323,7 +325,7 @@ refine_chapter_overview <-
           chapter_structure = out,
           chunk_templates = chunk_templates
         )
-      out <- remove_from_chapter_structure_if_no_type_match(out)
+      out <- remove_from_chapter_structure_if_no_type_match(out, log_file = log_file)
 
       if (nrow(out) == 0) {
         return(out)
@@ -382,7 +384,8 @@ refine_chapter_overview <-
       remove_from_chapter_structure_if_n_below(
         chapter_structure = out,
         n_variable_name = ".n",
-        hide_chunk_if_n_below = hide_chunk_if_n_below
+        hide_chunk_if_n_below = hide_chunk_if_n_below,
+        log_file = log_file
       )
 
     out <-
@@ -482,7 +485,8 @@ refine_chapter_overview <-
       out <-
         remove_from_chapter_structure_if_no_overlap(
           chapter_structure = out, # Current
-          data = data
+          data = data,
+          log_file = log_file
         )
     }
 
