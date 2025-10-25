@@ -1,5 +1,40 @@
 # saros.base 1.2.0
+
+## New features
 * Added file logging for excluded/ignored variables via `log_file` parameter in `refine_chapter_overview()`. All removal functions now log which variables/entries are excluded and why (all NA, low n, non-significant, no overlap, type mismatch).
+* New function `check_variable_labels()` to validate variable labels for saros compatibility.
+
+## Performance improvements
+* Vectorized password lookup in `refer_main_password_file()` for better performance.
+
+## Bug fixes
+* Fixed regex bugs in `check_variable_labels()`.
+* Fixed tidyselect warnings in `look_for_extended()`.
+* Improved robustness of `setup_mesos()`.
+* Added validation checks for email and username columns in `create_email_credentials()`.
+
+## Code quality improvements
+* Refactored long functions by extracting helper functions:
+  - `validate_refine_chapter_overview_args()`
+  - `validate_draft_report_args()`
+  - `create_mesos_stubs_from_main_files()`
+  - `gen_qmd_file()`
+  - `create_includes_content_path_df()`
+  - `validate_chapter_structure()`
+  - `look_for_extended()`
+  - `process_yaml()`
+* Removed broken and unused `create_heading()` function.
+* Removed commented-out and unused code.
+
+## Testing
+* Added 169 comprehensive tests across multiple modules (from 331 to 500+ tests).
+* Added 16 tests for `refine_chapter_overview()`.
+* Added 27 tests for logging functionality.
+* Added tests for setup_mesos helper functions, utility functions, access restriction setup, and directory structure helpers.
+
+## Documentation
+* Added `check_variable_labels()` to pkgdown reference.
+* Added Copilot instructions for testing and git workflows.
 
 # saros.base 1.1.0
 
