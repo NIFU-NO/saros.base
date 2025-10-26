@@ -188,7 +188,41 @@
 #'
 #'   Glue templates for the n_range columns to be created.
 #'
-#' @return Grouped tibble.
+#' @return
+#' A grouped tibble (data.frame) with columns that fall into two main categories:
+#'
+#' **Input columns (from user data):**
+#' - `chapter` (character): Chapter name (input)
+#' - `dep` (character): Dependent variable selector (input)
+#' - `indep` (character, optional): Independent variable selector (input)
+#'
+#' **Constructed columns (all start with a dot):**
+#' - `.variable_name`, `.variable_position` (character/integer): Variable name and position
+#' - `.variable_label`, `.variable_label_prefix`, `.variable_label_suffix` (character): Variable label and its components
+#' - `.variable_type`, `.variable_type_dep`, `.variable_type_indep` (character): Variable type(s)
+#' - `.variable_name_dep`, `.variable_name_indep` (character): Names of dependent/independent variables
+#' - `.variable_label_prefix_dep`, `.variable_label_prefix_indep` (character): Label prefixes for dep/indep
+#' - `.variable_group_dep` (character/factor): Grouping variable for bivariate analysis
+#' - `.variable_group_id` (integer): Numeric group identifier for bivariate analysis
+#' - `.chapter_number` (integer): Chapter number
+#' - `.template_name` (character): Name of chunk template used
+#' - `.obj_name`, `.chunk_name`, `.file_name` (character): Object, chunk, and file names (for output)
+#' - `.n`, `.n_range` (integer/character): Sample size and range
+#' - `.n_cats_dep`, `.n_cats_indep` (integer): Number of categories for dep/indep
+#' - `.max_chars_labels_dep`, `.max_chars_labels_indep` (integer): Max label length for dep/indep
+#' - `.max_chars_cats_dep`, `.max_chars_cats_indep` (integer): Max category label length for dep/indep
+#' - `.n_dep`, `.n_indep` (integer): Number of dep/indep variables in group
+#' - `.bi_test`, `.p_value` (character/numeric): Statistical test name and p-value for bivariates
+#' - `.keep_bi_rows` (logical): Whether bivariate row is kept
+#' - Other columns may be present depending on chunk templates and options.
+#'
+#' **Row count estimate:**
+#' - The number of rows in the output depends on the number of chapters, dep/indep combinations, and chunk templates. Typically, it is the sum of all unique variable combinations specified in `chapter_overview`, expanded by chunk templates and filtered by significance and other options. For a simple overview, expect one row per variable per chapter; for bivariates, one row per dep-indep pair.
+#'
+#' **Grouping variables:**
+#' - The columns used for grouping (i.e., `dplyr::grouped_df`) are determined by the `organize_by` argument. By default, this includes `.chapter_number`, `.variable_label_prefix_dep`, `.variable_name_indep`, and `.template_name`, but can be customized. These columns define how the output is grouped for further analysis or reporting.
+#'
+#' See function source and documentation for details on each column's meaning and usage.
 #' @export
 #'
 #' @examples
