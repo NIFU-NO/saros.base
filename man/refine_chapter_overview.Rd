@@ -229,7 +229,48 @@ Glue templates for the n_range columns to be created.}
 Path to log file. Set to NULL to disable logging.}
 }
 \value{
-Grouped tibble.
+A grouped tibble (data.frame) with columns that fall into two main categories:
+
+\strong{Input columns (from user data):}
+\itemize{
+\item \code{chapter} (character): Chapter name (input)
+\item \code{dep} (character): Dependent variable selector (input)
+\item \code{indep} (character, optional): Independent variable selector (input)
+}
+
+\strong{Constructed columns (all start with a dot):}
+\itemize{
+\item \code{.variable_name}, \code{.variable_position} (character/integer): Variable name and position
+\item \code{.variable_label}, \code{.variable_label_prefix}, \code{.variable_label_suffix} (character): Variable label and its components
+\item \code{.variable_type}, \code{.variable_type_dep}, \code{.variable_type_indep} (character): Variable type(s)
+\item \code{.variable_name_dep}, \code{.variable_name_indep} (character): Names of dependent/independent variables
+\item \code{.variable_label_prefix_dep}, \code{.variable_label_prefix_indep} (character): Label prefixes for dep/indep
+\item \code{.variable_group_dep} (character/factor): Grouping variable for bivariate analysis
+\item \code{.variable_group_id} (integer): Numeric group identifier for bivariate analysis
+\item \code{.chapter_number} (integer): Chapter number
+\item \code{.template_name} (character): Name of chunk template used
+\item \code{.obj_name}, \code{.chunk_name}, \code{.file_name} (character): Object, chunk, and file names (for output)
+\item \code{.n}, \code{.n_range} (integer/character): Sample size and range
+\item \code{.n_cats_dep}, \code{.n_cats_indep} (integer): Number of categories for dep/indep
+\item \code{.max_chars_labels_dep}, \code{.max_chars_labels_indep} (integer): Max label length for dep/indep
+\item \code{.max_chars_cats_dep}, \code{.max_chars_cats_indep} (integer): Max category label length for dep/indep
+\item \code{.n_dep}, \code{.n_indep} (integer): Number of dep/indep variables in group
+\item \code{.bi_test}, \code{.p_value} (character/numeric): Statistical test name and p-value for bivariates
+\item \code{.keep_bi_rows} (logical): Whether bivariate row is kept
+\item Other columns may be present depending on chunk templates and options.
+}
+
+\strong{Row count estimate:}
+\itemize{
+\item The number of rows in the output depends on the number of chapters, dep/indep combinations, and chunk templates. Typically, it is the sum of all unique variable combinations specified in \code{chapter_overview}, expanded by chunk templates and filtered by significance and other options. For a simple overview, expect one row per variable per chapter; for bivariates, one row per dep-indep pair.
+}
+
+\strong{Grouping variables:}
+\itemize{
+\item The columns used for grouping (i.e., \code{dplyr::grouped_df}) are determined by the \code{organize_by} argument. By default, this includes \code{.chapter_number}, \code{.variable_label_prefix_dep}, \code{.variable_name_indep}, and \code{.template_name}, but can be customized. These columns define how the output is grouped for further analysis or reporting.
+}
+
+See function source and documentation for details on each column's meaning and usage.
 }
 \description{
 Processes A 'chapter_overview' Data Frame
