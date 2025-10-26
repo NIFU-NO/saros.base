@@ -249,6 +249,11 @@ refine_chapter_overview <-
 
     # Things changed during validate_refine_chapter_overview_args should be set anew here:
     out <- args$chapter_overview
+    # Allow chapter to be factor, convert to character for downstream compatibility
+    if ("chapter" %in% names(out) && is.factor(out$chapter)) {
+      out$chapter <- as.character(out$chapter)
+    }
+
     chunk_templates <- args$chunk_templates
 
     if (is.null(data)) arrange_section_by <- NULL
