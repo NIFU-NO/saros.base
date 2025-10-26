@@ -14,6 +14,7 @@
 #' @param append_users Boolean, if TRUE (default) will create new users and add them to local_main_password_path. See also password_input.
 #' @param password_input String, either "prompt" which asks the user for input. Alternatively, a number stored as string for a generated random password of said length: "8", "10", "12", "16"
 #' @param type Character vector. "netlify" will create _headers file used for Netlify. "apache" will create .htaccess and .htpasswd files used for general FTP-servers.
+#' @param create_main_htaccess Logical. If TRUE, creates a main .htaccess file in local_basepath with security headers (HSTS, X-Content-Type-Options, X-Frame-Options, etc.). Only applicable when type includes "apache". Default is FALSE.
 #'
 #' @return String, the path to the newly created _headers-file or .htaccess files.
 #' @export
@@ -27,7 +28,8 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                                       log_rounds = 12,
                                       append_users = TRUE,
                                       password_input = "prompt",
-                                      type = c("netlify", "apache")) {
+                                      type = c("netlify", "apache"),
+                                      create_main_htaccess = FALSE) {
 
   remote_basepath <- stringi::stri_replace_last_regex(remote_basepath, pattern = "/", "")
 
@@ -65,7 +67,8 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                     universal_usernames = universal_usernames,
                     log_rounds = log_rounds,
                     append_users = append_users,
-                    password_input = password_input)
+                    password_input = password_input,
+                    create_main_htaccess = create_main_htaccess)
   }
 
 }
