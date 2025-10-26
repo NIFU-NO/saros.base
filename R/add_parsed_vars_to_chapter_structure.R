@@ -1,15 +1,11 @@
 add_parsed_vars_to_chapter_structure <-
   function(chapter_structure,
-           data) {
+           data,
+           call = rlang::caller_env()) {
     chapter_structure$.variable_selection <-
       stringi::stri_replace_all_fixed(chapter_structure$.variable_selection,
         pattern = '\"',
         replacement = "'"
-      )
-    chapter_structure$.variable_selection <-
-      stringi::stri_replace_all_regex(chapter_structure$.variable_selection,
-        pattern = "[[:space:],]+",
-        replacement = ","
       )
 
     chapter_structure$.cols <-

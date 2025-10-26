@@ -385,3 +385,38 @@ testthat::test_that("refine_chapter_overview with always_show_bi_for_indep overr
     chapter_overview = data.frame(chapter = "D", dep = "matches('non_existent_cols')")
   ), regexp = "No variables were selected from ")
 })
+
+testthat::test_that("refine_chapter_overview handles variable names with spaces (GH #151)", {
+  # Create test data with variable names containing spaces
+  test_data <- data.frame(
+    `var with space` = factor(c("A", "B", "C", "A", "B")),
+    normal_var = factor(c("X", "Y", "X", "Y", "X")),
+    check.names = FALSE
+  )
+  
+  # Add labels
+  attr(test_data$`var with space`, "label") <- "Variable with space"
+  attr(test_data$normal_var, "label") <- "Normal variable"
+  
+  ch_overview <- data.frame(
+    chapter = "Test",
+    dep = "`var with space`, normal_var",
+    stringsAsFactors = FALSE
+  )
+  
+  # Test the core processing: add_core_info_to_chapter_structure
+  # This is where the fix is applied
+  result_core <- saros.base:::add_core_info_to_chapter_structure(ch_overview)
+  
+  # Should have correctly split by comma, preserving the space in the backtick-quoted name
+  testthat::expect_true("`var with space`" %in% result_core$.variable_selection)
+  testthat::expect_true("normal_var" %in% result_core$.variable_selection)
+  testthat::expect_equal(nrow(result_core), 2)
+  
+  # Test add_parsed_vars_to_chapter_structure
+  result_parsed <- saros.base:::add_parsed_vars_to_chapter_structure(result_core, test_data)
+  
+  # Verify the variable name is correctly extracted (without backticks)
+  testthat::expect_true("var with space" %in% result_parsed$.variable_name)
+  testthat::expect_true("normal_var" %in% result_parsed$.variable_name)
+})
