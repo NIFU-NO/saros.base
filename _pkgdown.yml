@@ -13,6 +13,7 @@ reference:
   contents: 
   - draft_report
   - setup_mesos
+  - setup_mesos_structure
 - title: Post-processing tools (possibly movin to a Quarto extension at a later stage)
   contents:
   - remove_entry_from_sidebar
