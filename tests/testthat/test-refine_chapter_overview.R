@@ -1,3 +1,17 @@
+testthat::test_that("refine_chapter_overview allows chapter as factor (GH #109)", {
+  ch_overview <- data.frame(
+    chapter = factor(c("A", "B")),
+    dep = c("b_1", "b_2"),
+    stringsAsFactors = FALSE
+  )
+  result <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = saros.base::ex_survey,
+    progress = FALSE
+  )
+  testthat::expect_true(all(result$chapter %in% c("A", "B")))
+  testthat::expect_equal(class(result$chapter), "factor")
+})
 testthat::test_that("eval_cols", {
   x <-
     saros.base:::eval_cols(
@@ -393,29 +407,29 @@ testthat::test_that("refine_chapter_overview handles variable names with spaces 
     normal_var = factor(c("X", "Y", "X", "Y", "X")),
     check.names = FALSE
   )
-  
+
   # Add labels
   attr(test_data$`var with space`, "label") <- "Variable with space"
   attr(test_data$normal_var, "label") <- "Normal variable"
-  
+
   ch_overview <- data.frame(
     chapter = "Test",
     dep = "`var with space`, normal_var",
     stringsAsFactors = FALSE
   )
-  
+
   # Test the core processing: add_core_info_to_chapter_structure
   # This is where the fix is applied
   result_core <- saros.base:::add_core_info_to_chapter_structure(ch_overview)
-  
+
   # Should have correctly split by comma, preserving the space in the backtick-quoted name
   testthat::expect_true("`var with space`" %in% result_core$.variable_selection)
   testthat::expect_true("normal_var" %in% result_core$.variable_selection)
   testthat::expect_equal(nrow(result_core), 2)
-  
+
   # Test add_parsed_vars_to_chapter_structure
   result_parsed <- saros.base:::add_parsed_vars_to_chapter_structure(result_core, test_data)
-  
+
   # Verify the variable name is correctly extracted (without backticks)
   testthat::expect_true("var with space" %in% result_parsed$.variable_name)
   testthat::expect_true("normal_var" %in% result_parsed$.variable_name)

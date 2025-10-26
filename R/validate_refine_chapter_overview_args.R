@@ -27,7 +27,7 @@ create_arg_validator <- function(env) {
 get_arg_validation_rules <- function(params) {
   list(
     # Data frames
-    chapter_overview = list(fun = function(x) inherits(x, "data.frame") && nrow(x) > 0),
+  chapter_overview = list(fun = function(x) inherits(x, "data.frame") && nrow(x) > 0 && (is.character(x$chapter) || is.factor(x$chapter))),
     data = list(fun = function(x) is.null(x) || inherits(x, "data.frame") || inherits(x, "survey")),
     chunk_templates = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
