@@ -36,8 +36,16 @@ remove_from_chapter_structure_if_non_significant <-
         out_bivariates <- dplyr::group_map(out_bivariates,
           .keep = TRUE,
           .f = function(df_col_row, df_col_key) {
-            df_col_row$.keep_indep <- FALSE
+            # Performance fix: skip test if indep is in always_show_bi_for_indep
+            if (!is.null(df_col_row$.variable_name_indep) &&
+              df_col_row$.variable_name_indep %in% always_show_bi_for_indep) {
+              df_col_row$.keep_indep <- TRUE
+              df_col_row$.bi_test <- NA_character_
+              df_col_row$.p_value <- NA_real_
+              return(df_col_row)
+            }
 
+            df_col_row$.keep_indep <- FALSE
 
             if (is.null(df_col_row$.variable_name_dep) ||
               length(df_col_row$.variable_name_dep) == 0 ||
@@ -55,13 +63,6 @@ remove_from_chapter_structure_if_non_significant <-
             if (nrow(df_chitest) < 1) {
               return()
             }
-
-
-            count_uniques <- dplyr::count(df_chitest,
-              .data[[df_col_row$.variable_name_dep]],
-              .data[[df_col_row$.variable_name_indep]],
-              name = ".n_count"
-            )
 
 
             df_col_row$.keep_indep <-
