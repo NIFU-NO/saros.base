@@ -34,6 +34,7 @@ reference:
   contents:
   - setup_access_restrictions
   - create_email_credentials
+  - detect_malformed_quarto_project
 - title: Project startup tools - main wrapper functions
   desc: For project templates (might be dropped in favour of 3rd party packages focusing
     on this)
