@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' detect_malformed_quarto_project("_site")
+#' detect_malformed_quarto_project(tempdir())
 detect_malformed_quarto_project <- function(root_dir) {
   if (!dir.exists(root_dir)) {
     cli::cli_abort("Directory '{.path {root_dir}}' does not exist.")
