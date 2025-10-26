@@ -186,7 +186,7 @@ extract_mesos_metadata <- function(mesos_df_entry) {
     mesos_groups_pretty <- as.character(mesos_df_entry[[1]])
     mesos_groups_pretty <- mesos_groups_pretty[!is.na(mesos_groups_pretty)]
 
-    if (!is.null(mesos_df_entry[[2]])) {
+    if (ncol(mesos_df_entry) >= 2 && !is.null(mesos_df_entry[[2]])) {
         mesos_groups_abbr <- as.character(mesos_df_entry[[2]])
         mesos_groups_abbr <- mesos_groups_abbr[!is.na(mesos_groups_abbr)]
     } else {
