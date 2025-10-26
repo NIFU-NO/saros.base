@@ -19,6 +19,7 @@
 <url><loc>https://nifu-no.github.io/saros.base/news/index.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/add_n_range_to_chapter_structure.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/check_variable_labels.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros.base/reference/convert_mesos_groups_to_df.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/copy_folder_contents_to_dir.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/create_directory_structure.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/create_email_credentials.html</loc></url>
@@ -46,6 +47,7 @@
 <url><loc>https://nifu-no.github.io/saros.base/reference/remove_entry_from_sidebar.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/setup_access_restrictions.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/setup_mesos.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros.base/reference/write_default_draft_report_args.html</loc></url>
 </urlset>
 
