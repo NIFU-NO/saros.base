@@ -22,5 +22,5 @@ Future versions will add more checks.
 }
 }
 \examples{
-detect_malformed_quarto_project("_site")
+detect_malformed_quarto_project(tempdir())
 }
