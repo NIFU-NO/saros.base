@@ -1,3 +1,18 @@
+testthat::test_that("refine_chapter_overview preserves chapter order (GH #110)", {
+  ch_overview <- data.frame(
+    chapter = c("C", "A", "B"),
+    dep = c("b_1", "b_2", "b_3"),
+    stringsAsFactors = FALSE
+  )
+  result <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = saros.base::ex_survey,
+    progress = FALSE
+  )
+  # Only check the order of the first few rows for chapter
+  expect_order <- c("C", "A", "B")
+  testthat::expect_equal(unique(result$chapter)[seq_along(expect_order)], expect_order)
+})
 testthat::test_that("refine_chapter_overview allows chapter as factor (GH #109)", {
   ch_overview <- data.frame(
     chapter = factor(c("A", "B")),
@@ -10,7 +25,7 @@ testthat::test_that("refine_chapter_overview allows chapter as factor (GH #109)"
     progress = FALSE
   )
   testthat::expect_true(all(result$chapter %in% c("A", "B")))
-  testthat::expect_equal(class(result$chapter), "factor")
+  testthat::expect_equal(class(result$chapter), "character")
 })
 testthat::test_that("eval_cols", {
   x <-

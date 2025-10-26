@@ -253,6 +253,8 @@ refine_chapter_overview <-
     if ("chapter" %in% names(out) && is.factor(out$chapter)) {
       out$chapter <- as.character(out$chapter)
     }
+    # Capture original chapter order for later reordering (GH #110)
+    original_chapter_order <- unique(out$chapter)
 
     chunk_templates <- args$chunk_templates
 
@@ -515,5 +517,13 @@ refine_chapter_overview <-
 
     check_chapter_structure_for_duplicates(chapter_structure = out, organize_by = organize_by)
 
+    # Ensure chapter column is character before reordering and returning (GH #110)
+    if ("chapter" %in% names(out) && !is.character(out$chapter)) {
+      out$chapter <- as.character(out$chapter)
+    }
+    # Reorder output to match original chapter order (GH #110)
+    if ("chapter" %in% names(out) && length(original_chapter_order) > 1) {
+      out <- out[order(match(out$chapter, original_chapter_order)), , drop = FALSE]
+    }
     out
   }
