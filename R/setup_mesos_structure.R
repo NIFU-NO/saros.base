@@ -149,97 +149,118 @@ setup_mesos_structure <- function(
 #' @return List of single-column data frames (internal format)
 #' @keywords internal
 convert_mesos_groups_to_df <- function(mesos_groups) {
-  # If already in the old format (list of data frames), validate and return
-  if (is.list(mesos_groups) && all(sapply(mesos_groups, is.data.frame))) {
-    # Validate structure
-    for (i in seq_along(mesos_groups)) {
-      if (ncol(mesos_groups[[i]]) == 0) {
-        cli::cli_abort(c(
-          "Data frame {i} in {.arg mesos_groups} has no columns.",
-          "i" = "Each data frame should have 1-2 columns: group names (required) and abbreviations (optional)."
-        ))
-      }
-    }
-    return(mesos_groups)
+  # Validate input
+  validate_mesos_groups(mesos_groups)
+
+  # Handle different formats
+  if (is_legacy_format(mesos_groups)) {
+    return(handle_legacy_format(mesos_groups))
   }
 
-  # If it's a simple named list, convert to data frame format
-  if (is.list(mesos_groups) && !is.data.frame(mesos_groups)) {
-    if (is.null(names(mesos_groups)) || any(names(mesos_groups) == "")) {
-      cli::cli_abort(c(
-        "{.arg mesos_groups} must be a named list.",
-        "i" = "Example: list(region = c('North', 'South'), department = c('Sales', 'IT'))"
-      ))
-    }
-
-    result <- lapply(names(mesos_groups), function(var_name) {
-      groups <- mesos_groups[[var_name]]
-
-      if (!is.character(groups) || length(groups) == 0) {
-        cli::cli_abort(c(
-          "Value for {.field {var_name}} in {.arg mesos_groups} must be a non-empty character vector.",
-          "i" = "Got: {.obj_type_friendly {groups}}"
-        ))
-      }
-
-      # Create single-column data frame with group names
-      # extract_mesos_metadata will auto-generate abbreviations from the group names
-      df <- data.frame(groups, stringsAsFactors = FALSE)
-      names(df) <- var_name
-
-      # Set variable label attribute to use the variable name as pretty name
-      attr(df[[1]], "label") <- var_name
-
-      df
-    })
-
-    return(result)
+  if (is_named_list(mesos_groups)) {
+    return(handle_named_list(mesos_groups))
   }
 
-  # If it's a single data frame, convert to list of data frames
   if (is.data.frame(mesos_groups)) {
-    if (ncol(mesos_groups) == 0) {
-      cli::cli_abort("{.arg mesos_groups} data frame has no columns.")
-    }
-
-    # Treat each column as a mesos variable
-    result <- lapply(seq_len(ncol(mesos_groups)), function(i) {
-      col_data <- mesos_groups[[i]]
-      col_name <- names(mesos_groups)[i]
-
-      # Remove NAs
-      col_data <- col_data[!is.na(col_data)]
-
-      if (length(col_data) == 0) {
-        cli::cli_warn("Column {.field {col_name}} in {.arg mesos_groups} has no non-NA values and will be skipped.")
-        return(NULL)
-      }
-
-      df <- data.frame(group = as.character(col_data), stringsAsFactors = FALSE)
-      names(df) <- col_name
-
-      # Preserve label if it exists
-      label <- attr(mesos_groups[[i]], "label")
-      if (!is.null(label)) {
-        attr(df[[1]], "label") <- label
-      } else {
-        attr(df[[1]], "label") <- col_name
-      }
-
-      df
-    })
-
-    # Remove NULL entries
-    result <- result[!sapply(result, is.null)]
-
-    return(result)
+    return(handle_data_frame(mesos_groups))
   }
 
   cli::cli_abort(c(
     "{.arg mesos_groups} must be one of:",
-    "*" = "A named list (e.g., list(region = c('North', 'South')))",
+    "*" = "A named list (e.g., list(region = c('North', 'South'))",
     "*" = "A data frame with columns representing mesos variables",
     "*" = "A list of single-column data frames (legacy format from setup_mesos)",
     "i" = "Got: {.obj_type_friendly {mesos_groups}}"
   ))
+}
+
+# Helper functions
+
+validate_mesos_groups <- function(mesos_groups) {
+  if (is.null(mesos_groups)) {
+    cli::cli_abort("{.arg mesos_groups} cannot be NULL.")
+  }
+}
+
+is_legacy_format <- function(mesos_groups) {
+  is.list(mesos_groups) && all(sapply(mesos_groups, is.data.frame))
+}
+
+handle_legacy_format <- function(mesos_groups) {
+  lapply(seq_along(mesos_groups), function(i) {
+    df <- mesos_groups[[i]]
+
+    if (ncol(df) == 0) {
+      cli::cli_abort(c(
+        "Data frame {i} in {.arg mesos_groups} has no columns.",
+        "i" = "Each data frame should have 1-2 columns: group names (required) and abbreviations (optional)."
+      ))
+    }
+
+    # Clean the group column
+    df[[1]] <- clean_group_data(df[[1]])
+    if (length(df) == 2) {
+      df[[2]] <- clean_group_data(df[[2]])
+    }
+
+    df
+  })
+}
+
+is_named_list <- function(mesos_groups) {
+  is.list(mesos_groups) && !is.data.frame(mesos_groups)
+}
+
+handle_named_list <- function(mesos_groups) {
+  if (is.null(names(mesos_groups)) || any(names(mesos_groups) == "")) {
+    cli::cli_abort(c(
+      "{.arg mesos_groups} must be a named list.",
+      "i" = "Example: list(region = c('North', 'South'), department = c('Sales', 'IT'))"
+    ))
+  }
+
+  lapply(names(mesos_groups), function(var_name) {
+    groups <- clean_group_data(mesos_groups[[var_name]])
+
+    df <- data.frame(groups, stringsAsFactors = FALSE)
+    names(df) <- var_name
+    attr(df[[1]], "label") <- var_name
+    df
+  })
+}
+
+handle_data_frame <- function(mesos_groups) {
+  if (ncol(mesos_groups) == 0) {
+    cli::cli_abort("{.arg mesos_groups} data frame has no columns.")
+  }
+
+  lapply(seq_len(ncol(mesos_groups)), function(i) {
+    col_data <- clean_group_data(mesos_groups[[i]])
+    col_name <- names(mesos_groups)[i]
+
+    df <- data.frame(group = col_data, stringsAsFactors = FALSE)
+    names(df) <- col_name
+
+    label <- attr(mesos_groups[[i]], "label")
+    if (!is.null(label)) {
+      attr(df[[1]], "label") <- label
+    } else {
+      attr(df[[1]], "label") <- col_name
+    }
+
+    df
+  }) |> purrr::compact()
+}
+
+# Helper function to clean group data
+clean_group_data <- function(groups) {
+  groups <- as.character(groups)
+
+  groups <- groups[!is.na(groups) & groups != ""]
+
+  if (!is.character(groups) || length(groups) == 0) {
+    cli::cli_abort("Group data must be a non-empty character vector.")
+  }
+
+  groups
 }
