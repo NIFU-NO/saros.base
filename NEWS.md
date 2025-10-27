@@ -1,6 +1,5 @@
 # saros.base 1.2.0
 
-
 ## New features
 - Added file logging for excluded/ignored variables via `log_file` parameter in `refine_chapter_overview()`. All removal functions now log which variables/entries are excluded and why (all NA, low n, non-significant, no overlap, type mismatch).
 - Added `detect_malformed_quarto_project()`: exported function to diagnose malformed Quarto website projects (missing index.qmd, missing title in .qmd files, extensible for future checks).
@@ -27,6 +26,10 @@
   - `process_yaml()`
 - Removed broken and unused `create_heading()` function.
 - Removed commented-out and unused code.
+- Refactored `convert_mesos_groups_to_df` and its helper functions to ensure consistent handling of `mesos_groups`.
+- Added a `clean_group_data` internal helper function to:
+  - Drop unused levels for factors.
+  - Remove `NA` and blank strings.
 
 ## Testing
 - Added 169 comprehensive tests across multiple modules (from 331 to 500+ tests).
