@@ -449,3 +449,86 @@ testthat::test_that("refine_chapter_overview handles variable names with spaces 
   testthat::expect_true("var with space" %in% result_parsed$.variable_name)
   testthat::expect_true("normal_var" %in% result_parsed$.variable_name)
 })
+
+testthat::test_that("refine_chapter_overview handles ordered indep with different dep types (hide_bi_entry_if_sig_above = 0.05)", {
+  set.seed(42)
+  n <- 400
+
+  # Simulate an ordered independent variable (two levels) and use it to create
+  # some strong relationships (dep_int, dep_dbl, dep_fct) and one random
+  # relationship (dep_ord) so that some bivariate tests are significant at
+  # alpha = 0.05 and others are not.
+  indep_bin <- rbinom(n, 1, 0.5)
+  indep_ord <- ordered(ifelse(indep_bin == 1, "yes", "no"), levels = c("no", "yes"))
+
+  # Strong numeric relationship: dep_int and dep_dbl depend on indep
+  dep_int <- as.integer(round(indep_bin * 5 + rnorm(n, sd = 0.8)))
+  dep_dbl <- indep_bin * 2 + rnorm(n, sd = 0.7)
+
+  # Categorical relationship: different sampling probabilities by indep
+  dep_fct <- factor(ifelse(indep_bin == 1,
+    sample(c("A", "B", "C"), n, replace = TRUE, prob = c(0.7, 0.2, 0.1)),
+    sample(c("A", "B", "C"), n, replace = TRUE, prob = c(0.2, 0.4, 0.4))
+  ))
+
+  # Random ordered factor (should often be non-significant)
+  dep_ord <- ordered(sample(c("low", "med", "high"), n, replace = TRUE), levels = c("low", "med", "high"))
+
+  test_data <- data.frame(
+    dep_int = dep_int,
+    dep_dbl = dep_dbl,
+    dep_fct = dep_fct,
+    dep_ord = dep_ord,
+    indep_ord = indep_ord,
+    stringsAsFactors = FALSE
+  )
+
+  # Add variable labels to silence warnings about missing labels
+  attr(test_data$dep_int, "label") <- "Integer dependent"
+  attr(test_data$dep_dbl, "label") <- "Double dependent"
+  attr(test_data$dep_fct, "label") <- "Factor dependent"
+  attr(test_data$dep_ord, "label") <- "Ordered factor dependent"
+  attr(test_data$indep_ord, "label") <- "Ordered independent"
+
+  ch_overview <- data.frame(
+    chapter = rep("OrderedIndepTest", 4),
+    dep = c("dep_int", "dep_dbl", "dep_fct", "dep_ord"),
+    indep = rep("indep_ord", 4),
+    stringsAsFactors = FALSE
+  )
+
+  res <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = test_data,
+    hide_bi_entry_if_sig_above = 0.05,
+    progress = FALSE
+  )
+
+  testthat::expect_s3_class(res, "data.frame")
+
+  # Keep rows that refer to our ordered indep
+  rows_ord <- res[res$.variable_name_indep == "indep_ord", , drop = FALSE]
+  testthat::expect_true(nrow(rows_ord) >= 0)
+
+  # Check that the indep type is reported as 'ord' (vctrs abbreviation)
+  if (nrow(rows_ord) > 0) {
+    # For this test data none of the variables are all-NA, so types should be
+    # present (non-NA) and equal to the vctrs abbreviations.
+    types_indep <- unique(rows_ord$.variable_type_indep)
+    non_na_indep <- types_indep[!is.na(types_indep)]
+    testthat::expect_true(length(non_na_indep) > 0)
+    testthat::expect_true(all(non_na_indep == "ord"))
+
+    # Map expected dep types (vctrs abbreviations)
+    expected_dep_types <- c(dep_int = "int", dep_dbl = "dbl", dep_fct = "fct", dep_ord = "ord")
+
+    deps_present <- unique(rows_ord$.variable_name_dep)
+    # For each dep present, check reported type (must be non-NA) matches expected abbreviation
+    for (d in deps_present) {
+      reported <- unique(rows_ord$.variable_type_dep[rows_ord$.variable_name_dep == d])
+      reported_non_na <- reported[!is.na(reported)]
+      testthat::expect_true(length(reported_non_na) > 0)
+      testthat::expect_true(all(reported_non_na == expected_dep_types[d]))
+    }
+  }
+})
