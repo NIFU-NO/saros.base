@@ -83,6 +83,11 @@
 </ul></li>
 <li>Removed broken and unused <code>create_heading()</code> function.</li>
 <li>Removed commented-out and unused code.</li>
+<li>Refactored <code>convert_mesos_groups_to_df</code> and its helper functions to ensure consistent handling of <code>mesos_groups</code>.</li>
+<li>Added a <code>clean_group_data</code> internal helper function to:
+<ul><li>Drop unused levels for factors.</li>
+<li>Remove <code>NA</code> and blank strings.</li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="testing-1-2-0">Testing<a class="anchor" aria-label="anchor" href="#testing-1-2-0"></a></h3>
