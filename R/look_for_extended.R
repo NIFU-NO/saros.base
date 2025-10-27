@@ -78,6 +78,10 @@ fill_missing_prefix_suffix <- function(x) {
     )
 }
 
+get_variable_types <- function(data, cols) {
+  as.character(unlist(lapply(cols, function(.x) vctrs::vec_ptype_abbr(data[[.x]]))))
+}
+
 look_for_extended <- function(data,
                               cols = colnames(data),
                               label_separator = NULL,
@@ -94,7 +98,7 @@ look_for_extended <- function(data,
 
   .variable_name <- colnames(data_part)
   .variable_label <- get_raw_labels(data = data_part)
-  .variable_type <- as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]]))))
+  .variable_type <- get_variable_types(data = data_part, cols = names(data_part))
   if (length(.variable_position) != length(.variable_name) ||
     length(.variable_name) != length(.variable_label) ||
     length(.variable_label) != length(.variable_type)) {
