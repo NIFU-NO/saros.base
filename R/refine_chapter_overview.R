@@ -217,10 +217,19 @@
 #' - Other columns may be present depending on chunk templates and options.
 #'
 #' **Row count estimate:**
-#' - The number of rows in the output depends on the number of chapters, dep/indep combinations, and chunk templates. Typically, it is the sum of all unique variable combinations specified in `chapter_overview`, expanded by chunk templates and filtered by significance and other options. For a simple overview, expect one row per variable per chapter; for bivariates, one row per dep-indep pair.
+#' - The number of rows in the output depends on the number of chapters,
+#'   dep/indep combinations, and chunk templates. Typically, it is the sum of
+#'   all unique variable combinations specified in `chapter_overview`, expanded
+#'   by chunk templates and filtered by significance and other options.
+#'   For a simple overview, expect one row per variable per chapter; for
+#'   bivariates, one row per dep-indep pair.
 #'
 #' **Grouping variables:**
-#' - The columns used for grouping (i.e., `dplyr::grouped_df`) are determined by the `organize_by` argument. By default, this includes `.chapter_number`, `.variable_label_prefix_dep`, `.variable_name_indep`, and `.template_name`, but can be customized. These columns define how the output is grouped for further analysis or reporting.
+#' - The columns used for grouping (i.e., `dplyr::grouped_df`) are determined
+#'   by the `organize_by` argument. By default, this includes
+#'   `.chapter_number`, `.variable_label_prefix_dep`, `.variable_name_indep`,
+#'    and `.template_name`, but can be customized. These columns define how
+#'   the output is grouped for further analysis or reporting.
 #'
 #' See function source and documentation for details on each column's meaning and usage.
 #' @export

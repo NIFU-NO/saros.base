@@ -262,12 +262,21 @@ A grouped tibble (data.frame) with columns that fall into two main categories:
 
 \strong{Row count estimate:}
 \itemize{
-\item The number of rows in the output depends on the number of chapters, dep/indep combinations, and chunk templates. Typically, it is the sum of all unique variable combinations specified in \code{chapter_overview}, expanded by chunk templates and filtered by significance and other options. For a simple overview, expect one row per variable per chapter; for bivariates, one row per dep-indep pair.
+\item The number of rows in the output depends on the number of chapters,
+dep/indep combinations, and chunk templates. Typically, it is the sum of
+all unique variable combinations specified in \code{chapter_overview}, expanded
+by chunk templates and filtered by significance and other options.
+For a simple overview, expect one row per variable per chapter; for
+bivariates, one row per dep-indep pair.
 }
 
 \strong{Grouping variables:}
 \itemize{
-\item The columns used for grouping (i.e., \code{dplyr::grouped_df}) are determined by the \code{organize_by} argument. By default, this includes \code{.chapter_number}, \code{.variable_label_prefix_dep}, \code{.variable_name_indep}, and \code{.template_name}, but can be customized. These columns define how the output is grouped for further analysis or reporting.
+\item The columns used for grouping (i.e., \code{dplyr::grouped_df}) are determined
+by the \code{organize_by} argument. By default, this includes
+\code{.chapter_number}, \code{.variable_label_prefix_dep}, \code{.variable_name_indep},
+and \code{.template_name}, but can be customized. These columns define how
+the output is grouped for further analysis or reporting.
 }
 
 See function source and documentation for details on each column's meaning and usage.
