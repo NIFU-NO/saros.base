@@ -305,14 +305,23 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 
 
 #' Simply create qmd-files and yml-files for mesos reports
-#' @param main_directory String, path to where the _metadata.yml, stub QMD-files and their subfolders are created.
-#' @param mesos_var_subfolder String, optional name of a subfolder of the mesos_var folder in where to place all mesos_group folders.
+#' @param main_directory String, path to where the _metadata.yml, stub QMD-files
+#'      and their subfolders are created.
+#' @param mesos_var_subfolder String, optional name of a subfolder of the
+#'      mesos_var folder in where to place all mesos_group folders.
 #' @param files_to_process Character vector of files used as templates for the mesos stubs.
-#' @param mesos_df List of single-column data frames where each variable is a mesos variable, optionally with a variable label indicating its pretty name. The values in each variable are the mesos groups. NA is silently ignored.
-#' @param files_taking_title Character vector of files for which titles should be set. Optional but recommended.
-#' @param read_syntax_pattern,read_syntax_replacement Optional strings, any regex pattern to search and replace in the qmd-files. If NULL, will ignore it.
+#' @param mesos_df List of single-column data frames where each variable is a
+#'      mesos variable, optionally with a variable label indicating its pretty name.
+#'      The values in each variable are the mesos groups. NA is silently ignored.
+#' @param files_taking_title Character vector of files for which titles should
+#'      be set. Optional but recommended.
+#' @param read_syntax_pattern,read_syntax_replacement Optional strings, any
+#'      regex pattern to search and replace in the qmd-files. If NULL, will ignore it.
 #' @param qmd_regex String. Experimental feature for allowing Rmarkdown, not yet tested.
-#' @param subtitle_separator String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.
+#' @param subtitle_separator String or NULL. If a string will add title and subtitle
+#'     fields to the _metadata.yml-files in the deepest child folders. The title is
+#'     the mesos_group. The subtitle is a concatenation of the folder name of the
+#'     main_directory and the mesos_var label.
 #' @param prefix,suffix String for the include section of the stub qmd files.
 #' @export
 setup_mesos <- function(
@@ -329,7 +338,6 @@ setup_mesos <- function(
     suffix = '\" >}}') {
     ## Checks
 
-    # if (!inherits(main_directory, "character") || length(main_directory) == 0) cli::cli_abort("{.arg main_directory} must be a string, not {.obj_type_friendly {main_directory}}")
     if (!is.character(files_to_process) ||
         length(files_to_process) == 0 ||
         !all(file.exists(files_to_process))) {
@@ -343,13 +351,27 @@ setup_mesos <- function(
             "{check_files_to_process}"
         ))
     }
-    if (!is.list(mesos_df)) cli::cli_abort("{.arg mesos_df} must be a list of single-column data.frames, not {.obj_type_friendly {mesos_df}}")
-    if (!inherits(files_taking_title, "character")) cli::cli_abort("{.arg files_taking_title} must be a character vector, not a {.obj_type_friendly {files_taking_title}}")
-    if (!is.null(read_syntax_pattern) && !inherits(read_syntax_pattern, "character")) cli::cli_abort("{.arg read_syntax_pattern} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_pattern}}")
-    if (!is.null(read_syntax_replacement) && !inherits(read_syntax_replacement, "character")) cli::cli_abort("{.arg read_syntax_replacement} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_replacement}}")
-    if (!inherits(qmd_regex, "character") || length(qmd_regex) != 1) cli::cli_abort("{.arg qmd_regex} must be a string, not a {.obj_type_friendly {qmd_regex}}")
-    if (!inherits(prefix, "character") || length(prefix) != 1) cli::cli_abort("{.arg prefix} must be a string, not a {.obj_type_friendly {prefix}}")
-    if (!inherits(suffix, "character") || length(suffix) != 1) cli::cli_abort("{.arg suffix} must be a string, not a {.obj_type_friendly {suffix}}")
+    if (!is.list(mesos_df)) {
+        cli::cli_abort("{.arg mesos_df} must be a list of single-column data.frames, not {.obj_type_friendly {mesos_df}}")
+    }
+    if (!inherits(files_taking_title, "character")) {
+        cli::cli_abort("{.arg files_taking_title} must be a character vector, not a {.obj_type_friendly {files_taking_title}}")
+    }
+    if (!is.null(read_syntax_pattern) && !inherits(read_syntax_pattern, "character")) {
+        cli::cli_abort("{.arg read_syntax_pattern} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_pattern}}")
+    }
+    if (!is.null(read_syntax_replacement) && !inherits(read_syntax_replacement, "character")) {
+        cli::cli_abort("{.arg read_syntax_replacement} must be a string (regex) or NULL (i.e. ignore), not a {.obj_type_friendly {read_syntax_replacement}}")
+    }
+    if (!inherits(qmd_regex, "character") || length(qmd_regex) != 1) {
+        cli::cli_abort("{.arg qmd_regex} must be a string, not a {.obj_type_friendly {qmd_regex}}")
+    }
+    if (!inherits(prefix, "character") || length(prefix) != 1) {
+        cli::cli_abort("{.arg prefix} must be a string, not a {.obj_type_friendly {prefix}}")
+    }
+    if (!inherits(suffix, "character") || length(suffix) != 1) {
+        cli::cli_abort("{.arg suffix} must be a string, not a {.obj_type_friendly {suffix}}")
+    }
 
 
     create_mesos_stubs_from_main_files(

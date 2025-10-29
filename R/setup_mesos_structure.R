@@ -183,7 +183,7 @@ validate_mesos_groups <- function(mesos_groups) {
 }
 
 is_legacy_format <- function(mesos_groups) {
-  is.list(mesos_groups) && all(sapply(mesos_groups, is.data.frame))
+  is.list(mesos_groups) && all(vapply(mesos_groups, is.data.frame, FUN.VALUE = logical(1)))
 }
 
 handle_legacy_format <- function(mesos_groups) {

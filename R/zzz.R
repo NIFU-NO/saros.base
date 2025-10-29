@@ -223,7 +223,7 @@ _{.variable_label_prefix_dep}_.
 #| panel: tabset
 plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 
-if(!all(sapply(plots, is.null))) {{
+if(!all(vapply(plots, is.null, logical(1)))) {{
 
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
@@ -273,7 +273,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 #| panel: tabset
 plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 
-if(!all(sapply(plots, is.null))) {{
+if(!all(vapply(plots, is.null, logical(1)))) {{
 
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
@@ -323,7 +323,7 @@ _{.variable_label_prefix_dep}_.
 #| output: asis
 #| panel: tabset
 tbls <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
-if(!all(sapply(tbls, is.null))) {{
+if(!all(vapply(tbls, is.null, logical(1)))) {{
 
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
@@ -367,7 +367,7 @@ _{.variable_label_prefix_dep}_.
 #| output: asis
 #| panel: tabset
 tbls <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
-if(!all(sapply(tbls, is.null))) {{
+if(!all(vapply(tbls, is.null, logical(1)))) {{
 
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(

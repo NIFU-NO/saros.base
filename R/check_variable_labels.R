@@ -24,7 +24,6 @@
 #' attr(df$e, "label") <- "Gender - Male -  2"
 #' attr(df$f, "label") <- "Gender - Female..."
 #' check_variable_labels(df)
-
 check_variable_labels <- function(data,
                                   separator = " - ",
                                   special_chars = "[^\\p{L}\\p{N}\\s!?'#%&/()\\[\\]{}=+\\-*.,:;]") {
@@ -33,8 +32,8 @@ check_variable_labels <- function(data,
 
   get_label <- function(var) attr(var, "label") %||% NA_character_
 
-  labels <- sapply(data, get_label, USE.NAMES = FALSE)
-  types <- sapply(data, typeof)
+  labels <- vapply(data, get_label, FUN.VALUE = character(1), USE.NAMES = FALSE)
+  types <- vapply(data, typeof, FUN.VALUE = character(1))
   names <- names(data)
 
   problems <- data.frame(
@@ -46,8 +45,8 @@ check_variable_labels <- function(data,
     issue_multiple_separators = !is.na(stringi::stri_count_fixed(labels, pattern = separator)) & stringi::stri_count_fixed(labels, pattern = separator) > 1,
     issue_whitespace = !is.na(stringi::stri_detect_regex(labels, pattern = "^\\s|\\s$|\\s{2,}")) & stringi::stri_detect_regex(labels, pattern = "^\\s|\\s$|\\s{2,}"),
     issue_html = !is.na(stringi::stri_detect_regex(labels, pattern = "<[^>]+>")) & stringi::stri_detect_regex(labels, pattern = "<[^>]+>"),
-    issue_special_char =  !is.na(stringi::stri_detect_regex(labels, pattern = special_chars)) & stringi::stri_detect_regex(labels, pattern = special_chars),
-    issue_ellipsis = !is.na(stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}")) & stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}")  # catches exactly 2 dots or 4+ dots (not 3)
+    issue_special_char = !is.na(stringi::stri_detect_regex(labels, pattern = special_chars)) & stringi::stri_detect_regex(labels, pattern = special_chars),
+    issue_ellipsis = !is.na(stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}")) & stringi::stri_detect_regex(labels, pattern = "(?<!\\.)\\.\\.(?!\\.)|\\.\\.{3,}") # catches exactly 2 dots or 4+ dots (not 3)
   )
 
   # Any issue?
