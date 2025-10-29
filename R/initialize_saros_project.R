@@ -84,16 +84,8 @@ initialize_saros_project <-
         r_prefix_file_scope = r_prefix_file_scope,
         r_add_folder_scope_as_README = r_add_folder_scope_as_README
       )
-      # saros_path <-
-      #   unname(unlist(sapply(folder_structure, function(x) grep("saros.base", x = x, value = TRUE, ignore.case = TRUE))))
-      # if(length(saros_path)==1) {
-      #   saros_path <- dir(path = path, pattern = saros_path, full.names = TRUE, recursive = TRUE, ignore.case = TRUE, include.dirs = FALSE, no.. = TRUE)
-      #   usethis::create_project(path = paste0(path, .Platform$file.sep, saros_path))
-      # }
     }
     new_folder_name <- stringi::stri_extract_last_regex(path, pattern = "([^/]+)$")
     cli::cli_inform(new_folder_name) # Only remove if folder is otherwise empty
     invisible(new_folder_name)
-    # stuff_to_remove <- paste0(path, .Platform$file.sep, ".", c(new_folder_name, "Rproj"))
-    # unlink()
   }
