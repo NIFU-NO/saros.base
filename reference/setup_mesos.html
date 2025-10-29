@@ -77,11 +77,13 @@
 
 
 <dl><dt id="arg-main-directory">main_directory<a class="anchor" aria-label="anchor" href="#arg-main-directory"></a></dt>
-<dd><p>String, path to where the _metadata.yml, stub QMD-files and their subfolders are created.</p></dd>
+<dd><p>String, path to where the _metadata.yml, stub QMD-files
+and their subfolders are created.</p></dd>
 
 
 <dt id="arg-mesos-var-subfolder">mesos_var_subfolder<a class="anchor" aria-label="anchor" href="#arg-mesos-var-subfolder"></a></dt>
-<dd><p>String, optional name of a subfolder of the mesos_var folder in where to place all mesos_group folders.</p></dd>
+<dd><p>String, optional name of a subfolder of the
+mesos_var folder in where to place all mesos_group folders.</p></dd>
 
 
 <dt id="arg-files-to-process">files_to_process<a class="anchor" aria-label="anchor" href="#arg-files-to-process"></a></dt>
@@ -89,15 +91,19 @@
 
 
 <dt id="arg-mesos-df">mesos_df<a class="anchor" aria-label="anchor" href="#arg-mesos-df"></a></dt>
-<dd><p>List of single-column data frames where each variable is a mesos variable, optionally with a variable label indicating its pretty name. The values in each variable are the mesos groups. NA is silently ignored.</p></dd>
+<dd><p>List of single-column data frames where each variable is a
+mesos variable, optionally with a variable label indicating its pretty name.
+The values in each variable are the mesos groups. NA is silently ignored.</p></dd>
 
 
 <dt id="arg-files-taking-title">files_taking_title<a class="anchor" aria-label="anchor" href="#arg-files-taking-title"></a></dt>
-<dd><p>Character vector of files for which titles should be set. Optional but recommended.</p></dd>
+<dd><p>Character vector of files for which titles should
+be set. Optional but recommended.</p></dd>
 
 
 <dt id="arg-read-syntax-pattern-read-syntax-replacement">read_syntax_pattern, read_syntax_replacement<a class="anchor" aria-label="anchor" href="#arg-read-syntax-pattern-read-syntax-replacement"></a></dt>
-<dd><p>Optional strings, any regex pattern to search and replace in the qmd-files. If NULL, will ignore it.</p></dd>
+<dd><p>Optional strings, any
+regex pattern to search and replace in the qmd-files. If NULL, will ignore it.</p></dd>
 
 
 <dt id="arg-qmd-regex">qmd_regex<a class="anchor" aria-label="anchor" href="#arg-qmd-regex"></a></dt>
@@ -105,7 +111,10 @@
 
 
 <dt id="arg-subtitle-separator">subtitle_separator<a class="anchor" aria-label="anchor" href="#arg-subtitle-separator"></a></dt>
-<dd><p>String or NULL. If a string will add title and subtitle fields to the _metadata.yml-files in the deepest child folders. The title is the mesos_group. The subtitle is a concatenation of the folder name of the main_directory and the mesos_var label.</p></dd>
+<dd><p>String or NULL. If a string will add title and subtitle
+fields to the _metadata.yml-files in the deepest child folders. The title is
+the mesos_group. The subtitle is a concatenation of the folder name of the
+main_directory and the mesos_var label.</p></dd>
 
 
 <dt id="arg-prefix-suffix">prefix, suffix<a class="anchor" aria-label="anchor" href="#arg-prefix-suffix"></a></dt>
