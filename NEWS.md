@@ -4,6 +4,10 @@
 - Added file logging for excluded/ignored variables via `log_file` parameter in `refine_chapter_overview()`. All removal functions now log which variables/entries are excluded and why (all NA, low n, non-significant, no overlap, type mismatch).
 - Added `detect_malformed_quarto_project()`: exported function to diagnose malformed Quarto website projects (missing index.qmd, missing title in .qmd files, extensible for future checks).
 - New function `check_variable_labels()` to validate variable labels for saros compatibility.
+- New function `sanitize_chr_vec` for ensuring that character vectors are clean:
+  - Normalized Unicode strings to NFC form.
+  - Removed non-printable characters.
+  - Replaced common encoding artifacts (e.g., `â€™` to `'`).
 
 ## Performance improvements
 - Vectorized password lookup in `refer_main_password_file()` for better performance.

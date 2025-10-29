@@ -3,13 +3,15 @@ template:
   bootstrap: 5
   light-switch: yes
 reference:
+- title: Preparing data
+  contents:
+  - check_variable_labels
+  - sanitize_chr_vec
 - title: Used to create the structure of your report(s)
   contents: 
   - refine_chapter_overview
-  - check_variable_labels
 - title: Main use
-  desc: |
-    The only functions you will probably use, in the order listed
+  desc: The only functions you will probably use, in the order listed
   contents: 
   - draft_report
   - setup_mesos
