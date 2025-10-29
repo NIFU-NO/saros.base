@@ -1,10 +1,10 @@
-#' Sanitize character vector, for instance useful for variable xs in `xled::update_variable_xs_with()`
+#' Sanitize character vector, for instance useful for variable label in `labelled::update_variable_labels_with()`
 #'
 #'
-#' @param x character vector or factor vector
-#' @param sep String, separates main question from subquestion
-#' @param multi_sep_replacement String. If multiple sep are found, replace the first ones with this.
-#' @param replace_ascii_with_utf Flag. If TRUE, downloads a list from W3 used to convert html characters as ASCII to UTF8.
+#' @param x Character vector or factor vector
+#' @param sep String, separates prefix (e.g. main question) from suffix (sub-question)
+#' @param multi_sep_replacement String. If multiple separators (`sep`) are found, replace the first ones with this.
+#' @param replace_ascii_with_utf Flag. If TRUE, converts HTML characters to Unicode symbol.
 #'
 #' @return Character vector with sanitized strings
 #' @export
@@ -37,36 +37,21 @@ sanitize_chr_vec <- function(x,
   # Replace common encoding artifacts
   x <- stringi::stri_replace_all_fixed(
     x,
-    pattern = c("â€™", "â€œ", "â€"),
+    pattern = c("\u00C2\u20AC\u2122", "\u00C2\u20AC\u0153", "\u00C2\u20AC"),
     replacement = c("'", "\"", ""),
     vectorize_all = FALSE
   )
 
   # scrape lookup table of accented char html codes, from the 2nd table on this page
   if (isTRUE(replace_ascii_with_utf)) {
-    ref_url <- "http://www.w3schools.com/charsets/ref_html_8859.asp"
-    cols <- c("Character", "Entity Name")
-    char_table <- rvest::read_html(ref_url)
-    char_table <- rvest::html_table(char_table)
-    char_table <- char_table[1:4]
-    char_table <- lapply(char_table, function(x) x[, cols])
-    char_table <- do.call(rbind, char_table)
-    char_table <- char_table[!duplicated(char_table[[cols[2]]]) & char_table[[cols[2]]] != "", ]
-    for (i in seq_len(nrow(char_table))) {
+    for (i in seq_len(nrow(html_lookup_table))) {
       x <- stringi::stri_replace_all_fixed(
         str = x,
-        pattern = char_table[i, cols[2], drop = TRUE],
-        replacement = char_table[i, cols[1], drop = TRUE]
+        pattern = html_lookup_table[i, "html_name", drop = TRUE],
+        replacement = html_lookup_table[i, "symbol", drop = TRUE]
       )
     }
   }
-
-  # here's a test string loaded with different html accents
-  # test_str <- '&Agrave; &Aacute; &Acirc; &Atilde; &Auml; &Aring; &AElig; &Ccedil; &Egrave; &Eacute; &Ecirc; &Euml; &Igrave; &Iacute; &Icirc; &Iuml; &ETH; &Ntilde; &Ograve; &Oacute; &Ocirc; &Otilde; &Ouml; &times; &Oslash; &Ugrave; &Uacute; &Ucirc; &Uuml; &Yacute; &THORN; &szlig; &agrave; &aacute; &acirc; &atilde; &auml; &aring; &aelig; &ccedil; &egrave; &eacute; &ecirc; &euml; &igrave; &iacute; &icirc; &iuml; &eth; &ntilde; &ograve; &oacute; &ocirc; &otilde; &ouml; &divide; &oslash; &ugrave; &uacute; &ucirc; &uuml; &yacute; &thorn; &yuml;'
-
-  # use mgsub from here (it's just gsub with a for loop)
-  # http://stackoverflow.com/questions/15253954/replace-multiple-arguments-with-gsub
-
 
   x <- stringi::stri_replace_all_regex(x, pattern = "- Selected Choice ", replacement = "- ")
   x <- stringi::stri_replace_all_regex(x, pattern = "<.+?>|\\[.*\\]| - tekst", replacement = "")

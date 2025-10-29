@@ -2,7 +2,7 @@
 % Please edit documentation in R/sanitize_character_vector.R
 \name{sanitize_chr_vec}
 \alias{sanitize_chr_vec}
-\title{Sanitize character vector, for instance useful for variable xs in \code{xled::update_variable_xs_with()}}
+\title{Sanitize character vector, for instance useful for variable label in \code{labelled::update_variable_labels_with()}}
 \usage{
 sanitize_chr_vec(
   x,
@@ -12,17 +12,30 @@ sanitize_chr_vec(
 )
 }
 \arguments{
-\item{x}{character vector or factor vector}
+\item{x}{Character vector or factor vector}
 
-\item{sep}{String, separates main question from subquestion}
+\item{sep}{String, separates prefix (e.g. main question) from suffix (sub-question)}
 
-\item{multi_sep_replacement}{String. If multiple sep are found, replace the first ones with this.}
+\item{multi_sep_replacement}{String. If multiple separators (\code{sep}) are found, replace the first ones with this.}
 
-\item{replace_ascii_with_utf}{Flag. If TRUE, downloads a list from W3 used to convert html characters as ASCII to UTF8.}
+\item{replace_ascii_with_utf}{Flag. If TRUE, converts HTML characters to Unicode symbol.}
 }
 \value{
 Character vector with sanitized strings
 }
 \description{
-Sanitize character vector, for instance useful for variable xs in \code{xled::update_variable_xs_with()}
+Sanitize character vector, for instance useful for variable label in \code{labelled::update_variable_labels_with()}
+}
+\examples{
+# Example 1: Basic usage
+input <- c("<b>Bold</b>", "  Extra spaces   ", "- Selected Choice -")
+sanitize_chr_vec(input)
+
+# Example 2: Replace ASCII with UTF
+input <- c("&Agrave;", "&Eacute;", "&Ouml;")
+sanitize_chr_vec(input, replace_ascii_with_utf = TRUE)
+
+# Example 3: Custom separators
+input <- c("Question - Subquestion", "Another - Example")
+sanitize_chr_vec(input, sep = " - ", multi_sep_replacement = ": ")
 }
