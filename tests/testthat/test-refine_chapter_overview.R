@@ -124,7 +124,7 @@ testthat::test_that("refine_chapter_overview", {
       label_separator = " - ",
       name_separator = "_"
     )
-  testthat::expect_equal(dim(x), c(1 + 1 + 7 * 4 + 7 * 4 + 8 * 2, 48))
+  testthat::expect_equal(dim(x), c(1 + 1 + 7 * 4 + 7 * 4 + 2 * 2 + 8 * 2, 48))
 })
 
 testthat::test_that("refine_chapter_overview with always_show_bi_for_indep keeps specified bivariates", {
