@@ -79,8 +79,8 @@ testthat::test_that("remove_from_chapter_structure_if_no_overlap handles single-
 testthat::test_that("keep_dep_indep_if_no_overlap works in refine_chapter_overview", {
     # Create test data
     test_data <- data.frame(
-        var1 = c(1, NA, 3),
-        var2 = c(NA, 2, NA)
+        var1 = factor(c(1, NA, 3)),
+        var2 = factor(c(NA, 2, NA))
     )
     attr(test_data[["var1"]], "label") <- "Variable 1"
     attr(test_data[["var2"]], "label") <- "Variable 2"
@@ -95,12 +95,14 @@ testthat::test_that("keep_dep_indep_if_no_overlap works in refine_chapter_overvi
     result_keep <- saros.base::refine_chapter_overview(
         chapter_overview = test_overview,
         data = test_data,
+        hide_chunk_if_n_below = 0,
         keep_dep_indep_if_no_overlap = TRUE
     )
 
     # Test with keep_dep_indep_if_no_overlap = FALSE (default)
     result_remove <- saros.base::refine_chapter_overview(
         chapter_overview = test_overview,
+        hide_chunk_if_n_below = 0,
         data = test_data
     )
 
