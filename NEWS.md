@@ -13,6 +13,10 @@
 - Vectorized password lookup in `refer_main_password_file()` for better performance.
 
 ## Bug fixes
+- Fixed critical sorting bug in `refine_chapter_overview()` where output was incorrectly sorted by variable labels instead of variable positions when using default arguments. The fix includes:
+  - Corrected `arrange_expr_producer()` to properly name arrange expressions with column names instead of logical values.
+  - Added ungrouping before sorting in `arrange_arrangers_and_groups()` to prevent grouped data from interfering with global sort order.
+  - Made chapter reordering stable to preserve within-chapter sorting.
 - Fixed regex bugs in `check_variable_labels()`.
 - Fixed tidyselect warnings in `look_for_extended()`.
 - Improved robustness of `setup_mesos()`.
@@ -38,6 +42,7 @@
 ## Testing
 - Added 169 comprehensive tests across multiple modules (from 331 to 500+ tests).
 - Added 16 tests for `refine_chapter_overview()`.
+- Added comprehensive sorting tests in `test-arrange2.R` to verify position-based sorting with intentionally mismatched variable names, labels, and positions.
 - Added 27 tests for logging functionality.
 - Added tests for setup_mesos helper functions, utility functions, access restriction setup, and directory structure helpers.
 
