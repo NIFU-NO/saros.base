@@ -57,7 +57,6 @@ if (!exists(".saros.env")) .saros.env <- NULL
   )
 
 
-
   ################################################################################
   # for a single crowd only, no mesos
   .saros.env$default_chunk_templates_1 <<-
@@ -792,6 +791,236 @@ gt(table)
 ```
 
 _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
+
+:::
+
+
+"
+    )
+
+  ##################################################################################################################################
+  # For mesos using crowd_plots_as_tabset and txt_from_cat_mesos_plots
+  .saros.env$default_chunk_templates_4 <<-
+    data.frame(
+      .template_name = character(),
+      .template_variable_type_dep = character(),
+      .template_variable_type_indep = character(),
+      .template = character()
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_plot_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = "fct;ord",
+      .template =
+        "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+txts <- saros::txt_from_cat_mesos_plots(plots)
+saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html')
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
+
+:::
+
+txts
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_plot_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = NA_character_,
+      .template =
+        "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+txts <- saros::txt_from_cat_mesos_plots(plots)
+saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html')
+```
+
+_{.variable_label_prefix_dep}_.
+
+:::
+
+txts
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "int_plot_html",
+      .template_variable_type_dep = "int;dbl",
+      .template_variable_type_indep = "fct;ord",
+      .template =
+        "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+
+saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html')
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "int_plot_html",
+      .template_variable_type_dep = "int;dbl",
+      .template_variable_type_indep = NA_character_,
+      .template =
+        "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html')
+```
+
+_{.variable_label_prefix_dep}_.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_table_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = "fct;ord",
+      .template =
+        "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+tbls <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+if(!all(vapply(tbls, is.null, logical(1)))) {{
+
+lapply(names(tbls), function(.x) {{
+  knitr::knit_child(text = c(
+      '',
+      '#\\newpage',
+      '',
+    '##### `r .x`',
+    '',
+    '```{{r}}',
+    'library(gt)',
+    'library(saros)',
+    'nrange <- stringi::stri_c(\\'N = \\', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep})))',
+    'link <- make_link(data = tbls[[.x]])',
+    'x <- I(paste0(c(nrange, link), collapse=\\', \\')',
+    'gt(tbls[[.x]])',
+    '```',
+    '',
+    '`r x`',
+    ''
+    ), envir = environment(), quiet = TRUE)
+}}) |> unlist() |> cat(sep = '\\n')
+}}
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_table_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = NA_character_,
+      .template =
+        "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+#| panel: tabset
+tbls <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_table_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+if(!all(vapply(tbls, is.null, logical(1)))) {{
+
+  lapply(names(tbls), function(.x) {{
+    knitr::knit_child(text = c(
+        '',
+        '#\\newpage',
+        '',
+      '##### `r .x`',
+      '',
+      '```{{r}}',
+      'library(gt)',
+      'library(saros)',
+      'nrange <- stringi::stri_c(\\'N = \\', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep})))',
+      'link <- make_link(data = tbls[[.x]])',
+      'x <- I(paste0(c(nrange, link), collapse=\\', \\')',
+      'gt(tbls[[.x]])',
+      '```',
+      '',
+      '`r x`',
+      ''
+      ), envir = environment(), quiet = TRUE)
+  }}) |> unlist() |> cat(sep = '\\n')
+}}
+```
+
+_{.variable_label_prefix_dep}_.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "chr_table",
+      .template_variable_type_dep = "chr",
+      .template_variable_type_indep = NA_character_,
+      .template =
+        "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+#| output: asis
+tbl <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'),\n\thide_for_crowd_if_valid_n_below = 0,\n\thide_for_crowd_if_category_n_below = 0,\n\thide_for_crowd_if_cell_n_below = 0,\n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
+if(!all(vapply(tbls, is.null, logical(1)))) {{
+
+  lapply(names(tbls), function(.x) {{
+    knitr::knit_child(text = c(
+        '',
+        '#\\newpage',
+        '',
+      '##### `r .x`',
+      '',
+      '```{{r}}',
+      'library(gt)',
+      'gt(tbls[[.x]])',
+      '```',
+      '',
+      '`r x`',
+      ''
+      ), envir = environment(), quiet = TRUE)
+  }}) |> unlist() |> cat(sep = '\\n')
+}}
+```
+
+_{.variable_label_prefix_dep}_.
 
 :::
 

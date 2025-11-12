@@ -8,6 +8,7 @@
   - Normalized Unicode strings to NFC form.
   - Removed non-printable characters.
   - Replaced common encoding artifacts (e.g., `â€™` to `'`).
+- Added chunk template variant 4 (`get_chunk_template_defaults(4)`) for mesos reports using the new saros package functions `crowd_plots_as_tabset()` and `txt_from_cat_mesos_plots()`. This provides a more streamlined approach for generating mesos-specific plots and tables.
 
 ## Performance improvements
 - Vectorized password lookup in `refer_main_password_file()` for better performance.
