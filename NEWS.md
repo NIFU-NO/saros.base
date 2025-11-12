@@ -1,3 +1,8 @@
+# saros.base 1.2.1
+
+## Bug fixes
+- Fixed bug in `setup_mesos()` where an incorrect assignment to `files_to_process` was causing the search and replace functionality to fail.
+
 # saros.base 1.2.0
 
 ## New features
