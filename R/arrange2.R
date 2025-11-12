@@ -1,7 +1,8 @@
 arrange_expr_producer <- function(
-    data,
-    arrange_vars = NULL,
-    na_first = TRUE) {
+  data,
+  arrange_vars = NULL,
+  na_first = TRUE
+) {
   if (is.null(arrange_vars)) {
     return(list(data = data, arrange_vars = list(NULL)))
   }
@@ -41,13 +42,14 @@ arrange_expr_producer <- function(
     expr
   })
 
-  stats::setNames(arrange_exprs, arrange_vars)
+  stats::setNames(arrange_exprs, names(arrange_vars))
 }
 
 arrange2 <- function(
-    data,
-    arrange_vars = NULL,
-    na_first = TRUE) {
+  data,
+  arrange_vars = NULL,
+  na_first = TRUE
+) {
   if (is.null(arrange_vars)) {
     return(data)
   }
@@ -61,10 +63,14 @@ arrange2 <- function(
 }
 
 arrange_arrangers_and_groups <- function(
-    chapter_structure,
-    arrange_vars = NULL,
-    group_by_vars = NULL,
-    na_first = TRUE) {
+  chapter_structure,
+  arrange_vars = NULL,
+  group_by_vars = NULL,
+  na_first = TRUE
+) {
+  # Ungroup first to ensure arrange works globally, not within existing groups
+  chapter_structure <- dplyr::ungroup(chapter_structure)
+
   # Do same for arrange_vars and group_by_vars
   arrange_vars_expr <-
     arrange_expr_producer(
@@ -79,7 +85,8 @@ arrange_arrangers_and_groups <- function(
       na_first = na_first
     )
 
-  combined <- c(arrange_vars_expr)
+  # Combine arrange and group expressions, with arrange taking precedence
+  combined <- c(arrange_vars_expr, group_by_vars_expr)
   combined <- combined[!duplicated(names(combined))]
 
   data_sorted <- dplyr::arrange(chapter_structure, !!!combined)
