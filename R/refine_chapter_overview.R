@@ -495,7 +495,6 @@ refine_chapter_overview <-
       )
 
 
-
     out <-
       add_n_vars_to_chapter_structure(
         chapter_structure = out,
@@ -509,7 +508,6 @@ refine_chapter_overview <-
         target_variable = ".variable_name_indep",
         variable_name = ".n_indep"
       )
-
 
 
     out <-
@@ -565,8 +563,9 @@ refine_chapter_overview <-
       out$chapter <- as.character(out$chapter)
     }
     # Reorder output to match original chapter order (GH #110)
+    # Use stable sort to preserve within-chapter ordering
     if ("chapter" %in% names(out) && length(original_chapter_order) > 1) {
-      out <- out[order(match(out$chapter, original_chapter_order)), , drop = FALSE]
+      out <- out[order(match(out$chapter, original_chapter_order), seq_len(nrow(out))), , drop = FALSE]
     }
     out
   }
