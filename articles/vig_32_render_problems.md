@@ -1,0 +1,15 @@
+# Error messages and Frequently Asked Questions
+
+- Quarto stops in the middle of rendering and complains that it cannot
+  find a shape or another file.:
+
+  This is most likely caused by running Render while in a folder that
+  has too long a path, on a Sharepoint/Teams folder. Move everything
+  together to e.g. `%HOMEPATH%/AppData/Saros/Project/` and try again.
+
+- Quarto can’t find R?: You have R installed in an AppData folder path.
+  Uninstall R, make yourself an administrator, open the R installation
+  file as an administrator and install instead in Program files or
+  Program Files.
+
+- Sudden strange error: Try rendering again, might solve itself.

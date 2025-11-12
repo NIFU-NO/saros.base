@@ -1,0 +1,41 @@
+# Get Global Options for Chunk Templates
+
+Get Global Options for Chunk Templates
+
+## Usage
+
+``` r
+get_chunk_template_defaults(variant = 1)
+```
+
+## Arguments
+
+- variant:
+
+  Positive integer.
+
+## Value
+
+List with options in R
+
+## Examples
+
+``` r
+get_chunk_template_defaults()
+#>   .template_name .template_variable_type_dep .template_variable_type_indep
+#> 1  cat_plot_html                     fct;ord                       fct;ord
+#> 2  cat_plot_html                     fct;ord                          <NA>
+#> 3  int_plot_html                     int;dbl                       fct;ord
+#> 4 int_table_html                     int;dbl                          <NA>
+#> 5 cat_table_html                     fct;ord                       fct;ord
+#> 6 cat_table_html                     fct;ord                          <NA>
+#> 7      chr_table                         chr                          <NA>
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .template
+#> 1 \n::: {{#fig-{.chunk_name}}}\n\n```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_cats_indep}, max_chars_labels_x={.max_chars_labels_indep})}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_plot_html')\nnrange <- stringi::stri_c('N = ', n_range2({.obj_name}))\nlink <- make_link(data = {.obj_name}$data)\nlink_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver)\nx <- I(paste0(c(nrange, link, link_plot), collapse=', '))\ngirafe(ggobj = {.obj_name})\n```\n\n_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.\n\n:::\n\n\n
+#> 2                                                                                                                                                                                                                           \n::: {{#fig-{.chunk_name}}}\n\n```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_plot_html')\nnrange <- stringi::stri_c('N = ', n_range2({.obj_name}))\nlink <- make_link(data = {.obj_name}$data)\nlink_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver)\nx <- I(paste0(c(nrange, link, link_plot), collapse=', '))\ngirafe(ggobj = {.obj_name})\n```\n\n_{.variable_label_prefix_dep}_. `{{r}} x`.\n\n:::\n\n
+#> 3                                                                                                                                                                                                                                                                                                                                                                   \n::: {{#fig-{.chunk_name}}}\n\n```{{r}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'int_plot_html')\nlink <- make_link(data = {.obj_name}$data)\nlink_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver)\nx <- I(paste0(c(link, link_plot), collapse=', '))\ngirafe(ggobj = {.obj_name})\n```\n\n_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.\n\n:::\n\n
+#> 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n```{{r}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_table_html')\nlink <- make_link(data = {.obj_name}$data)\nlink_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver)\nx <- I(paste0(c(link, link_plot), collapse=', '))\ngirafe(ggobj = {.obj_name})\n```\n\n_{.variable_label_prefix_dep}_. `{{r}} x`.\n\n:::\n\n\n
+#> 5                                                                                                                                                                                                                                                                                                                                                   \n::: {{#tbl-{.chunk_name}}}\n\n```{{r}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_table_html')\nnrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))\nlink <- make_link(data={.obj_name})\nx <- I(paste0(c(nrange, link), collapse=', '))\ngt({.obj_name})\n```\n\n_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.\n\n:::\n\n\n
+#> 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \n::: {{#tbl-{.chunk_name}}}\n\n```{{r}}\n{.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_table_html')\nnrange <- stringi::stri_c('N = ', n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})))\nlink <- make_link(data={.obj_name})\nx <- I(paste0(c(nrange, link), collapse=', '))\ngt({.obj_name})\n```\n\n_{.variable_label_prefix_dep}_. N=`{{r}} x`.\n\n:::\n\n\n
+#> 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \n::: {{#tbl-{.chunk_name}}}\n\n```{{r}}\n{.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html')\ngt({.obj_name})\n```\n\n_{.variable_label_prefix_dep}_.\n\n:::\n\n\n
+```

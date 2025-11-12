@@ -69,7 +69,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-0"></a></h3>
-<ul><li>Fixed regex bugs in <code><a href="../reference/check_variable_labels.html">check_variable_labels()</a></code>.</li>
+<ul><li>Fixed critical sorting bug in <code><a href="../reference/refine_chapter_overview.html">refine_chapter_overview()</a></code> where output was incorrectly sorted by variable labels instead of variable positions when using default arguments. The fix includes:
+<ul><li>Corrected <code>arrange_expr_producer()</code> to properly name arrange expressions with column names instead of logical values.</li>
+<li>Added ungrouping before sorting in <code>arrange_arrangers_and_groups()</code> to prevent grouped data from interfering with global sort order.</li>
+<li>Made chapter reordering stable to preserve within-chapter sorting.</li>
+</ul></li>
+<li>Fixed regex bugs in <code><a href="../reference/check_variable_labels.html">check_variable_labels()</a></code>.</li>
 <li>Fixed tidyselect warnings in <code>look_for_extended()</code>.</li>
 <li>Improved robustness of <code><a href="../reference/setup_mesos.html">setup_mesos()</a></code>.</li>
 <li>Added validation checks for email and username columns in <code><a href="../reference/create_email_credentials.html">create_email_credentials()</a></code>.</li>
@@ -98,6 +103,7 @@
 <h3 id="testing-1-2-0">Testing<a class="anchor" aria-label="anchor" href="#testing-1-2-0"></a></h3>
 <ul><li>Added 169 comprehensive tests across multiple modules (from 331 to 500+ tests).</li>
 <li>Added 16 tests for <code><a href="../reference/refine_chapter_overview.html">refine_chapter_overview()</a></code>.</li>
+<li>Added comprehensive sorting tests in <code>test-arrange2.R</code> to verify position-based sorting with intentionally mismatched variable names, labels, and positions.</li>
 <li>Added 27 tests for logging functionality.</li>
 <li>Added tests for setup_mesos helper functions, utility functions, access restriction setup, and directory structure helpers.</li>
 </ul></div>
@@ -149,7 +155,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
