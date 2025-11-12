@@ -2,6 +2,8 @@
 
 ## saros.base 1.2.0
 
+CRAN release: 2025-11-12
+
 ### New features
 
 - Added file logging for excluded/ignored variables via `log_file`

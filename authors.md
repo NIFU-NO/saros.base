@@ -13,7 +13,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/NIFU-NO/saros.base/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/NIFU-NO/saros.base/blob/v1.2.0/inst/CITATION)
 
 Stephan Daus (2024). *saros: Semi-Automated Reporting of Ordinary
 Surveys*. Nordic institute for the studies of innovation, research and
