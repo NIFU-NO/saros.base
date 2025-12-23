@@ -1,7 +1,8 @@
 search_and_replace_files <- function(
-    files,
-    pattern,
-    replacement) {
+  files,
+  pattern,
+  replacement
+) {
     if (is.null(pattern) || is.null(replacement)) {
         return(files)
     }
@@ -141,9 +142,10 @@ create_includes_content_path_df <-
 
 
 create_index_qmd <- function(
-    main_directory = character(),
-    mesos_var = character(),
-    mesos_var_pretty = character()) {
+  main_directory = character(),
+  mesos_var = character(),
+  mesos_var_pretty = character()
+) {
     if (length(mesos_var) != length(mesos_var_pretty)) cli::cli_abort("mesos_var and mesos_var_pretty must be of same length.")
     for (i in seq_along(mesos_var)) {
         contents <- add_yaml_fences(yaml::as.yaml(list(title = mesos_var_pretty[i])))
@@ -303,7 +305,6 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 }
 
 
-
 #' Simply create qmd-files and yml-files for mesos reports
 #' @param main_directory String, path to where the _metadata.yml, stub QMD-files
 #'      and their subfolders are created.
@@ -325,17 +326,18 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 #' @param prefix,suffix String for the include section of the stub qmd files.
 #' @export
 setup_mesos <- function(
-    main_directory = character(),
-    mesos_var_subfolder = character(),
-    files_to_process,
-    mesos_df,
-    files_taking_title = c("index.qmd", "report.qmd"),
-    read_syntax_pattern = "qs::qread\\('",
-    read_syntax_replacement = "qs::qread('../../",
-    qmd_regex = "\\.qmd",
-    subtitle_separator = " - ",
-    prefix = '{{< include \"',
-    suffix = '\" >}}') {
+  main_directory = character(),
+  mesos_var_subfolder = character(),
+  files_to_process,
+  mesos_df,
+  files_taking_title = c("index.qmd", "report.qmd"),
+  read_syntax_pattern = "qs::qread\\('",
+  read_syntax_replacement = "qs::qread('../../",
+  qmd_regex = "\\.qmd",
+  subtitle_separator = " - ",
+  prefix = '{{< include \"',
+  suffix = '\" >}}'
+) {
     ## Checks
 
     if (!is.character(files_to_process) ||
@@ -389,7 +391,6 @@ setup_mesos <- function(
         is.character(read_syntax_replacement) &&
         nchar(read_syntax_pattern) > 0 &&
         nchar(read_syntax_replacement) > 0) {
-        files_to_process <- list.files
         search_and_replace_files(
             files = files_to_process,
             pattern = read_syntax_pattern,
