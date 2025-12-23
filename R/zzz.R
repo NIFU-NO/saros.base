@@ -1,34 +1,61 @@
 utils::globalVariables(names = c(".", ".data", ".env"))
 
-if (!exists(".saros.env")) .saros.env <- NULL
+if (!exists(".saros.env")) {
+  .saros.env <- NULL
+}
 .onLoad <- function(libname, pkgname) {
   # Initialize the .saros.env environment if not already set
-  if (!exists(".saros.env")) .saros.env <<- new.env(parent = emptyenv())
-
+  if (!exists(".saros.env")) {
+    .saros.env <<- new.env(parent = emptyenv())
+  }
 
   .saros.env$core_chapter_structure_cols <<-
     c(
       "chapter",
-      paste0(c(
-        ".variable_role", ".variable_selection", ".variable_position",
-        ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-        ".variable_label_prefix", ".variable_label_suffix",
-        ".variable_type"
-      ), "_dep"),
-      paste0(c(
-        ".variable_role", ".variable_selection", ".variable_position",
-        ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-        ".variable_label_prefix", ".variable_label_suffix",
-        ".variable_type"
-      ), "_indep"),
+      paste0(
+        c(
+          ".variable_role",
+          ".variable_selection",
+          ".variable_position",
+          ".variable_name",
+          ".variable_name_prefix",
+          ".variable_name_suffix",
+          ".variable_label_prefix",
+          ".variable_label_suffix",
+          ".variable_type"
+        ),
+        "_dep"
+      ),
+      paste0(
+        c(
+          ".variable_role",
+          ".variable_selection",
+          ".variable_position",
+          ".variable_name",
+          ".variable_name_prefix",
+          ".variable_name_suffix",
+          ".variable_label_prefix",
+          ".variable_label_suffix",
+          ".variable_type"
+        ),
+        "_indep"
+      ),
       ".bi_test",
       ".p_value",
       ".template_name",
-      ".template", ".variable_group_id", ".n", ".n_range", ".n_cats_dep",
+      ".template",
+      ".variable_group_id",
+      ".n",
+      ".n_range",
+      ".n_cats_dep",
       ".max_chars_cats_dep",
-      ".max_chars_labels_dep", ".n_dep",
+      ".max_chars_labels_dep",
+      ".n_dep",
       ".n_indep",
-      ".obj_name", ".chunk_name", ".file_name", ".chapter_number",
+      ".obj_name",
+      ".chunk_name",
+      ".file_name",
+      ".chapter_number",
       ".chapter_foldername"
     )
 
@@ -45,7 +72,6 @@ if (!exists(".saros.env")) .saros.env <- NULL
   .saros.env$core_chapter_structure_pattern <<-
     "\\.template_variable_type_dep|\\.template_variable_type_indep"
 
-
   .saros.env$ignore_args <<- c(
     "data",
     "dep",
@@ -55,7 +81,6 @@ if (!exists(".saros.env")) .saros.env <- NULL
     "call",
     "..."
   )
-
 
   ################################################################################
   # for a single crowd only, no mesos
@@ -70,8 +95,7 @@ if (!exists(".saros.env")) .saros.env <- NULL
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_cats_indep}, max_chars_labels_x={.max_chars_labels_indep})}}
@@ -94,8 +118,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}
@@ -117,8 +140,7 @@ _{.variable_label_prefix_dep}_. `{{r}} x`.
       .template_name = "int_plot_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
@@ -139,8 +161,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
       .template_name = "int_table_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ```{{r}}
 {.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_table_html')
 link <- make_link(data = {.obj_name}$data)
@@ -160,8 +181,7 @@ _{.variable_label_prefix_dep}_. `{{r}} x`.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -183,8 +203,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -206,8 +225,7 @@ _{.variable_label_prefix_dep}_. N=`{{r}} x`.
       .template_name = "chr_table",
       .template_variable_type_dep = "chr",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -256,8 +274,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
@@ -306,8 +323,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
@@ -357,8 +373,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "int_plot_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
@@ -402,8 +417,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
       .template_name = "int_plot_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
@@ -447,8 +461,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -491,8 +504,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -535,8 +547,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "chr_table",
       .template_variable_type_dep = "chr",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -566,8 +577,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{.panel-tabset}}
 
 ##### Target
@@ -622,8 +632,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{.panel-tabset}}
 
 ##### Target
@@ -677,8 +686,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{.panel-tabset}}
 
 ##### Target
@@ -730,8 +738,7 @@ _{.variable_label_prefix_dep}_ by _{.variable_label_prefix_dep}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{.panel-tabset}}
 
 ##### Target
@@ -779,8 +786,7 @@ _{.variable_label_prefix_dep}_
       .template_name = "chr_table",
       .template_variable_type_dep = "chr",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}-target}}
 
 ```{{r}}
@@ -811,23 +817,22 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd = c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 txts <- saros::txt_from_cat_mesos_plots(plots)
-saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html')
+saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html', save = parameters$save)
 ```
 
 _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 
 :::
 
-txts
+`{{r}} I(paste0(txts, collapse = ' '))`
 
 "
     ) |>
@@ -835,23 +840,22 @@ txts
       .template_name = "cat_plot_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 txts <- saros::txt_from_cat_mesos_plots(plots)
-saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html')
+saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html', save = parameters$save)
 ```
 
 _{.variable_label_prefix_dep}_.
 
 :::
 
-txts
+`{{r}} I(paste0(txts, collapse = ' '))`
 
 "
     ) |>
@@ -859,16 +863,15 @@ txts
       .template_name = "int_plot_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 
-saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html')
+saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html', save = parameters$save)
 ```
 
 _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
@@ -882,15 +885,14 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
       .template_name = "int_plot_html",
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#fig-{.chunk_name}}}
 
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
-saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html')
+plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html', save = parameters$save)
 ```
 
 _{.variable_label_prefix_dep}_.
@@ -904,8 +906,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = "fct;ord",
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -948,8 +949,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
       .template_name = "cat_table_html",
       .template_variable_type_dep = "fct;ord",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -992,8 +992,7 @@ _{.variable_label_prefix_dep}_.
       .template_name = "chr_table",
       .template_variable_type_dep = "chr",
       .template_variable_type_indep = NA_character_,
-      .template =
-        "
+      .template = "
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
@@ -1027,4 +1026,173 @@ _{.variable_label_prefix_dep}_.
 
 "
     )
+
+  ################################################################################
+  # for a single crowd only, no mesos. Simplified
+  .saros.env$default_chunk_templates_5 <<-
+    data.frame(
+      .template_name = character(),
+      .template_variable_type_dep = character(),
+      .template_variable_type_indep = character(),
+      .template = character()
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_plot_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = "fct;ord",
+      .template = "
+::: {{#fig-{.chunk_name}}}
+
+```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_cats_y={.max_chars_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, n_x={.n_indep}, n_cats_x={.n_cats_indep}, max_chars_cats_x={.max_chars_cats_indep}, max_chars_labels_x={.max_chars_labels_indep})}}
+plot <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_plot_html')
+x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+girafe(ggobj = plot)
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_plot_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = NA_character_,
+      .template = "
+::: {{#fig-{.chunk_name}}}
+
+```{{r, fig.height=fig_height_h_barchart(n_y={.n_dep}, n_cats_y={.n_cats_dep}, max_chars_labels_y={.max_chars_labels_dep}, max_chars_cats_y={.max_chars_cats_dep})}}
+plot <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_plot_html')
+x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+girafe(ggobj = plot)
+```
+
+_{.variable_label_prefix_dep}_. `{{r}} x`.
+
+:::
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "int_plot_html",
+      .template_variable_type_dep = "int;dbl",
+      .template_variable_type_indep = "fct;ord",
+      .template = "
+::: {{#fig-{.chunk_name}}}
+
+```{{r}}
+plot <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'int_plot_html')
+x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+girafe(ggobj = plot)
+
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.
+
+:::
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "int_plot_html",
+      .template_variable_type_dep = "int;dbl",
+      .template_variable_type_indep = NA_character_,
+      .template = "
+```{{r}}
+plot <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_plot_html')
+x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+girafe(ggobj = plot)
+```
+
+_{.variable_label_prefix_dep}_. `{{r}} x`.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_table_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = "fct;ord",
+      .template = "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+tbl <- \n\tdata |>\n\t\tmakeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_table_html')
+nrange <- stringi::stri_c('N = ', n_range(data = data, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))
+link <- make_link(data=tbl)
+x <- I(paste0(c(nrange, link), collapse=', '))
+gt(tbl)
+```
+
+_{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{r}} x`.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "cat_table_html",
+      .template_variable_type_dep = "fct;ord",
+      .template_variable_type_indep = NA_character_,
+      .template = "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+tbl <- \n\tdata |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_table_html')
+nrange <- stringi::stri_c('N = ', n_range(data = data, \n\t\tdep = c({.variable_name_dep})))
+link <- make_link(data=tbl)
+x <- I(paste0(c(nrange, link), collapse=', '))
+gt(tbl)
+```
+
+_{.variable_label_prefix_dep}_. N=`{{r}} x`.
+
+:::
+
+
+"
+    ) |>
+    tibble::add_row(
+      .template_name = "chr_table",
+      .template_variable_type_dep = "chr",
+      .template_variable_type_indep = NA_character_,
+      .template = "
+::: {{#tbl-{.chunk_name}}}
+
+```{{r}}
+tbl <- \n\tmakeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html')
+gt(tbl)
+```
+
+_{.variable_label_prefix_dep}_.
+
+:::
+
+
+"
+    ) #|>
+
+  #     tibble::add_row(.template_name = "sigtest_table_html",
+  #                     .template =
+  #                       "
+  # ::: {{#tbl-{.chunk_name}}}
+  #
+  # ```{{r}}
+  # {.obj_name} <- \n\tmakeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'sigtest_table_html')
+  # gt::gt({.obj_name})
+  # ```
+  #
+  # _Significance tests_.
+  #
+  # :::
+  #
+  #
+  # ",
+  #                     .template_variable_type_dep = "fct;ord;int;dbl",
+  #                     .template_variable_type_indep = "fct;ord;int;dbl")
 }

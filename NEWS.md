@@ -1,3 +1,13 @@
+# saros.base 1.2.1.9001
+
+## New features
+- Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
+
+## Code quality improvements
+- Improved code formatting and readability in `.onLoad()` function for better maintainability.
+- Updated template references in `default_chunk_templates_4` for better consistency (using `data` instead of `data_{.chapter_foldername}`, added `save = parameters$save` parameter).
+- Better structured code blocks with consistent indentation and spacing.
+
 # saros.base 1.2.1
 
 ## Bug fixes
