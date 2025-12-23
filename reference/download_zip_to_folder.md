@@ -70,5 +70,5 @@ download_zip_to_folder(
   out_path = tempdir(), overwrite = TRUE
 )
 #> Copied: 01_script, 02_resources, and 03_organization_settings
-#> [1] "/tmp/RtmpClqKEn"
+#> [1] "/tmp/RtmpoXUAnd"
 ```

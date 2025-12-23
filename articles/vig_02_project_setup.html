@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros.base</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,7 @@
 
 
 
-      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros.base/blob/v1.2.0/vignettes/vig_02_project_setup.qmd" class="external-link"><code>vignettes/vig_02_project_setup.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros.base/blob/main/vignettes/vig_02_project_setup.qmd" class="external-link"><code>vignettes/vig_02_project_setup.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -172,22 +172,22 @@
 <p>This is a quick approach to changing the most important settings. See further below for a more detailed explanation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">quarto_yaml</span> <span class="op">&lt;-</span> <span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/read_yaml.html" class="external-link">read_yaml</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_quarto.yaml"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">quarto_yaml</span> <span class="op">&lt;-</span> <span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://yaml.r-lib.org/reference/read_yaml.html" class="external-link">read_yaml</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_quarto.yaml"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">quarto_yaml</span><span class="op">$</span><span class="va">website</span><span class="op">$</span><span class="va">title</span> <span class="op">&lt;-</span> <span class="st">"PROJECT TITLE"</span></span>
 <span><span class="va">quarto_yaml</span><span class="op">$</span><span class="va">website</span><span class="op">$</span><span class="va">`site-url`</span> <span class="op">&lt;-</span> <span class="st">"WEBSITE URL"</span></span>
 <span><span class="va">quarto_yaml</span><span class="op">$</span><span class="va">project_no</span> <span class="op">&lt;-</span> <span class="st">"INTERNAL PROJECT NUMBER"</span> <span class="co"># Usually not needed</span></span>
 <span><span class="va">quarto_yaml</span><span class="op">$</span><span class="va">funder</span> <span class="op">&lt;-</span> <span class="st">"FUNDER"</span></span>
 <span><span class="va">quarto_yaml</span><span class="op">$</span><span class="va">funder_address</span> <span class="op">&lt;-</span> <span class="st">"FUNDER'S ADDRESS"</span></span>
-<span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/write_yaml.html" class="external-link">write_yaml</a></span><span class="op">(</span><span class="va">quarto_yaml</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_quarto.yaml"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://yaml.r-lib.org/reference/write_yaml.html" class="external-link">write_yaml</a></span><span class="op">(</span><span class="va">quarto_yaml</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_quarto.yaml"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">report_yaml</span> <span class="op">&lt;-</span> <span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/read_yaml.html" class="external-link">read_yaml</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_report_header.yaml"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">report_yaml</span> <span class="op">&lt;-</span> <span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://yaml.r-lib.org/reference/read_yaml.html" class="external-link">read_yaml</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_report_header.yaml"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">report_yaml</span><span class="op">$</span><span class="va">signer_1</span> <span class="op">&lt;-</span> <span class="st">"REPORT SIGNER 1"</span></span>
 <span><span class="va">report_yaml</span><span class="op">$</span><span class="va">signer_1_title</span> <span class="op">&lt;-</span> <span class="st">"REPORT SIGNER 1 JOB TITLE"</span></span>
 <span><span class="va">report_yaml</span><span class="op">$</span><span class="va">signer_1</span> <span class="op">&lt;-</span> <span class="st">"REPORT SIGNER 2"</span></span>
 <span><span class="va">report_yaml</span><span class="op">$</span><span class="va">signer_1_title</span> <span class="op">&lt;-</span> <span class="st">"REPORT SIGNER 2 JOB TITLE"</span></span>
 <span><span class="va">report_yaml</span><span class="op">$</span><span class="va">report_type</span> <span class="op">&lt;-</span> <span class="st">"rapport"</span> <span class="co"># Usually not needed</span></span>
-<span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/write_yaml.html" class="external-link">write_yaml</a></span><span class="op">(</span><span class="va">report_yaml</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_report_header.yaml"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://yaml.r-lib.org/reference/write_yaml.html" class="external-link">write_yaml</a></span><span class="op">(</span><span class="va">report_yaml</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"02_resources"</span>, <span class="st">"YAML"</span>, <span class="st">"_report_header.yaml"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </section></section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
