@@ -46,7 +46,6 @@ get_draft_report_validation_rules <- function(params, env, core_chapter_structur
     replace_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
     prefix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
     suffix_heading_for_group = list(fun = function(x) is.null(x) || (is.character(x) && rlang::is_named(x) && sum(duplicated(names(x))) == 0)),
-    filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
     data_filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
     report_includes_prefix = list(fun = function(x) is_string(x)),
     report_includes_suffix = list(fun = function(x) is_string(x)),
