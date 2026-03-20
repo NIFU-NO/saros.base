@@ -1,17 +1,14 @@
-# MIT License
+# Custom License for saros.base
 
 Copyright (c) 2026 Stephan Daus
 
-saros is free, except in Norway.
-Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. If your department/organization competes with NIFU or Kristiania University College on commissioned or open research calls within Norway, you are probably not going to get easy permission. Governmental agencies can ask for permission.
+**saros is free, except in Norway.**
 
+Outside of Norway, this package can be used freely in accordance with the terms below. However, persons affiliated with Norwegian organizations (governmental, non-profit or profit/commercial) must have the explicit written permission from the author for use. If your department/organization competes with NIFU or Kristiania University College on commissioned or open research calls within Norway, you are probably not going to get easy permission unfortunately. Governmental agencies in Norway may get approval.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+---
+
+Permission is hereby granted, free of charge, to any person outside of Norway obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
