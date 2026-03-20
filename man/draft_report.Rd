@@ -35,7 +35,7 @@ draft_report(
   write_qmd = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
-  serialized_format = c("rds", "qs"),
+  serialized_format = "rds",
   max_path_warning_threshold = 260,
   filename_prefix = "",
   data_filename_prefix = "data_",
@@ -194,10 +194,7 @@ chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available
 \verb{scalar<string>} // \emph{default:} \code{"rds"}
 
 Format for serialized data when storing chapter dataset.
-One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
-The latter two requires the respective packages to be installed.
-\code{"qs"} is usually the fastest and most space efficient, but sets package
-dependencies on the report project.}
+Currently only \code{"rds"} is supported.}
 
 \item{max_path_warning_threshold}{\emph{Maximum number of characters in paths warning}
 

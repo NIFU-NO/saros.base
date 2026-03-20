@@ -72,7 +72,6 @@ validate_serialized_format <- function(serialized_format) {
   serialized_format <- serialized_format[1]
   
   pkg <- switch(serialized_format,
-    "qs" = "qs",
     "rds" = "base"
   )
   
