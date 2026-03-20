@@ -19,6 +19,7 @@ reference:
 - title: Post-processing tools (possibly movin to a Quarto extension at a later stage)
   contents:
   - remove_entry_from_sidebar
+  - delete_freeze
 - title: Auxiliary functions to obtain defaults
   contents: 
   - get_chunk_template_defaults
