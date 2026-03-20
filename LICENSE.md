@@ -1,9 +1,9 @@
 # MIT License
 
-Copyright (c) 2024 Stephan Daus
+Copyright (c) 2026 Stephan Daus
 
 saros is free, except in Norway.
-Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. Simply put, if your department/organization competes with NIFU on commissioned or open research calls within Norway, you are probably not going to get permission unfortunately.
+Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. If your department/organization competes with NIFU or Kristiania University College on commissioned or open research calls within Norway, you are probably not going to get easy permission. Governmental agencies can ask for permission.
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
