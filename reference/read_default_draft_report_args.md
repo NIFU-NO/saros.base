@@ -25,7 +25,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpoXUAnd/file1f2a4cc598f8.yaml"
+#> [1] "/tmp/RtmpCzR55J/file20175312828e.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL
@@ -104,7 +104,7 @@ read_default_draft_report_args(path = tmpfile)
 #> NULL
 #> 
 #> $serialized_format
-#> NULL
+#> [1] "rds"
 #> 
 #> $max_path_warning_threshold
 #> [1] 260

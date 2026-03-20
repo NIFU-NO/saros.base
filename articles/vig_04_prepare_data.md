@@ -598,10 +598,9 @@ Read/write in SPSS? \| Open Standard \| Unicode? \|
 sav (SPSS) \| Limitation on length \| \| \| Yes \| Yes \| No \| \| \|
 dta (Stata) \| Limitation on length \| \| \| Yes \| Yes \| No \| \| \|
 Parquet \| Good \| Very small \| Very fast \| No \| No \| Yes \| \| \|
-qs \| Everything is possible \| Very small \| Very fast \| No \| No \|
-\| \| \| Excel \| No \| Bad \| Bad \| Yes \| Yes \| No \| \| \| CSV \|
-No \| Worst \| Worst \| Yes \| Yes \| Yes \| Confusing \| \| \| \| \| \|
-\| \| \| \| \| \| \| \| \| \| \| \| \|
+Excel \| No \| Bad \| Bad \| Yes \| Yes \| No \| \| \| CSV \| No \|
+Worst \| Worst \| Yes \| Yes \| Yes \| Confusing \| \| \| \| \| \| \| \|
+\| \| \| \| \| \| \| \| \| \| \|
 
 : Advantages and disadvantages of different data formats
 

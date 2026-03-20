@@ -42,7 +42,7 @@ draft_report(
   write_qmd = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
-  serialized_format = c("rds", "qs"),
+  serialized_format = "rds",
   max_path_warning_threshold = 260,
   filename_prefix = "",
   data_filename_prefix = "data_",
@@ -260,11 +260,8 @@ draft_report(
 
   `scalar<string>` // *default:* `"rds"`
 
-  Format for serialized data when storing chapter dataset. One of
-  `"rds"` (default), `"qs"` or `"fst"`. The latter two requires the
-  respective packages to be installed. `"qs"` is usually the fastest and
-  most space efficient, but sets package dependencies on the report
-  project.
+  Format for serialized data when storing chapter dataset. Currently
+  only `"rds"` is supported.
 
 - max_path_warning_threshold:
 
