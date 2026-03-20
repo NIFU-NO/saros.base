@@ -8,6 +8,8 @@
 ^LICENSE\.md$
 ^codecov\.yml$
 ^\.github$
+^\.claude$
+^\.vscode$
 ^cran-comments\.md$
 ^_pkgdown\.yml$
 ^docs$

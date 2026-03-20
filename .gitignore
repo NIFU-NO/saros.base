@@ -13,3 +13,4 @@ copilot-analysis-*.md
 coverage-report.html
 lib
 .vscode/
+settings.local.json
