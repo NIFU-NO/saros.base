@@ -20,7 +20,7 @@ Description: Scaffold an entire web-based report using template chunks, based on
     where each organization wants to obtain results for their organization compared with everyone else.
     See 'saros' (<https://CRAN.R-project.org/package=saros>) for tools used for authors in the drafted reports.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
-License: MIT + file LICENSE
+License: file LICENSE
 URL: https://nifu-no.github.io/saros.base/, https://github.com/NIFU-NO/saros.base 
 BugReports: https://github.com/NIFU-NO/saros.base/issues
 Depends:
