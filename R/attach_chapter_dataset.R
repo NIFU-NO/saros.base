@@ -29,10 +29,9 @@ attach_chapter_dataset <- function(chapter_structure_chapter,
   filepath_chapter_dataset_relative <- file.path(chapter_foldername_clean, filename_chapter_dataset)
 
 
-  serialize_write(
+  saveRDS(
     object = data_chapter,
-    path = filepath_chapter_dataset_absolute,
-    format = serialized_format
+    file = filepath_chapter_dataset_absolute
   )
 
   r_chunk_header <- stringi::stri_c("```{r}\n",
@@ -44,7 +43,7 @@ attach_chapter_dataset <- function(chapter_structure_chapter,
   import_code <- stringi::stri_c(data_filename_prefix,
     chapter_foldername_clean,
     " <- ",
-    serialize_read_syntax(serialized_format),
+    "readRDS",
     "('", filepath_chapter_dataset_relative, "')",
     sep = "", ignore_null = TRUE
   )
