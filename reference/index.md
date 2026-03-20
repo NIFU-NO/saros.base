@@ -31,6 +31,8 @@ The only functions you will probably use, in the order listed
 
 - [`remove_entry_from_sidebar()`](https://nifu-no.github.io/saros.base/reference/remove_entry_from_sidebar.md)
   : Removes entries in sidebar if containing a filename regex pattern.
+- [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
+  : Delete Quarto \_freeze Cache for Updated QMD Files
 
 ## Auxiliary functions to obtain defaults
 
