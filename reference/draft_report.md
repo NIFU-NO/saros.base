@@ -44,7 +44,6 @@ draft_report(
   auxiliary_variables = NULL,
   serialized_format = "rds",
   max_path_warning_threshold = 260,
-  filename_prefix = "",
   data_filename_prefix = "data_",
   report_includes_prefix = "{{< include \"",
   report_includes_suffix = "\" >}}",
@@ -275,16 +274,6 @@ draft_report(
   warning will be returned if files are found to be longer than this
   threshold. Also note that spaces count as three characters due to its
   URL-conversion: %20. To avoid test, set to Inf
-
-- filename_prefix:
-
-  *Prefix string for all qmd filenames*
-
-  `scalar<character>` // *default:* `""` (`optional`)
-
-  For mesos setup it might be useful to set these files (and related
-  sub-folders) with an underscore (`filename_prefix = "_"`) in front as
-  other stub files will include these main qmd files.
 
 - data_filename_prefix:
 

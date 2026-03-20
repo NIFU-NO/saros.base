@@ -144,16 +144,6 @@ gen_qmd_chapters(
   Format for serialized data when storing chapter dataset. Currently
   only `"rds"` is supported.
 
-- filename_prefix:
-
-  *Prefix string for all qmd filenames*
-
-  `scalar<character>` // *default:* `""` (`optional`)
-
-  For mesos setup it might be useful to set these files (and related
-  sub-folders) with an underscore (`filename_prefix = "_"`) in front as
-  other stub files will include these main qmd files.
-
 - data_filename_prefix:
 
   *String attached to beginning of data-file and data-object*
