@@ -251,7 +251,6 @@ draft_report <-
            auxiliary_variables = NULL,
            serialized_format = "rds", # For attach_chapter_dataset
            max_path_warning_threshold = 260, # Tidy up argument name: max_width_path_warning. Keep here
-           filename_prefix = "",
            data_filename_prefix = "data_",
            report_includes_prefix = '{{< include "',
            report_includes_suffix = '" >}}',

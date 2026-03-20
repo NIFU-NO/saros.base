@@ -109,13 +109,6 @@ chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available
 Format for serialized data when storing chapter dataset.
 Currently only \code{"rds"} is supported.}
 
-\item{filename_prefix}{\emph{Prefix string for all qmd filenames}
-
-\verb{scalar<character>} // \emph{default:} \code{""} (\code{optional})
-
-For mesos setup it might be useful to set these files (and related sub-folders) with an underscore
-(\code{filename_prefix = "_"}) in front as other stub files will include these main qmd files.}
-
 \item{data_filename_prefix}{\emph{String attached to beginning of data-file and data-object}
 
 \verb{scalar<string>} // \emph{default:} \code{"data_"}}
