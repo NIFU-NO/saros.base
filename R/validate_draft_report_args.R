@@ -67,22 +67,6 @@ get_draft_report_validation_rules <- function(params, env, core_chapter_structur
   )
 }
 
-# Helper: Validate serialized format and check package availability
-validate_serialized_format <- function(serialized_format) {
-  serialized_format <- serialized_format[1]
-  
-  pkg <- switch(serialized_format,
-    "qs" = "qs",
-    "rds" = "base"
-  )
-  
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg {pkg}} to use {.arg serialized_format}={serialized_format}: {.run [install.packages(pkg)](install.packages())}")
-  }
-  
-  serialized_format
-}
-
 validate_draft_report_args <- function(params) {
   # Check for required data argument
   if (!"data" %in% names(params) || is.null(params$data)) {
@@ -111,9 +95,6 @@ validate_draft_report_args <- function(params) {
         validation_fun = arg_params[[par]]$fun
       )
   }
-
-  # Validate serialized format and check package availability
-  params$serialized_format <- validate_serialized_format(params$serialized_format)
 
   params
 }
