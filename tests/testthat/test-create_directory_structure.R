@@ -19,26 +19,21 @@ testthat::test_that("handle_naming_conventions applies correct case transformati
   result <- saros.base:::handle_naming_conventions("hello world", case = "title")
   testthat::expect_equal(result, "Hello World")
   
-  # Test snake case (removes spaces)
+  # Test snake case (lowercase with underscores)
   result <- saros.base:::handle_naming_conventions("hello world test", case = "snake")
-  testthat::expect_equal(result, "HelloWorldTest")
+  testthat::expect_equal(result, "hello_world_test")
 })
 
 testthat::test_that("handle_naming_conventions applies word separators", {
-  # Note: word_separator replacement does NOT use regex, it's literal string replacement
-  # The pattern "[[:space:]]+" is treated as literal text, not regex
-  # So this feature may not work as intended in the current implementation
-  
-  # Test that function runs without error
-  result <- saros.base:::handle_naming_conventions("Hello World", 
+  result <- saros.base:::handle_naming_conventions("Hello World",
                                                    case = "lower",
                                                    word_separator = "_")
-  testthat::expect_type(result, "character")
-  
-  result <- saros.base:::handle_naming_conventions("Hello World Test", 
+  testthat::expect_equal(result, "hello_world")
+
+  result <- saros.base:::handle_naming_conventions("Hello World Test",
                                                    case = "asis",
                                                    word_separator = "-")
-  testthat::expect_type(result, "character")
+  testthat::expect_equal(result, "Hello-World-Test")
 })
 
 testthat::test_that("handle_naming_conventions applies replacement list", {

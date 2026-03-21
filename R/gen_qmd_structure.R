@@ -17,8 +17,6 @@ gen_qmd_structure <-
 
 
       for (value in unique(grouped_data[[level]])) {
-        # if(!is.na(value) && value == "x1_sex") browser()
-
 
         # Keep only relevant part of meta data which will be forwarded into a deeper level
         sub_df <-
@@ -89,8 +87,6 @@ gen_qmd_structure <-
         output <-
           if (length(output) > 0) output else ""
       }
-      if (length(output) > 1) browser()
-
       if (length(output) != 1 || is.na(output)) {
         cli::cli_abort(c(
           "x" = "Internal error in {.fn gen_qmd_structure}",
