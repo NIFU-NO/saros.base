@@ -51,7 +51,7 @@ remove_from_chapter_structure_if_non_significant <-
               length(df_col_row$.variable_name_dep) == 0 ||
               is.na(df_col_row$.variable_name_dep)) {
               cli::cli_abort(c(
-                "x" = "Internal error: {.var .variable_name_dep} is NULL, empty, or NA in bivariate filtering.",
+                "x" = "Internal error: column {.val .variable_name_dep} is NULL, empty, or NA in bivariate filtering.",
                 "i" = "Please report at {.url https://github.com/NIFU-NO/saros.base/issues}."
               ))
             }

@@ -24,9 +24,12 @@ handle_naming_conventions <- function(name = "Journal manuscripts",
         )
     )
 
-  # Replace spaces. CONSIDER CHANGING " " TO EVERYTHING NON-ALPHANUMERIC?
+  # Replace whitespace runs with word_separator
   if (rlang::is_string(word_separator)) {
-    name <- stringi::stri_replace_all_regex(name, pattern = "[[:space:]]+", replacement = word_separator)
+    # Escape $ and \ so they are treated literally in ICU regex replacement
+    escaped_sep <- stringi::stri_replace_all_fixed(word_separator, "\\", "\\\\")
+    escaped_sep <- stringi::stri_replace_all_fixed(escaped_sep, "$", "\\$")
+    name <- stringi::stri_replace_all_regex(name, pattern = "[[:space:]]+", replacement = escaped_sep)
   }
   for (i in seq_along(replacement_list)) {
     name <- stringi::stri_replace_all_fixed(name,
