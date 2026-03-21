@@ -102,7 +102,11 @@ look_for_extended <- function(data,
   if (length(.variable_position) != length(.variable_name) ||
     length(.variable_name) != length(.variable_label) ||
     length(.variable_label) != length(.variable_type)) {
-    browser()
+    cli::cli_abort(c(
+      "x" = "Internal error in {.fn look_for_extended}: mismatched vector lengths.",
+      "i" = "Lengths: position={length(.variable_position)}, name={length(.variable_name)}, label={length(.variable_label)}, type={length(.variable_type)}",
+      "i" = "Please report at {.url https://github.com/NIFU-NO/saros.base/issues}."
+    ))
   }
 
   x <- data.frame(

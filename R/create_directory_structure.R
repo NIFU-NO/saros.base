@@ -19,14 +19,14 @@ handle_naming_conventions <- function(name = "Journal manuscripts",
       "upper" = stringi::stri_trans_toupper(name),
       "title" = stringi::stri_trans_totitle(name),
       "snake" =
-        stringi::stri_replace_all_fixed(stringi::stri_trans_totitle(name),
-          pattern = " ", replacement = ""
+        stringi::stri_replace_all_regex(stringi::stri_trans_tolower(name),
+          pattern = "[[:space:]]+", replacement = "_"
         )
     )
 
   # Replace spaces. CONSIDER CHANGING " " TO EVERYTHING NON-ALPHANUMERIC?
   if (rlang::is_string(word_separator)) {
-    name <- stringi::stri_replace_all_fixed(name, pattern = "[[:space:]]+", replacement = word_separator)
+    name <- stringi::stri_replace_all_regex(name, pattern = "[[:space:]]+", replacement = word_separator)
   }
   for (i in seq_along(replacement_list)) {
     name <- stringi::stri_replace_all_fixed(name,
@@ -154,7 +154,9 @@ create_directory_structure <- function(
   if (numbering_prefix == "max_global") {
     max_folder_count_digits <- find_longest_list_length(folder_structure)
     max_folder_count_digits <- floor(log10(max_folder_count_digits)) + 1
-    if (max_folder_count_digits == -Inf) browser()
+    if (max_folder_count_digits == -Inf) {
+      cli::cli_abort("Internal error: {.arg max_folder_count_digits} is {.val -Inf}, indicating an empty folder structure.")
+    }
   } else {
     max_folder_count_digits <- 0
   }
