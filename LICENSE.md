@@ -2,7 +2,7 @@
 
 Copyright (c) 2026 Stephan Daus
 
-**saros is free, except in Norway.**
+**saros.base is free, except in Norway.**
 
 Outside of Norway, this package can be used freely in accordance with the terms below. However, persons affiliated with Norwegian organizations (governmental, non-profit or profit/commercial) must have the explicit written permission from the author for use. If your department/organization competes with NIFU or Kristiania University College on commissioned or open research calls within Norway, you are probably not going to get easy permission unfortunately. Governmental agencies in Norway may get approval.
 
