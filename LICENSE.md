@@ -2,7 +2,7 @@
 
 Copyright (c) 2026 Stephan Daus
 
-**saros is free, except in Norway.**
+**saros.base is free, except in Norway.**
 
 Outside of Norway, this package can be used freely in accordance with
 the terms below. However, persons affiliated with Norwegian
