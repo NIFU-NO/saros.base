@@ -35,6 +35,19 @@ create_email_credentials <-
       cli::cli_warn("Usernames in emails data set not found in password file ({.path {local_main_password_path}}): {in_email_not_in_cred}")
     }
 
+    # The direction `ignore_missing_emails` documents: accounts that exist in
+    # the password file but have no email address here. They silently receive
+    # no credentials, which is the failure this warning exists to surface.
+    if (isFALSE(ignore_missing_emails)) {
+      in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
+      if (length(in_cred_not_in_email) > 0) {
+        cli::cli_warn(c(
+          "Usernames in password file ({.path {local_main_password_path}}) with no email in {.arg email_data_frame}: {in_cred_not_in_email}",
+          i = "These users will not receive credentials. Set {.code ignore_missing_emails = TRUE} to silence this."
+        ))
+      }
+    }
+
 
     out <- dplyr::inner_join(emails, credentials, by = username_col, relationship = "many-to-one")
 
