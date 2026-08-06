@@ -326,11 +326,41 @@ testthat::test_that("extract_mesos_metadata handles NA values", {
     region = c("North", NA, "South"),
     abbr = c("N", NA, "S")
   )
-  
+
   result <- saros.base:::extract_mesos_metadata(test_df)
-  
+
   testthat::expect_equal(result$mesos_groups_pretty, c("North", "South"))
   testthat::expect_equal(result$mesos_groups_abbr, c("N", "S"))
+})
+
+# GH #188: get_raw_labels() returns NA_character_ for an unlabelled column,
+# never NULL, so the is.null() fallback here never fired. mesos_var_pretty
+# stayed NA and yaml::as.yaml() wrote it as `.na.character`.
+testthat::test_that("extract_mesos_metadata falls back to the column name when unlabelled", {
+  test_df <- data.frame(Laerested = c("HINN", "UiO"))
+
+  result <- saros.base:::extract_mesos_metadata(test_df)
+
+  testthat::expect_equal(result$mesos_var_pretty, "Laerested")
+  testthat::expect_false(is.na(result$mesos_var_pretty))
+})
+
+testthat::test_that("extract_mesos_metadata prefers the variable label when present", {
+  test_df <- data.frame(Laerested = c("HINN", "UiO"))
+  attr(test_df[[1]], "label") <- "Lærested"
+
+  result <- saros.base:::extract_mesos_metadata(test_df)
+
+  testthat::expect_equal(result$mesos_var_pretty, "Lærested")
+})
+
+testthat::test_that("extract_mesos_metadata falls back on an empty label", {
+  test_df <- data.frame(Laerested = c("HINN", "UiO"))
+  attr(test_df[[1]], "label") <- ""
+
+  result <- saros.base:::extract_mesos_metadata(test_df)
+
+  testthat::expect_equal(result$mesos_var_pretty, "Laerested")
 })
 
 # Tests for process_mesos_subfolders
