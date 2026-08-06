@@ -1,12 +1,10 @@
 # saros.base 1.2.1.9001
 
-## Code quality improvements
-- Removed the unused and broken `create_text_collapse()` (#217). It read `formals(draft_report)$translations`, but `draft_report()` has no `translations` argument, so the last separator resolved to `NULL` and `c("a", "b", "c")` collapsed to `"a, bc"` rather than erroring. A new test asserts that every `formals(fn)$name` reference in `R/` names a real argument.
-
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
 ## Code quality improvements
+- Removed the unused and broken `create_text_collapse()` (#217). It read `formals(draft_report)$translations`, but `draft_report()` has no `translations` argument, so the last separator resolved to `NULL` and `c("a", "b", "c")` collapsed to `"a, bc"` rather than erroring. A new test asserts that every `formals(fn)$name` reference in `R/` names a real argument.
 - Improved code formatting and readability in `.onLoad()` function for better maintainability.
 - Updated template references in `default_chunk_templates_4` for better consistency (using `data` instead of `data_{.chapter_foldername}`, added `save = parameters$save` parameter).
 - Better structured code blocks with consistent indentation and spacing.
