@@ -33,8 +33,13 @@ roxygen_exported_names <- function(r_dir) {
 test_that("every function tagged @export is actually exported", {
   skip_on_cran()
 
+  # An *installed* package also has an R/ directory, but it holds saros.base.rdb
+  # rather than sources -- so presence of the directory is not enough.
   r_dir <- test_path("..", "..", "R")
-  skip_if_not(dir.exists(r_dir), "source tree not available (installed package)")
+  skip_if(
+    length(list.files(r_dir, pattern = "[.][Rr]$")) == 0,
+    "no R/ sources available (running against an installed package)"
+  )
 
   tagged <- roxygen_exported_names(r_dir)
   expect_gt(length(tagged), 0)
