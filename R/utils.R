@@ -30,18 +30,6 @@ check_category_pairs <-
 
 
 
-create_text_collapse <-
-  function(text = NULL,
-           last_sep = NULL) {
-    if (!is_string(last_sep)) {
-      last_sep <-
-        eval(formals(draft_report)$translations)$last_sep
-    }
-    cli::ansi_collapse(text, sep2 = last_sep, last = last_sep)
-  }
-
-
-
 
 
 
