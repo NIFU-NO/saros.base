@@ -1,6 +1,9 @@
 # saros.base 1.2.1.9001
 
 ## Bug fixes
+- `draft_report(title = )` is no longer a silent no-op (#208, #184). `process_yaml()` only assigned the title when an explicit `yaml_file` was supplied, so `index.qmd` and `report.qmd` were written without a `title` field in the default case.
+- Chapter qmd-files now receive their `chapter` name as the YAML `title` (#208, #184). Previously `gen_qmd_chapters()` passed `title = NULL`, leaving Quarto to infer the page title from the first body heading — which is why titles varied across Quarto versions, and why projects post-processed the heading into the header with regexes that truncated at hyphens.
+- Mesos group `_metadata.yml` files now get the `title` field that `?setup_mesos` documents for `subtitle_separator` (#184). The assignment was commented out, and referred to an out-of-scope variable.
 - `.variable_label_suffix` is now whitespace-normalised like the prefix (#216). `refine_chapter_overview()` passed `.variable_label_prefix` to `trim_columns()` twice and never passed the suffix, so label suffixes kept leading/trailing spaces and internal runs of spaces. These suffixes become section headings, where leading whitespace is significant in Markdown. Only visible with a `label_separator` that does not itself include surrounding spaces, e.g. `":"`.
 - `delete_freeze()` no longer warns `no non-missing arguments to max` when a `_freeze` entry contains no files (#220). Such an entry is stale and is still deleted; only the spurious warning is gone. Staleness now also ignores directory mtimes, and `_freeze` itself is excluded when discovering `.qmd` files.
 - Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, so the package could not be attached at all on installations without `tibble` (e.g. `install.packages()` without `dependencies = TRUE`). No new installation burden: `dplyr` already imports `tibble`.
