@@ -1,8 +1,10 @@
 utils::globalVariables(names = c(".", ".data", ".env"))
 
 # Package-internal store for settings and the default chunk templates.
-# Created at build time as a real environment, so `$<-` below mutates it in
-# place and the binding itself is never rebound after the namespace is sealed.
+# An actual environment -- previously this was NULL, which the first `$<-`
+# silently coerced to a list -- so the assignments in .onLoad() mutate it in
+# place rather than copying the whole store on every write, and the binding
+# itself is never rebound after the namespace is sealed.
 .saros.env <- new.env(parent = emptyenv())
 
 .onLoad <- function(libname, pkgname) {
