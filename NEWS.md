@@ -1,5 +1,8 @@
 # saros.base 1.2.1.9001
 
+## Bug fixes
+- `delete_freeze()` is now actually exported (#219). It was documented with `@export` and had a generated `man/delete_freeze.Rd`, but `NAMESPACE` had not been regenerated, so `saros.base::delete_freeze()` failed with "not an exported object".
+
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
