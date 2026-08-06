@@ -168,7 +168,9 @@ create_index_qmd <- function(
     if (length(mesos_var) != length(mesos_var_pretty)) cli::cli_abort("mesos_var and mesos_var_pretty must be of same length.")
     for (i in seq_along(mesos_var)) {
         contents <- add_yaml_fences(yaml::as.yaml(list(title = mesos_var_pretty[i])))
-        cat(contents, file = fs::path_join(c(main_directory, mesos_var[i], "index.qmd")))
+        # Trailing newline: without it readLines() and other text tools warn
+        # about an "incomplete final line".
+        cat(contents, "\n", sep = "", file = fs::path_join(c(main_directory, mesos_var[i], "index.qmd")))
     }
 }
 
@@ -201,8 +203,14 @@ create_metadata_yml <- function(main_directory = character(),
 # Helper: Extract mesos variable metadata from data frame
 extract_mesos_metadata <- function(mesos_df_entry) {
     mesos_var <- names(mesos_df_entry)[1]
+    # get_raw_labels() returns NA_character_ for an unlabelled column, never
+    # NULL, so an is.null() guard here never fired: the display name stayed NA
+    # and yaml::as.yaml() wrote it out as `.na.character` -- visible as the
+    # title of <mesos_var>/index.qmd. Fall back to the column name instead.
     mesos_var_pretty <- unname(get_raw_labels(mesos_df_entry, col_pos = 1))
-    if (is.null(mesos_var_pretty)) mesos_var_pretty <- mesos_var
+    if (length(mesos_var_pretty) != 1 || is.na(mesos_var_pretty) || !nzchar(mesos_var_pretty)) {
+        mesos_var_pretty <- mesos_var
+    }
 
     mesos_groups_pretty <- as.character(mesos_df_entry[[1]])
     mesos_groups_pretty <- mesos_groups_pretty[!is.na(mesos_groups_pretty)]
@@ -237,7 +245,8 @@ process_mesos_subfolders <- function(mesos_var_subfolder, j) {
 write_stub_files <- function(includes_df) {
     for (i in seq_len(nrow(includes_df))) {
         fs::dir_create(dirname(includes_df[i, "path", drop = TRUE]))
-        cat(includes_df[i, "content", drop = TRUE], file = includes_df[i, "path", drop = TRUE])
+        cat(includes_df[i, "content", drop = TRUE], "\n",
+            sep = "", file = includes_df[i, "path", drop = TRUE])
     }
 }
 
