@@ -10,6 +10,7 @@
 
 ## Code quality improvements
 - Removed the empty file `R/utils_qmd.R` (#220), a leftover of the refactor that moved the QMD helpers into `R/qmd_utils.R`.
+- Removed the unused and broken `create_text_collapse()` (#217). It read `formals(draft_report)$translations`, but `draft_report()` has no `translations` argument, so the last separator resolved to `NULL` and `c("a", "b", "c")` collapsed to `"a, bc"` rather than erroring. A new test asserts that every `formals(fn)$name` reference in `R/` names a real argument.
 - Improved code formatting and readability in `.onLoad()` function for better maintainability.
 - Updated template references in `default_chunk_templates_4` for better consistency (using `data` instead of `data_{.chapter_foldername}`, added `save = parameters$save` parameter).
 - Better structured code blocks with consistent indentation and spacing.
