@@ -4,6 +4,8 @@
 - `draft_report(title = )` is no longer a silent no-op (#208, #184). `process_yaml()` only assigned the title when an explicit `yaml_file` was supplied, so `index.qmd` and `report.qmd` were written without a `title` field in the default case.
 - Chapter qmd-files now receive their `chapter` name as the YAML `title` (#208, #184). Previously `gen_qmd_chapters()` passed `title = NULL`, leaving Quarto to infer the page title from the first body heading — which is why titles varied across Quarto versions, and why projects post-processed the heading into the header with regexes that truncated at hyphens.
 - Mesos group `_metadata.yml` files now get the `title` field that `?setup_mesos` documents for `subtitle_separator` (#184). The assignment was commented out, and referred to an out-of-scope variable.
+- Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, so the package could not be attached at all on installations without `tibble` (e.g. `install.packages()` without `dependencies = TRUE`). No new installation burden: `dplyr` already imports `tibble`.
+- Suggested packages are now used conditionally, per R-exts (#215). `srvyr` (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in `tabular_write()`) are guarded with `rlang::check_installed()`, which reports an actionable install prompt instead of "there is no package called ...". The single `purrr::compact()` call was replaced with base R.
 
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
