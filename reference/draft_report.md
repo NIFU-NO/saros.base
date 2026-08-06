@@ -96,7 +96,13 @@ draft_report(
 
   `scalar<character>` // *default:* `NULL` (`optional`)
 
-  Added automatically to YAML-header of index.qmd and report.qmd-files.
+  Added automatically to the YAML-header of the index.qmd and
+  report.qmd-files. If `NULL`, no `title` field is written to those
+  files.
+
+  Each chapter qmd-file instead receives its own value of the
+  `chapter`-column as its YAML title, so chapters are titled correctly
+  regardless of this argument.
 
 - authors:
 

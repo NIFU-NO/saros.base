@@ -146,7 +146,11 @@ variables) and other informative columns as needed.</p></dd>
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p><em>Title of report</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Added automatically to YAML-header of index.qmd and report.qmd-files.</p></dd>
+<p>Added automatically to the YAML-header of the index.qmd and report.qmd-files.
+If <code>NULL</code>, no <code>title</code> field is written to those files.</p>
+<p>Each chapter qmd-file instead receives its own value of the
+<code>chapter</code>-column as its YAML title, so chapters are titled correctly
+regardless of this argument.</p></dd>
 
 
 <dt id="arg-authors">authors<a class="anchor" aria-label="anchor" href="#arg-authors"></a></dt>

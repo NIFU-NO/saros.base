@@ -4,6 +4,40 @@
 
 ### Bug fixes
 
+- Removed the stray `'#\newpage'` element from the tabset chunk
+  templates ([\#214](https://github.com/NIFU-NO/saros.base/issues/214)).
+  The single backslash was re-parsed by R as a newline escape when the
+  generated qmd was rendered, so the text `ewpage` appeared above every
+  tabset on every page. Affected 6 of 7 templates in
+  `get_chunk_template_defaults(2)` and 3 of 7 in variant 4. A page break
+  was meaningless in these HTML templates in any case.
+- [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
+  is now actually exported
+  ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). It was
+  documented with `@export` and had a generated `man/delete_freeze.Rd`,
+  but `NAMESPACE` had not been regenerated, so
+  [`saros.base::delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
+  failed with “not an exported object”.
+- `draft_report(title = )` is no longer a silent no-op
+  ([\#208](https://github.com/NIFU-NO/saros.base/issues/208),
+  [\#184](https://github.com/NIFU-NO/saros.base/issues/184)).
+  `process_yaml()` only assigned the title when an explicit `yaml_file`
+  was supplied, so `index.qmd` and `report.qmd` were written without a
+  `title` field in the default case.
+- Chapter qmd-files now receive their `chapter` name as the YAML `title`
+  ([\#208](https://github.com/NIFU-NO/saros.base/issues/208),
+  [\#184](https://github.com/NIFU-NO/saros.base/issues/184)). Previously
+  [`gen_qmd_chapters()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_chapters.md)
+  passed `title = NULL`, leaving Quarto to infer the page title from the
+  first body heading — which is why titles varied across Quarto
+  versions, and why projects post-processed the heading into the header
+  with regexes that truncated at hyphens.
+- Mesos group `_metadata.yml` files now get the `title` field that
+  [`?setup_mesos`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  documents for `subtitle_separator`
+  ([\#184](https://github.com/NIFU-NO/saros.base/issues/184)). The
+  assignment was commented out, and referred to an out-of-scope
+  variable.
 - `.variable_label_suffix` is now whitespace-normalised like the prefix
   ([\#216](https://github.com/NIFU-NO/saros.base/issues/216)).
   [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
