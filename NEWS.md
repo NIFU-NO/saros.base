@@ -1,5 +1,8 @@
 # saros.base 1.2.1.9001
 
+## Bug fixes
+- Removed the stray `'#\newpage'` element from the tabset chunk templates (#214). The single backslash was re-parsed by R as a newline escape when the generated qmd was rendered, so the text `ewpage` appeared above every tabset on every page. Affected 6 of 7 templates in `get_chunk_template_defaults(2)` and 3 of 7 in variant 4. A page break was meaningless in these HTML templates in any case.
+
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
