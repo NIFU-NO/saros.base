@@ -65,9 +65,16 @@ test_that("every pkgdown reference topic resolves to a documented object", {
 
   config <- yaml::read_yaml(pkgdown_yml)
   listed <- unlist(lapply(config$reference, function(section) section$contents))
-  # Ignore selector expressions such as starts_with("ex_survey") or matches(...)
+  # Ignore selector expressions such as starts_with("ex_survey") or matches(...);
+  # these are resolved by pkgdown, and may legitimately cover datasets.
   listed <- listed[!grepl("[(]", listed)]
+  expect_gt(length(listed), 0)
 
   documented <- sub("[.]Rd$", "", list.files(man_dir, pattern = "[.]Rd$"))
   expect_equal(setdiff(listed, documented), character(0))
+
+  # The stricter half: a topic named literally in _pkgdown.yml should be
+  # reachable by users. This is what pkgdown itself does not check -- it
+  # indexes .Rd topics, so an unexported function stays green there.
+  expect_equal(setdiff(listed, getNamespaceExports("saros.base")), character(0))
 })
