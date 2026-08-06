@@ -29,9 +29,9 @@ A data.frame with columns: type, path, details
 ``` r
 detect_malformed_quarto_project(tempdir())
 #>                type                                                   path
-#> 1 missing_index.qmd                                        /tmp/RtmpgypmyL
-#> 2 missing_index.qmd /tmp/RtmpgypmyL/bslib-ef2376b075e58032f49cfa20592b120a
-#> 3 missing_index.qmd                                /tmp/RtmpgypmyL/downlit
+#> 1 missing_index.qmd                                        /tmp/Rtmp0oi4wg
+#> 2 missing_index.qmd /tmp/Rtmp0oi4wg/bslib-ef2376b075e58032f49cfa20592b120a
+#> 3 missing_index.qmd                                /tmp/Rtmp0oi4wg/downlit
 #>                     details
 #> 1 No index.qmd in subfolder
 #> 2 No index.qmd in subfolder

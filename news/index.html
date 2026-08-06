@@ -63,7 +63,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="code-quality-improvements-1-2-1-9001">Code quality improvements<a class="anchor" aria-label="anchor" href="#code-quality-improvements-1-2-1-9001"></a></h3>
-<ul><li>Improved code formatting and readability in <code>.onLoad()</code> function for better maintainability.</li>
+<ul><li>Removed the unused and broken <code>create_text_collapse()</code> (<a href="https://github.com/NIFU-NO/saros.base/issues/217" class="external-link">#217</a>). It read <code>formals(draft_report)$translations</code>, but <code><a href="../reference/draft_report.html">draft_report()</a></code> has no <code>translations</code> argument, so the last separator resolved to <code>NULL</code> and <code>c("a", "b", "c")</code> collapsed to <code>"a, bc"</code> rather than erroring. A new test asserts that every <code>formals(fn)$name</code> reference in <code>R/</code> names a real argument.</li>
+<li>Improved code formatting and readability in <code>.onLoad()</code> function for better maintainability.</li>
 <li>Updated template references in <code>default_chunk_templates_4</code> for better consistency (using <code>data</code> instead of <code>data_{.chapter_foldername}</code>, added <code>save = parameters$save</code> parameter).</li>
 <li>Better structured code blocks with consistent indentation and spacing.</li>
 </ul></div>
