@@ -44,6 +44,15 @@ create_r_files <- function(r_files_out_path,
   # Files stuff
   for (i in seq_len(nrow(data))) {
     r_filepath <- file.path(r_files_out_path, paste0(data[i, "file_name"], ".R"))
-    if (!file.exists(r_filepath)) cat(r_prefix_file_scope, data[i, "file_scope"], "\n", file = r_filepath)
+    if (file.exists(r_filepath)) next
+
+    # The placeholder file is always created; `r_add_file_scope` controls only
+    # whether the 'file_scope' column is written into it. Previously the flag
+    # was accepted and ignored, so the scope was written either way.
+    if (isTRUE(r_add_file_scope)) {
+      cat(r_prefix_file_scope, data[i, "file_scope"], "\n", file = r_filepath)
+    } else {
+      file.create(r_filepath)
+    }
   }
 }
