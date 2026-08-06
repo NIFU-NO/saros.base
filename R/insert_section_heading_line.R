@@ -1,7 +1,35 @@
+# Stable, content-derived suffix disambiguating headings whose sanitized base
+# collides.
+#
+# The base of an anchor is the sanitized group *value*, which is not unique on
+# its own: the same value routinely appears under different parents within one
+# chapter (e.g. an indep variable used in several sections), so some suffix is
+# required. This used to be two RNG-drawn digits, which made `draft_report()`
+# non-reproducible and defeated Quarto's `freeze` cache -- every chapter
+# re-rendered after every regeneration (GH #213).
+#
+# The path of group values from the outermost level down to this one uniquely
+# identifies a heading's position in the tree, so hashing it is both stable
+# across runs and a stronger disambiguator than 2 digits (which collided 1% of
+# the time for any given pair).
+anchor_suffix <- function(grouping_structure, level) {
+  path <- utils::head(
+    c(
+      rbind(
+        as.character(grouping_structure), # the grouping columns
+        as.character(names(grouping_structure)) # the value chosen at each level
+      )
+    ),
+    n = 2L * level
+  )
+  substr(rlang::hash(paste(path, collapse = "\r")), 1L, 6L)
+}
+
 insert_section_heading_line <- function(grouped_data,
                                         level,
                                         chapter_structure,
                                         value,
+                                        grouping_structure = character(),
                                         ignore_heading_for_group = NULL,
                                         replace_heading_for_group = NULL,
                                         prefix_heading_for_group = NULL,
@@ -36,7 +64,7 @@ insert_section_heading_line <- function(grouped_data,
                     " ",
                     heading,
                     "{#sec-", filename_sanitizer(value, sep = "-"), "-",
-                        stringi::stri_c(sample(0:9, size = 2, replace = TRUE), collapse = ""), "}\n",
+                        anchor_suffix(grouping_structure, level), "}\n",
                     suffix,
                     ignore_null = TRUE) |>
     stringi::stri_remove_empty_na()
