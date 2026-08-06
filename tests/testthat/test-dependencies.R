@@ -33,7 +33,13 @@ test_that("Suggests-only packages are used conditionally in R/", {
   skip_on_cran()
 
   r_dir <- test_path("..", "..", "R")
-  skip_if_not(dir.exists(r_dir), "source tree not available (installed package)")
+  # An *installed* package also has an R/ directory, but it holds saros.base.rdb
+  # rather than sources -- so presence of the directory is not enough, and
+  # scanning it would otherwise pass vacuously.
+  skip_if(
+    length(list.files(r_dir, pattern = "[.][Rr]$")) == 0,
+    "no R/ sources available (running against an installed package)"
+  )
 
   suggests_only <- setdiff(description_deps("Suggests"), description_deps("Imports"))
   skip_if(length(suggests_only) == 0, "no Suggests-only packages declared")
