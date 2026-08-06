@@ -55,7 +55,17 @@ testthat::test_that("qmd discovery ignores files cached inside _freeze", {
   fs::dir_create(fs::path(path, "_freeze", "ch1", "nested"))
   writeLines("cached copy", fs::path(path, "_freeze", "ch1", "nested", "ch1.qmd"))
 
-  testthat::expect_no_warning(saros.base:::delete_freeze(path = path))
+  # If that cached copy were treated as a source, its derived freeze entry
+  # would be _freeze/_freeze/ch1/nested/ch1 -- empty, therefore judged stale,
+  # therefore deleted. Create it, so the test can tell the difference rather
+  # than passing merely because the derived path happens not to exist.
+  decoy <- fs::path(path, "_freeze", "_freeze", "ch1", "nested", "ch1")
+  fs::dir_create(decoy)
+
+  testthat::expect_no_warning(deleted <- saros.base:::delete_freeze(path = path))
+
+  testthat::expect_true(fs::dir_exists(decoy))
+  testthat::expect_false(decoy %in% deleted)
 })
 
 testthat::test_that("a missing _freeze directory is reported, not an error", {
