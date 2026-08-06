@@ -91,6 +91,9 @@ testthat::test_that("keep_dep_indep_if_no_overlap works in refine_chapter_overvi
         indep = "var2"
     )
 
+    # var1 and var2 never have a non-NA value in the same row, so every
+    # bivariate combination of them has zero overlap.
+
     # Test with keep_dep_indep_if_no_overlap = TRUE
     result_keep <- saros.base::refine_chapter_overview(
         chapter_overview = test_overview,
@@ -106,5 +109,12 @@ testthat::test_that("keep_dep_indep_if_no_overlap works in refine_chapter_overvi
         data = test_data
     )
 
-    testthat::expect_equal(nrow(result_keep), nrow(result_remove))
+    # GH #232: this previously asserted the two were equal, which held only
+    # because the call site was disabled with `if (FALSE && ...)`. The argument
+    # is now honoured, so the default drops the non-overlapping bivariates.
+    testthat::expect_lt(nrow(result_remove), nrow(result_keep))
+
+    # Only bivariate rows go away; univariate entries for var1 survive.
+    testthat::expect_true(all(is.na(as.character(result_remove$.variable_name_indep))))
+    testthat::expect_true("var1" %in% as.character(result_remove$.variable_name_dep))
 })

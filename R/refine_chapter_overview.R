@@ -540,7 +540,7 @@ refine_chapter_overview <-
         to_lower = TRUE
       )
 
-    if (FALSE && isFALSE(keep_dep_indep_if_no_overlap)) {
+    if (isFALSE(keep_dep_indep_if_no_overlap)) {
       out <-
         remove_from_chapter_structure_if_no_overlap(
           chapter_structure = out, # Current

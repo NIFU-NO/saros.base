@@ -283,6 +283,17 @@ draft_report <-
     data <- ungroup_data(data)
 
 
+    # Checked before anything is written, so a mismatch does not leave a
+    # half-generated report behind.
+    if (isTRUE(args$require_common_categories)) {
+      check_common_categories_in_sections(
+        chapter_structure = chapter_structure,
+        data = data,
+        call = rlang::current_env()
+      )
+    }
+
+
     all_authors <- get_authors(data = chapter_structure, col = args$authors_col)
 
 
