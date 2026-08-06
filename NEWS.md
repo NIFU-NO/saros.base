@@ -1,5 +1,8 @@
 # saros.base 1.2.1.9001
 
+## Bug fixes
+- `.variable_label_suffix` is now whitespace-normalised like the prefix (#216). `refine_chapter_overview()` passed `.variable_label_prefix` to `trim_columns()` twice and never passed the suffix, so label suffixes kept leading/trailing spaces and internal runs of spaces. These suffixes become section headings, where leading whitespace is significant in Markdown. Only visible with a `label_separator` that does not itself include surrounding spaces, e.g. `":"`.
+
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
