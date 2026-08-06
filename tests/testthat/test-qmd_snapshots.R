@@ -71,12 +71,27 @@ print_file <- function(path, file) {
 # the chunk bodies. Compact enough to review on a richer report.
 skeleton <- function(path, file) {
   lines <- readLines(fs::path(path, file), warn = FALSE)
-  yaml_end <- if (length(lines) && lines[1] == "---") which(lines == "---")[2] else 0L
+  cat("== ", file, " ==\n", sep = "")
+
+  # An opening fence with no closing one is a regression this file exists to
+  # catch -- process_yaml() takes an `add_fences` argument, so it is reachable.
+  # Report it in the snapshot rather than dying: which(...)[2] is NA there, and
+  # seq_len(NA) errors with "argument must be coercible to non-negative
+  # integer", which says nothing about the file that caused it.
+  fences <- which(lines == "---")
+  yaml_end <- 0L
+  if (length(lines) && lines[1] == "---") {
+    if (length(fences) >= 2) {
+      yaml_end <- fences[2]
+    } else {
+      cat("<<< unterminated YAML front matter >>>\n")
+    }
+  }
+
   keep <- c(
     seq_len(yaml_end),
     grep("^#{1,6} |^::: \\{#|^:::: \\{\\.panel-tabset", lines)
   )
-  cat("== ", file, " ==\n", sep = "")
   writeLines(lines[sort(unique(keep))])
   cat("\n")
 }
@@ -117,8 +132,8 @@ testthat::test_that("index.qmd and report.qmd carry the report title", {
 })
 
 testthat::test_that("a whole chapter file is stable", {
-  # Full text, deliberately: this is the one place chunk bodies are pinned, so
-  # a stray character inside a template shows up here (#214).
+  # Full text, deliberately: this is the one place chunk bodies are pinned for
+  # the default templates, so a stray character inside one shows up here.
   path <- draft_into(one_chapter_overview, title = "Eksempelrapport")
   testthat::expect_snapshot(print_file(path, "1_Bakgrunn.qmd"))
 })
@@ -206,4 +221,28 @@ testthat::test_that("headings are whitespace-normalised with a bare separator", 
   # Stated as a property too, so the intent survives a careless snapshot accept.
   testthat::expect_false(any(grepl("^#{1,6}  ", headings)))
   testthat::expect_false(any(grepl("[ \t]$", headings)))
+})
+
+testthat::test_that("skeleton() reports unterminated YAML instead of erroring", {
+  # Guards the helper itself. Before this, an opening fence with no closing one
+  # made which(lines == "---")[2] NA and seq_len(NA) abort with "argument must
+  # be coercible to non-negative integer" -- an error that names neither the
+  # file nor the problem, in the one place a YAML regression would show up.
+  dir <- withr::local_tempdir()
+
+  writeLines(c("---", "title: x", "# Heading"), fs::path(dir, "unterminated.qmd"))
+  output <- utils::capture.output(skeleton(dir, "unterminated.qmd"))
+  testthat::expect_true(any(grepl("unterminated YAML front matter", output)))
+  testthat::expect_true(any(grepl("^# Heading$", output)))
+
+  # A well-formed file is unaffected: front matter through the closing fence,
+  # then the headings.
+  writeLines(
+    c("---", "title: x", "---", "# Heading", "body text"),
+    fs::path(dir, "wellformed.qmd")
+  )
+  output <- utils::capture.output(skeleton(dir, "wellformed.qmd"))
+  testthat::expect_false(any(grepl("unterminated", output)))
+  testthat::expect_true(any(grepl("^title: x$", output)))
+  testthat::expect_false(any(grepl("^body text$", output)))
 })
