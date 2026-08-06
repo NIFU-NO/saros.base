@@ -4,6 +4,22 @@
 
 ### Bug fixes
 
+- `.variable_label_suffix` is now whitespace-normalised like the prefix
+  ([\#216](https://github.com/NIFU-NO/saros.base/issues/216)).
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  passed `.variable_label_prefix` to `trim_columns()` twice and never
+  passed the suffix, so label suffixes kept leading/trailing spaces and
+  internal runs of spaces. These suffixes become section headings, where
+  leading whitespace is significant in Markdown. Only visible with a
+  `label_separator` that does not itself include surrounding spaces,
+  e.g. `":"`.
+- [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
+  no longer warns `no non-missing arguments to max` when a `_freeze`
+  entry contains no files
+  ([\#220](https://github.com/NIFU-NO/saros.base/issues/220)). Such an
+  entry is stale and is still deleted; only the spurious warning is
+  gone. Staleness now also ignores directory mtimes, and `_freeze`
+  itself is excluded when discovering `.qmd` files.
 - Moved `tibble` from `Suggests` to `Imports`
   ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)).
   `.onLoad()` builds the default chunk templates with
@@ -32,6 +48,20 @@
 
 ### Code quality improvements
 
+- `.saros.env` is now an actual environment
+  ([\#218](https://github.com/NIFU-NO/saros.base/issues/218)). A
+  package-level `.saros.env <- NULL` made `exists(".saros.env")` inside
+  `.onLoad()` always true, so the
+  [`new.env()`](https://rdrr.io/r/base/environment.html) branch never
+  ran; the first `$<-` coerced `NULL` to a list, and each of the ~50
+  subsequent assignments copied the whole accumulating list — including
+  the large chunk-template tables — instead of mutating in place. The
+  superassignments (`<<-`) are no longer needed and have been replaced
+  with ordinary `$<-`.
+- Removed the empty file `R/utils_qmd.R`
+  ([\#220](https://github.com/NIFU-NO/saros.base/issues/220)), a
+  leftover of the refactor that moved the QMD helpers into
+  `R/qmd_utils.R`.
 - Removed the unused and broken `create_text_collapse()`
   ([\#217](https://github.com/NIFU-NO/saros.base/issues/217)). It read
   `formals(draft_report)$translations`, but
