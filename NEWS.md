@@ -1,6 +1,7 @@
 # saros.base 1.2.1.9001
 
 ## Bug fixes
+- `.variable_label_suffix` is now whitespace-normalised like the prefix (#216). `refine_chapter_overview()` passed `.variable_label_prefix` to `trim_columns()` twice and never passed the suffix, so label suffixes kept leading/trailing spaces and internal runs of spaces. These suffixes become section headings, where leading whitespace is significant in Markdown. Only visible with a `label_separator` that does not itself include surrounding spaces, e.g. `":"`.
 - `delete_freeze()` no longer warns `no non-missing arguments to max` when a `_freeze` entry contains no files (#220). Such an entry is stale and is still deleted; only the spurious warning is gone. Staleness now also ignores directory mtimes, and `_freeze` itself is excluded when discovering `.qmd` files.
 - Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, so the package could not be attached at all on installations without `tibble` (e.g. `install.packages()` without `dependencies = TRUE`). No new installation burden: `dplyr` already imports `tibble`.
 - Suggested packages are now used conditionally, per R-exts (#215). `srvyr` (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in `tabular_write()`) are guarded with `rlang::check_installed()`, which reports an actionable install prompt instead of "there is no package called ...". The single `purrr::compact()` call was replaced with base R.

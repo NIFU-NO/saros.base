@@ -29,7 +29,7 @@ check_category_pairs <-
   }
 
 trim_columns <- function(data, cols = c(
-                           ".variable_label_prefix_dep", ".variable_label_prefix_dep",
+                           ".variable_label_prefix_dep", ".variable_label_suffix_dep",
                            ".variable_label_prefix_indep", ".variable_label_suffix_indep"
                          )) {
   for (col in cols) {
