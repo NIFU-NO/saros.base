@@ -55,6 +55,9 @@ gen_qmd_structure <-
             level = level,
             chapter_structure = chapter_structure,
             value = value,
+            # Carries the path of group values chosen down to this level, which
+            # is what makes the anchor suffix stable and unique (GH #213).
+            grouping_structure = grouping_structure,
             ignore_heading_for_group = ignore_heading_for_group,
             replace_heading_for_group = replace_heading_for_group,
             prefix_heading_for_group = prefix_heading_for_group,

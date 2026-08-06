@@ -54,10 +54,20 @@ Path to save all output. Defaults to a temporary directory.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{vector<character>} // \emph{default:} see Usage (\code{optional})
 
-Type of refined chapter_structure data for which to suppress the heading
-in the report output. Typically variable_name_dep, variable_name_indep, etc.}
+Grouping columns of the refined chapter_structure for which to suppress the
+heading in the report output. Typically variable_name_dep,
+variable_name_indep, etc. Names must match the columns actually grouped on,
+i.e. the \code{organize_by}-argument of \code{\link[=refine_chapter_overview]{refine_chapter_overview()}}; an entry
+that is not a grouping column simply has no effect.
+
+\code{.chapter_number} is suppressed by default because the chapter heading is
+written directly by the chapter file, so leaving it enabled produces two
+first-level headings. Remove it from this argument to get the chapter
+heading from the grouping machinery instead, which gives it a \verb{\{#sec-\}}
+anchor and makes \code{prefix_heading_for_group}/\code{suffix_heading_for_group}
+apply to it.}
 
 \item{replace_heading_for_group}{\emph{Replacing heading for group}
 
