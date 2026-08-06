@@ -362,7 +362,7 @@ refine_chapter_overview <-
         )
 
       out <-
-        trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
+        trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_suffix"))
       out <-
         validate_labels(out)
 
