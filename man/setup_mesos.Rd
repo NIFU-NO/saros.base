@@ -23,7 +23,9 @@ setup_mesos(
 and their subfolders are created.}
 
 \item{mesos_var_subfolder}{String, optional name of a subfolder of the
-mesos_var folder in where to place all mesos_group folders.}
+mesos_var folder in where to place all mesos_group folders. A value
+containing \code{/} or \verb{\\} creates nested directories, so \code{"Rapport/Del1"}
+places the group folders in \verb{<mesos_var>/Rapport/Del1/}.}
 
 \item{files_to_process}{Character vector of files used as templates for the mesos stubs.}
 

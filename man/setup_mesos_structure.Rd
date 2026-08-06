@@ -35,7 +35,9 @@ single-column data frames with optional variable labels.
 
 \item{mesos_var_subfolder}{Optional character vector. Subfolder path(s) within
 each mesos variable folder where group folders should be placed. Default is
-no subfolder (empty character vector).}
+no subfolder (empty character vector). A value containing \code{/} or \verb{\\} creates
+nested directories, so \code{"reports/Q1"} places the group folders in
+\verb{<mesos_var>/reports/Q1/}.}
 
 \item{files_taking_title}{Character vector of filenames that should receive
 title metadata. Default is \code{c("index.qmd", "report.qmd")}.}

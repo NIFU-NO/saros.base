@@ -18,7 +18,9 @@
 #'     single-column data frames with optional variable labels.
 #' @param mesos_var_subfolder Optional character vector. Subfolder path(s) within
 #'   each mesos variable folder where group folders should be placed. Default is
-#'   no subfolder (empty character vector).
+#'   no subfolder (empty character vector). A value containing `/` or `\` creates
+#'   nested directories, so `"reports/Q1"` places the group folders in
+#'   `<mesos_var>/reports/Q1/`.
 #' @param files_taking_title Character vector of filenames that should receive
 #'   title metadata. Default is `c("index.qmd", "report.qmd")`.
 #' @param subtitle_separator String or NULL. If a string, adds title and subtitle
