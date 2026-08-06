@@ -1,6 +1,8 @@
 # saros.base 1.2.1.9001
 
 ## Bug fixes
+- `.variable_label_suffix` is now whitespace-normalised like the prefix (#216). `refine_chapter_overview()` passed `.variable_label_prefix` to `trim_columns()` twice and never passed the suffix, so label suffixes kept leading/trailing spaces and internal runs of spaces. These suffixes become section headings, where leading whitespace is significant in Markdown. Only visible with a `label_separator` that does not itself include surrounding spaces, e.g. `":"`.
+- `delete_freeze()` no longer warns `no non-missing arguments to max` when a `_freeze` entry contains no files (#220). Such an entry is stale and is still deleted; only the spurious warning is gone. Staleness now also ignores directory mtimes, and `_freeze` itself is excluded when discovering `.qmd` files.
 - Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, so the package could not be attached at all on installations without `tibble` (e.g. `install.packages()` without `dependencies = TRUE`). No new installation burden: `dplyr` already imports `tibble`.
 - Suggested packages are now used conditionally, per R-exts (#215). `srvyr` (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in `tabular_write()`) are guarded with `rlang::check_installed()`, which reports an actionable install prompt instead of "there is no package called ...". The single `purrr::compact()` call was replaced with base R.
 
@@ -9,6 +11,8 @@
 
 ## Code quality improvements
 - `.saros.env` is now an actual environment (#218). A package-level `.saros.env <- NULL` made `exists(".saros.env")` inside `.onLoad()` always true, so the `new.env()` branch never ran; the first `$<-` coerced `NULL` to a list, and each of the ~50 subsequent assignments copied the whole accumulating list — including the large chunk-template tables — instead of mutating in place. The superassignments (`<<-`) are no longer needed and have been replaced with ordinary `$<-`.
+- Removed the empty file `R/utils_qmd.R` (#220), a leftover of the refactor that moved the QMD helpers into `R/qmd_utils.R`.
+- Removed the unused and broken `create_text_collapse()` (#217). It read `formals(draft_report)$translations`, but `draft_report()` has no `translations` argument, so the last separator resolved to `NULL` and `c("a", "b", "c")` collapsed to `"a, bc"` rather than erroring. A new test asserts that every `formals(fn)$name` reference in `R/` names a real argument.
 - Improved code formatting and readability in `.onLoad()` function for better maintainability.
 - Updated template references in `default_chunk_templates_4` for better consistency (using `data` instead of `data_{.chapter_foldername}`, added `save = parameters$save` parameter).
 - Better structured code blocks with consistent indentation and spacing.
