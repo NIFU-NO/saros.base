@@ -140,3 +140,26 @@ testthat::test_that("numeric items with no shared values do not trip the check",
     ))
   )
 })
+
+testthat::test_that("the failure is attributed to the user's draft_report() call", {
+  # Guards the `call = rlang::current_env()` at the call site: cli_abort() must
+  # name draft_report(), not whatever called it.
+  data <- battery_data(c("Yes", "No"), c("Agree", "Disagree"))
+  structure <- battery_structure(data)
+  path <- withr::local_tempdir()
+
+  user_pipeline <- function() {
+    saros.base::draft_report(
+      data = data, chapter_structure = structure, path = path,
+      require_common_categories = TRUE
+    )
+  }
+
+  condition <- rlang::catch_cnd(suppressMessages(user_pipeline()), classes = "error")
+
+  testthat::expect_match(
+    paste(deparse(conditionCall(condition)), collapse = " "),
+    "draft_report(",
+    fixed = TRUE
+  )
+})
