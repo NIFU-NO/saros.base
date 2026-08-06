@@ -1,5 +1,8 @@
 # saros.base 1.2.1.9001
 
+## Code quality improvements
+- `.saros.env` is now an actual environment (#218). A package-level `.saros.env <- NULL` made `exists(".saros.env")` inside `.onLoad()` always true, so the `new.env()` branch never ran; the first `$<-` coerced `NULL` to a list, and each of the ~50 subsequent assignments copied the whole accumulating list — including the large chunk-template tables — instead of mutating in place. The superassignments (`<<-`) are no longer needed and have been replaced with ordinary `$<-`.
+
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 

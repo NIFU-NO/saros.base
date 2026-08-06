@@ -1,15 +1,12 @@
 utils::globalVariables(names = c(".", ".data", ".env"))
 
-if (!exists(".saros.env")) {
-  .saros.env <- NULL
-}
-.onLoad <- function(libname, pkgname) {
-  # Initialize the .saros.env environment if not already set
-  if (!exists(".saros.env")) {
-    .saros.env <<- new.env(parent = emptyenv())
-  }
+# Package-internal store for settings and the default chunk templates.
+# Created at build time as a real environment, so `$<-` below mutates it in
+# place and the binding itself is never rebound after the namespace is sealed.
+.saros.env <- new.env(parent = emptyenv())
 
-  .saros.env$core_chapter_structure_cols <<-
+.onLoad <- function(libname, pkgname) {
+  .saros.env$core_chapter_structure_cols <-
     c(
       "chapter",
       paste0(
@@ -59,7 +56,7 @@ if (!exists(".saros.env")) {
       ".chapter_foldername"
     )
 
-  .saros.env$peripheral_chapter_structure_cols <<-
+  .saros.env$peripheral_chapter_structure_cols <-
     c(
       ".keep_indep",
       ".keep_bi_rows",
@@ -69,10 +66,10 @@ if (!exists(".saros.env")) {
     )
 
   # These actually do not exist in this form, but contain some suffixes
-  .saros.env$core_chapter_structure_pattern <<-
+  .saros.env$core_chapter_structure_pattern <-
     "\\.template_variable_type_dep|\\.template_variable_type_indep"
 
-  .saros.env$ignore_args <<- c(
+  .saros.env$ignore_args <- c(
     "data",
     "dep",
     "indep",
@@ -84,7 +81,7 @@ if (!exists(".saros.env")) {
 
   ################################################################################
   # for a single crowd only, no mesos
-  .saros.env$default_chunk_templates_1 <<-
+  .saros.env$default_chunk_templates_1 <-
     data.frame(
       .template_name = character(),
       .template_variable_type_dep = character(),
@@ -263,7 +260,7 @@ _{.variable_label_prefix_dep}_.
   #######################################################################################################################
   #### For crowd = c("target", "others") (and/or "all") in a tidy way
 
-  .saros.env$default_chunk_templates_2 <<-
+  .saros.env$default_chunk_templates_2 <-
     data.frame(
       .template_name = character(),
       .template_variable_type_dep = character(),
@@ -566,7 +563,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 
   ##################################################################################################################################
   # For crowd = c("target", "others") when ggiraph has limitations in loops: manual solution
-  .saros.env$default_chunk_templates_3 <<-
+  .saros.env$default_chunk_templates_3 <-
     data.frame(
       .template_name = character(),
       .template_variable_type_dep = character(),
@@ -806,7 +803,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 
   ##################################################################################################################################
   # For mesos using crowd_plots_as_tabset and txt_from_cat_mesos_plots
-  .saros.env$default_chunk_templates_4 <<-
+  .saros.env$default_chunk_templates_4 <-
     data.frame(
       .template_name = character(),
       .template_variable_type_dep = character(),
@@ -1029,7 +1026,7 @@ _{.variable_label_prefix_dep}_.
 
   ################################################################################
   # for a single crowd only, no mesos. Simplified
-  .saros.env$default_chunk_templates_5 <<-
+  .saros.env$default_chunk_templates_5 <-
     data.frame(
       .template_name = character(),
       .template_variable_type_dep = character(),
