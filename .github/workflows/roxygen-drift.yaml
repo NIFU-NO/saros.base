@@ -1,0 +1,67 @@
+# Fails when the checked-in `man/` and `NAMESPACE` are not what roxygen2
+# produces from the current roxygen comments in `R/`.
+#
+# Motivated by GH #219: `delete_freeze()` was tagged `@export` and had a
+# generated `man/delete_freeze.Rd`, but `NAMESPACE` had never been
+# regenerated, so `saros.base::delete_freeze()` failed with "not an exported
+# object". `R CMD check` does not catch this -- an export missing from
+# NAMESPACE is a valid package, just one missing a function -- and pkgdown
+# indexes `.Rd` topics rather than exports, so it stayed green too.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+name: roxygen-drift.yaml
+
+permissions: read-all
+
+jobs:
+  roxygen-drift:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # roxygenise() loads the package source with pkgload, so every
+          # package in Imports has to be present.
+          extra-packages: any::roxygen2, local::.
+          needs: check
+
+      - name: Regenerate documentation
+        run: roxygen2::roxygenise()
+        shell: Rscript {0}
+
+      - name: Fail if man/ or NAMESPACE changed
+        run: |
+          # DESCRIPTION is deliberately excluded. roxygen2 stamps its own
+          # version into it -- as `RoxygenNote` up to 7.x, as
+          # `Config/roxygen2/version` from 8.0.0 -- which tracks the toolchain
+          # rather than the sources, so it churns on every roxygen2 release.
+          if ! git diff --quiet -- man NAMESPACE; then
+            echo "::error::man/ and/or NAMESPACE are out of sync with the roxygen comments in R/."
+            echo
+            echo "Run roxygen2::roxygenise() (or devtools::document()) locally and commit the result."
+            echo
+            echo "If the diff below is unrelated to your change, a newer roxygen2 has altered its"
+            echo "output format. Regenerating and committing is still the right fix, and DESCRIPTION"
+            echo "should be regenerated in the same commit."
+            echo
+            git --no-pager diff -- man NAMESPACE
+            exit 1
+          fi
+          echo "man/ and NAMESPACE are in sync."
+        shell: bash
