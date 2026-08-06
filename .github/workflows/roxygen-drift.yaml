@@ -36,10 +36,37 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # roxygenise() loads the package source with pkgload, so every
-          # package in Imports has to be present.
-          extra-packages: any::roxygen2, local::.
+          # roxygen2 is pinned to the version DESCRIPTION records, so the job
+          # asks a reproducible question -- "are man/ and NAMESPACE what THIS
+          # roxygen2 produces?" -- rather than a moving one. Tracking the
+          # latest release instead makes the job unfixable for a maintainer on
+          # an older roxygen2: 8.1.0 reflows multiple importFrom() entries from
+          # one package into a multi-line call, so it disagrees with 7.3.3 on a
+          # NAMESPACE neither version is wrong about.
+          #
+          # Keep this in sync with DESCRIPTION; the next step fails loudly if
+          # it drifts. roxygenise() also loads the package source with pkgload,
+          # so every package in Imports has to be present -- hence local::.
+          extra-packages: roxygen2@7.3.3, local::.
           needs: check
+
+      - name: Check the pin still matches DESCRIPTION
+        run: |
+          desc <- read.dcf("DESCRIPTION")
+          # roxygen2 stamps its version as RoxygenNote up to 7.x and as
+          # Config/roxygen2/version from 8.0.0.
+          field <- intersect(c("Config/roxygen2/version", "RoxygenNote"), colnames(desc))
+          if (!length(field)) stop("DESCRIPTION records no roxygen2 version.")
+          recorded <- unname(desc[, field[1]])
+          installed <- as.character(packageVersion("roxygen2"))
+          if (!identical(recorded, installed)) {
+            stop(sprintf(paste0(
+              "DESCRIPTION records roxygen2 %s but this workflow installs %s.\n",
+              "Update extra-packages in .github/workflows/roxygen-drift.yaml to roxygen2@%s."),
+              recorded, installed, recorded))
+          }
+          cat("roxygen2", installed, "matches DESCRIPTION.\n")
+        shell: Rscript {0}
 
       - name: Regenerate documentation
         run: roxygen2::roxygenise()
@@ -55,10 +82,8 @@ jobs:
             echo "::error::man/ and/or NAMESPACE are out of sync with the roxygen comments in R/."
             echo
             echo "Run roxygen2::roxygenise() (or devtools::document()) locally and commit the result."
-            echo
-            echo "If the diff below is unrelated to your change, a newer roxygen2 has altered its"
-            echo "output format. Regenerating and committing is still the right fix, and DESCRIPTION"
-            echo "should be regenerated in the same commit."
+            echo "Use the roxygen2 version DESCRIPTION records -- the step above checked that this"
+            echo "job is running that same version, so a local run will reproduce the diff below."
             echo
             git --no-pager diff -- man NAMESPACE
             exit 1
