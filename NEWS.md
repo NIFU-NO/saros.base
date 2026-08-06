@@ -10,6 +10,7 @@
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
 ## Code quality improvements
+- `.saros.env` is now an actual environment (#218). A package-level `.saros.env <- NULL` made `exists(".saros.env")` inside `.onLoad()` always true, so the `new.env()` branch never ran; the first `$<-` coerced `NULL` to a list, and each of the ~50 subsequent assignments copied the whole accumulating list — including the large chunk-template tables — instead of mutating in place. The superassignments (`<<-`) are no longer needed and have been replaced with ordinary `$<-`.
 - Removed the empty file `R/utils_qmd.R` (#220), a leftover of the refactor that moved the QMD helpers into `R/qmd_utils.R`.
 - Removed the unused and broken `create_text_collapse()` (#217). It read `formals(draft_report)$translations`, but `draft_report()` has no `translations` argument, so the last separator resolved to `NULL` and `c("a", "b", "c")` collapsed to `"a, bc"` rather than erroring. A new test asserts that every `formals(fn)$name` reference in `R/` names a real argument.
 - Improved code formatting and readability in `.onLoad()` function for better maintainability.
