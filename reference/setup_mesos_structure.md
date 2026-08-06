@@ -54,7 +54,9 @@ setup_mesos_structure(
 
   Optional character vector. Subfolder path(s) within each mesos
   variable folder where group folders should be placed. Default is no
-  subfolder (empty character vector).
+  subfolder (empty character vector). A value containing `/` or `\`
+  creates nested directories, so `"reports/Q1"` places the group folders
+  in `<mesos_var>/reports/Q1/`.
 
 - files_taking_title:
 

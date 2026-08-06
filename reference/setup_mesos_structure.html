@@ -103,7 +103,9 @@ single-column data frames with optional variable labels.</p></li>
 <dt id="arg-mesos-var-subfolder">mesos_var_subfolder<a class="anchor" aria-label="anchor" href="#arg-mesos-var-subfolder"></a></dt>
 <dd><p>Optional character vector. Subfolder path(s) within
 each mesos variable folder where group folders should be placed. Default is
-no subfolder (empty character vector).</p></dd>
+no subfolder (empty character vector). A value containing <code>/</code> or <code>\</code> creates
+nested directories, so <code>"reports/Q1"</code> places the group folders in
+<code>&lt;mesos_var&gt;/reports/Q1/</code>.</p></dd>
 
 
 <dt id="arg-files-taking-title">files_taking_title<a class="anchor" aria-label="anchor" href="#arg-files-taking-title"></a></dt>

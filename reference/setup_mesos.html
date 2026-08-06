@@ -83,7 +83,9 @@ and their subfolders are created.</p></dd>
 
 <dt id="arg-mesos-var-subfolder">mesos_var_subfolder<a class="anchor" aria-label="anchor" href="#arg-mesos-var-subfolder"></a></dt>
 <dd><p>String, optional name of a subfolder of the
-mesos_var folder in where to place all mesos_group folders.</p></dd>
+mesos_var folder in where to place all mesos_group folders. A value
+containing <code>/</code> or <code>\</code> creates nested directories, so <code>"Rapport/Del1"</code>
+places the group folders in <code>&lt;mesos_var&gt;/Rapport/Del1/</code>.</p></dd>
 
 
 <dt id="arg-files-to-process">files_to_process<a class="anchor" aria-label="anchor" href="#arg-files-to-process"></a></dt>

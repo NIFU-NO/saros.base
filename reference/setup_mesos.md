@@ -30,7 +30,9 @@ setup_mesos(
 - mesos_var_subfolder:
 
   String, optional name of a subfolder of the mesos_var folder in where
-  to place all mesos_group folders.
+  to place all mesos_group folders. A value containing `/` or `\`
+  creates nested directories, so `"Rapport/Del1"` places the group
+  folders in `<mesos_var>/Rapport/Del1/`.
 
 - files_to_process:
 

@@ -4,6 +4,33 @@
 
 ### Bug fixes
 
+- [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  and
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  no longer overwrite the authored `_*.qmd` chapter sources in
+  `main_directory`
+  ([\#212](https://github.com/NIFU-NO/saros.base/issues/212)). A stub
+  was emitted at the top level, replacing each source file with an
+  include pointing outside `main_directory`. The failure was silent and
+  repeated on every run, so restoring the files from version control was
+  not sufficient.
+- Mesos `{{< include >}}` paths now resolve
+  ([\#212](https://github.com/NIFU-NO/saros.base/issues/212)). The
+  relative path scaled with the directory level
+  (`rep("../", path_lvl)`), but consecutive levels always differ by
+  exactly one component, so every level above the innermost skipped a
+  directory and eventually escaped `main_directory`. Quarto does not
+  error on an unresolvable include, so affected group pages rendered as
+  empty documents with correct titles and `_metadata.yml`.
+- A multi-component `mesos_var_subfolder` such as `"Rapport/Del1"` now
+  nests instead of erroring
+  ([\#212](https://github.com/NIFU-NO/saros.base/issues/212)).
+  `write_subfolder_metadata()` vectorised over the components rather
+  than nesting them, addressing a non-existent sibling directory and
+  failing with `cannot open the connection` after stub files had already
+  been written. This affected the documented example in
+  [`?setup_mesos_structure`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md),
+  which used `mesos_var_subfolder = "reports/Q1"`.
 - Removed the stray `'#\newpage'` element from the tabset chunk
   templates ([\#214](https://github.com/NIFU-NO/saros.base/issues/214)).
   The single backslash was re-parsed by R as a newline escape when the
