@@ -24,8 +24,12 @@ test_that("tibble is declared in Imports, because .onLoad() uses it", {
 })
 
 test_that("Suggests-only packages are used conditionally in R/", {
-  # R-exts: "Packages in Suggests should be used conditionally." A file is
-  # compliant if it calls rlang::check_installed() before reaching for one.
+  # R-exts: "Packages in Suggests should be used conditionally."
+  #
+  # Each Suggests-only package used in a file must be named as a string literal
+  # in a check_installed() call in that same file. Associating the guard with
+  # the specific package -- rather than accepting any check_installed() anywhere
+  # in the file -- stops one guarded package from vouching for an unguarded one.
   skip_on_cran()
 
   r_dir <- test_path("..", "..", "R")
@@ -44,15 +48,29 @@ test_that("Suggests-only packages are used conditionally in R/", {
       src,
       gregexpr("[A-Za-z][A-Za-z0-9._]*(?=::)", src, perl = TRUE)
     )))
-    unguarded <- intersect(used, suggests_only)
 
-    if (length(unguarded) > 0 && !any(grepl("check_installed", src, fixed = TRUE))) {
-      offenders <- c(
-        offenders,
-        paste0(basename(file), ": ", paste(unguarded, collapse = ", "))
-      )
+    for (pkg in intersect(used, suggests_only)) {
+      guard <- paste0("check_installed\\(\\s*[\"']", pkg, "[\"']")
+      if (!any(grepl(guard, src))) {
+        offenders <- c(offenders, paste0(basename(file), ": ", pkg))
+      }
     }
   }
 
   expect_equal(offenders, character(0))
+})
+
+test_that("the Suggests guard detector rejects a cross-vouching file", {
+  # Guards the guard: a file that guards one package must not thereby be
+  # treated as guarding another.
+  src <- c(
+    'rlang::check_installed("srvyr", reason = "to ungroup survey objects.")',
+    "srvyr::ungroup(data)",
+    "haven::write_sav(data, path)" # unguarded
+  )
+  guarded <- function(pkg) {
+    any(grepl(paste0("check_installed\\(\\s*[\"']", pkg, "[\"']"), src))
+  }
+  expect_true(guarded("srvyr"))
+  expect_false(guarded("haven"))
 })
