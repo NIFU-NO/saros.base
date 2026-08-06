@@ -286,7 +286,6 @@ if(!all(vapply(plots, is.null, logical(1)))) {{
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
       '##### `r .x`',
       '```{{r}}',
@@ -335,7 +334,6 @@ if(!all(vapply(plots, is.null, logical(1)))) {{
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
       '##### `r .x`',
       '',
@@ -385,7 +383,6 @@ if(!all(vapply(plots, is.null, logical(1)))) {{
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
       '##### `r .x`',
       '',
@@ -429,7 +426,6 @@ if(!all(vapply(plots, is.null, logical(1)))) {{
   lapply(names(plots), function(.x) {{
     knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
       '##### `r .x`',
       '',
@@ -472,7 +468,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
     '##### `r .x`',
     '',
@@ -515,7 +510,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
     '##### `r .x`',
     '',
@@ -917,7 +911,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
 lapply(names(tbls), function(.x) {{
   knitr::knit_child(text = c(
       '',
-      '#\\newpage',
       '',
     '##### `r .x`',
     '',
@@ -960,7 +953,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
   lapply(names(tbls), function(.x) {{
     knitr::knit_child(text = c(
         '',
-        '#\\newpage',
         '',
       '##### `r .x`',
       '',
@@ -1002,7 +994,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
   lapply(names(tbls), function(.x) {{
     knitr::knit_child(text = c(
         '',
-        '#\\newpage',
         '',
       '##### `r .x`',
       '',
