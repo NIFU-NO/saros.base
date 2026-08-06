@@ -2,6 +2,8 @@
 
 ## Bug fixes
 - `delete_freeze()` no longer warns `no non-missing arguments to max` when a `_freeze` entry contains no files (#220). Such an entry is stale and is still deleted; only the spurious warning is gone. Staleness now also ignores directory mtimes, and `_freeze` itself is excluded when discovering `.qmd` files.
+- Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, so the package could not be attached at all on installations without `tibble` (e.g. `install.packages()` without `dependencies = TRUE`). No new installation burden: `dplyr` already imports `tibble`.
+- Suggested packages are now used conditionally, per R-exts (#215). `srvyr` (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in `tabular_write()`) are guarded with `rlang::check_installed()`, which reports an actionable install prompt instead of "there is no package called ...". The single `purrr::compact()` call was replaced with base R.
 
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
