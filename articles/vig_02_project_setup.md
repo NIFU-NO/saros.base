@@ -31,6 +31,7 @@ Copy from an existing project using Saros, and edit the 00\*\_ R-files
 and \_quarto.yaml files for project-specific settings.
 
 ``` r
+
 saros.base::copy_folder_contents_to_dir(
   from, 
   to = getwd(),
@@ -48,6 +49,7 @@ Institute for the Studies of Innovation, Research, and Education
 synchronized if this already exists.
 
 ``` r
+
 library(saros.base)
 saros.base::download_zip_to_folder(out_path = fs::path(getwd(), "Saros")) # Set to your project folder's Saros-folder (keep absolute folder path as short as possible)
 ```
@@ -59,6 +61,7 @@ certain template. The template can be modified to an organization’s
 liking.
 
 ``` r
+
 # Modify these to your liking
 project_path <- 
   fs::path(getwd())
@@ -108,6 +111,7 @@ This is a quick approach to changing the most important settings. See
 further below for a more detailed explanation.
 
 ``` r
+
 quarto_yaml <- yaml::read_yaml(file.path("02_resources", "YAML", "_quarto.yaml"))
 
 quarto_yaml$website$title <- "PROJECT TITLE"

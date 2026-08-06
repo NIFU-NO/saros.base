@@ -46,6 +46,7 @@ using RStudio.
 ## Configuring R
 
 ``` r
+
 install.packages(c("tidyverse", "devtools", "gt", "ggiraph", "webshot", "webshot2", "saros.base", "saros"))
 webshot::install_phantomjs()
 usethis::edit_r_environ()

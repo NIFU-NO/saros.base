@@ -65,8 +65,10 @@ needs extra attention in Saros and R.
   the variables to the console:
 
 ``` r
+
 library(dplyr)
 ```
+
 
     Attaching package: 'dplyr'
 
@@ -79,6 +81,7 @@ library(dplyr)
         intersect, setdiff, setequal, union
 
 ``` r
+
 library(labelled)
 library(saros.base)
 ex_survey |>
@@ -94,6 +97,7 @@ ex_survey |>
     3 3 [A lot]         28
 
 ``` r
+
 # This is how they ought to look
 ex_survey |>
    count(b_1)
@@ -116,6 +120,7 @@ variables in an SPSS/Stata/SAS from the `labelled' type to the`factor’
 type as follows:
 
 ``` r
+
 # Optionally convert all unordered to ordered factors if they are mostly that
 my_data <- 
    ex_survey |> 
@@ -134,6 +139,7 @@ my_data <-
   done with the following code. Check the values ​​column.
 
 ``` r
+
 ex_survey |>
    look_for("^[abdep]_", details=TRUE)
 ```
@@ -356,6 +362,7 @@ ex_survey |>
      Strongly agree                              
 
 ``` r
+
 # Alternatively
 library(purrr)
 ex_survey |>
@@ -478,6 +485,7 @@ ex_survey |>
   restore the data).
 
 ``` r
+
 data <-
    ex_survey |>
    mutate(across(matches("p_"),
@@ -552,6 +560,7 @@ questionnaire, or a definition of how data has been collected.
   `labelled::copy_labels_from(original_data)`.
 
 ``` r
+
 library(forcats)
 original_data <- ex_survey
 modified_data <-

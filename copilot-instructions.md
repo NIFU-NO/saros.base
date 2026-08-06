@@ -10,6 +10,7 @@ functions they are working on.
 Use this for faster iteration during development:
 
 ``` r
+
 devtools::load_all(); devtools::test()
 ```
 
@@ -22,6 +23,7 @@ devtools::load_all(); devtools::test()
 Only use when necessary (e.g., before PR):
 
 ``` r
+
 devtools::check()
 ```
 

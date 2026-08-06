@@ -1,5 +1,5 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   vig_01_basic_file_system: vig_01_basic_file_system.html
@@ -11,7 +11,7 @@ articles:
   vig_07_adjust_report_cycle_settings: vig_07_adjust_report_cycle_settings.html
   vig_31_render: vig_31_render.html
   vig_32_render_problems: vig_32_render_problems.html
-last_built: 2026-03-23T12:54Z
+last_built: 2026-08-06T13:34Z
 urls:
   reference: https://nifu-no.github.io/saros.base/reference
   article: https://nifu-no.github.io/saros.base/articles

@@ -3,6 +3,7 @@
 ## See the respective template R script files, YAML-files and QMD-files.
 
 ``` r
+
 saros.base::get_chunk_template_defaults()
 ```
 
