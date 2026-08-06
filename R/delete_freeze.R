@@ -32,8 +32,10 @@ delete_freeze <- function(path, qmd_files = NULL) {
   }
 
   if (is.null(qmd_files)) {
-    qmd_files <- fs::dir_ls(path, recurse = TRUE, glob = "*.qmd")
+    qmd_files <- fs::dir_ls(path, recurse = TRUE, type = "file", glob = "*.qmd")
     qmd_files <- fs::path_rel(qmd_files, start = path)
+    # Cached copies inside _freeze are not sources.
+    qmd_files <- qmd_files[!startsWith(as.character(qmd_files), "_freeze/")]
   }
 
   deleted <- character(0)
@@ -46,7 +48,16 @@ delete_freeze <- function(path, qmd_files = NULL) {
     if (!fs::dir_exists(freeze_entry)) next
 
     qmd_mtime <- fs::file_info(qmd_path)$modification_time
-    freeze_mtime <- max(fs::file_info(fs::dir_ls(freeze_entry, recurse = TRUE))$modification_time)
+
+    # An entry with no files is itself stale. Guard the empty case explicitly:
+    # max() of an empty vector returns -Inf with a warning. Directory mtimes
+    # are not meaningful for staleness, hence type = "file".
+    freeze_files <- fs::dir_ls(freeze_entry, recurse = TRUE, type = "file")
+    freeze_mtime <- if (length(freeze_files) == 0) {
+      -Inf
+    } else {
+      max(fs::file_info(freeze_files)$modification_time)
+    }
 
     if (qmd_mtime > freeze_mtime) {
       fs::dir_delete(freeze_entry)

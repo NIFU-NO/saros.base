@@ -75,7 +75,12 @@ Path to save all output. Defaults to a temporary directory.}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Added automatically to YAML-header of index.qmd and report.qmd-files.}
+Added automatically to the YAML-header of the index.qmd and report.qmd-files.
+If \code{NULL}, no \code{title} field is written to those files.
+
+Each chapter qmd-file instead receives its own value of the
+\code{chapter}-column as its YAML title, so chapters are titled correctly
+regardless of this argument.}
 
 \item{authors}{\emph{Authors of entire report}
 

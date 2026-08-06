@@ -76,7 +76,7 @@ gen_qmd_chapters <-
           authors <- get_authors(data = chapter_structure_chapter, col = authors_col)
           yaml_section <- process_yaml(
             yaml_file = chapter_yaml_file,
-            title = NULL,
+            title = chapter,
             authors = authors,
             chapter_number = chapter_number
           )
