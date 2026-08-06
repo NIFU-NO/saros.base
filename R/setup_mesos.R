@@ -46,9 +46,14 @@ process_filename_by_level <- function(filename, path_lvl, total_levels, is_child
 }
 
 # Helper: Create include content with relative path
-create_include_content <- function(filename_parent, path_lvl, prefix, suffix) {
-    relative_path <- paste0(rep("../", times = path_lvl), collapse = "")
-    paste0(prefix, relative_path, filename_parent, suffix)
+#
+# Every stub includes the file one directory above it, so the hop is always a
+# single "../" regardless of depth. `create_includes_content_path_df()` emits
+# one stub per level and `process_mesos_subfolders()` has already split
+# `mesos_var_subfolder` into one element per directory, so consecutive levels
+# differ by exactly one path component.
+create_include_content <- function(filename_parent, prefix, suffix) {
+    paste0(prefix, "../", filename_parent, suffix)
 }
 
 # Helper: Add title YAML if file requires it
@@ -78,7 +83,7 @@ process_file_at_level <- function(filename_parent, path_lvl, total_levels,
         filename_child <- fs::path(mesos_groups_abbr, filename_child)
     }
 
-    content <- create_include_content(filename_parent_processed, path_lvl, prefix, suffix)
+    content <- create_include_content(filename_parent_processed, prefix, suffix)
 
     data.frame(
         content = content,
@@ -116,8 +121,22 @@ create_includes_content_path_df <-
         )
         total_levels <- length(full_dir_path)
 
+        # Levels are walked from the deepest (group folders) upwards. The
+        # directory holding the authored sources is the terminus of the include
+        # chain and must not receive a stub -- writing one there would overwrite
+        # the sources with an include pointing outside the tree.
+        #
+        # Where that directory sits depends on `main_directory`:
+        #   supplied  -> it is `full_dir_path[1]`, so the outermost level is
+        #                skipped;
+        #   empty     -> the sources live in the working directory, which is not
+        #                part of `full_dir_path` at all, so every level here is
+        #                an intermediate one and all of them need a stub.
+        has_main_directory <- length(main_directory) > 0 && any(nzchar(main_directory))
+        n_stub_levels <- if (has_main_directory) total_levels - 1L else total_levels
+
         includes_df <-
-            seq_along(full_dir_path) |>
+            seq_len(max(n_stub_levels, 0L)) |>
             lapply(FUN = function(path_lvl) {
                 dir_path <- fs::path_join(stringi::stri_remove_empty_na(
                     full_dir_path[seq_len(total_levels - path_lvl + 1)]
@@ -240,8 +259,17 @@ write_mesos_var_metadata <- function(main_directory, mesos_var, mesos_var_pretty
 }
 
 # Helper: Write empty metadata files for subfolders
+#
+# `mesos_var_subfolders` holds one element per directory level, so the paths
+# must nest cumulatively. `fs::path()` vectorises over them instead, which for
+# c("Rapport", "Del1") yields the siblings <var>/Rapport and <var>/Del1 -- the
+# second does not exist, and writing to it errors.
 write_subfolder_metadata <- function(main_directory, mesos_var, mesos_var_subfolders) {
-    for (f in fs::path(if (length(main_directory)) main_directory else ".", mesos_var, mesos_var_subfolders, "_metadata.yml")) {
+    base <- if (length(main_directory)) main_directory else "."
+    for (depth in seq_along(mesos_var_subfolders)) {
+        f <- fs::path_join(c(
+            base, mesos_var, mesos_var_subfolders[seq_len(depth)], "_metadata.yml"
+        ))
         cat(file = f, append = TRUE)
     }
 }
@@ -309,7 +337,9 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 #' @param main_directory String, path to where the _metadata.yml, stub QMD-files
 #'      and their subfolders are created.
 #' @param mesos_var_subfolder String, optional name of a subfolder of the
-#'      mesos_var folder in where to place all mesos_group folders.
+#'      mesos_var folder in where to place all mesos_group folders. A value
+#'      containing `/` or `\` creates nested directories, so `"Rapport/Del1"`
+#'      places the group folders in `<mesos_var>/Rapport/Del1/`.
 #' @param files_to_process Character vector of files used as templates for the mesos stubs.
 #' @param mesos_df List of single-column data frames where each variable is a
 #'      mesos variable, optionally with a variable label indicating its pretty name.

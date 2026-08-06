@@ -17,19 +17,18 @@ testthat::test_that("Handles mesos_var_subfolders correctly", {
     mesos_var_subfolders = subfolders
   )
 
+  # GH #212: every hop is a single "../", and no stub is emitted into
+  # main_directory itself -- that level holds the authored sources and is the
+  # terminus of the chain. Previously this produced a fourth row at
+  # "main/_file1.md" whose include pointed outside main_directory.
   testthat::expect_equal(result,
     expected = tibble::tibble(
-      content = c(
-        "{{< include \"../_file1.md\" >}}",
-        "{{< include \"../../_file1.md\" >}}", "{{< include \"../../../_file1.md\" >}}",
-        "{{< include \"../../../../_file1.md\" >}}"
-      ),
+      content = rep("{{< include \"../_file1.md\" >}}", 3),
       mesos_group = NA_character_, mesos_group_pretty = NA_character_,
       path = fs::as_fs_path(c(
         "main/mesos/sub1/sub2/file1.md",
         "main/mesos/sub1/_file1.md",
-        "main/mesos/_file1.md",
-        "main/_file1.md"
+        "main/mesos/_file1.md"
       ))
     )
   )
@@ -53,19 +52,13 @@ testthat::test_that("Handles mesos_groups_abbr with subfolders", {
   testthat::expect_equal(
     result,
     tibble::tibble(
-      content = c(
-        "{{< include \"../_file1.md\" >}}",
-        "{{< include \"../../_file1.md\" >}}",
-        "{{< include \"../../../_file1.md\" >}}",
-        "{{< include \"../../../../_file1.md\" >}}"
-      ),
-      mesos_group = c("groupA", rep(NA_character_, 3)),
-      mesos_group_pretty = c("Group A", rep(NA_character_, 3)),
+      content = rep("{{< include \"../_file1.md\" >}}", 3),
+      mesos_group = c("groupA", rep(NA_character_, 2)),
+      mesos_group_pretty = c("Group A", rep(NA_character_, 2)),
       path = fs::as_fs_path(c(
         "main/mesos/sub1/groupA/file1.md",
         "main/mesos/sub1/_file1.md",
-        "main/mesos/_file1.md",
-        "main/_file1.md"
+        "main/mesos/_file1.md"
       ))
     )
   )
@@ -83,14 +76,14 @@ testthat::test_that("Handles multiple mesos_groups_abbr", {
     mesos_groups_pretty = groups_pretty
   )
 
+  # With no main_directory the authored sources live in the working directory,
+  # which is not part of full_dir_path -- so "mesos/_file1.md" is an
+  # intermediate level and must still be emitted, otherwise the group stubs'
+  # "../_file1.md" points at nothing. Only the hop length changes here.
   testthat::expect_equal(
     result,
     tibble::tibble(
-      content = c(
-        "{{< include \"../_file1.md\" >}}",
-        "{{< include \"../_file1.md\" >}}",
-        "{{< include \"../../_file1.md\" >}}"
-      ),
+      content = rep("{{< include \"../_file1.md\" >}}", 3),
       mesos_group = c("groupA", "groupB", NA),
       mesos_group_pretty = c("Group A", "Group B", NA),
       path = fs::as_fs_path(c(
@@ -261,17 +254,18 @@ testthat::test_that("process_filename_by_level handles parent files correctly", 
 })
 
 # Tests for create_include_content
-testthat::test_that("create_include_content generates correct relative path", {
-  result <- saros.base:::create_include_content("_file.md", path_lvl = 1, prefix = "{{< include \"", suffix = "\" >}}")
+testthat::test_that("create_include_content always points one directory up", {
+  # GH #212: the hop used to scale with the level (rep("../", path_lvl)), but
+  # every stub includes the file in its immediate parent directory, so it is
+  # always a single "../". At any level above the innermost, the deeper form
+  # skipped a directory and eventually escaped main_directory entirely.
+  result <- saros.base:::create_include_content("_file.md", prefix = "{{< include \"", suffix = "\" >}}")
   testthat::expect_equal(result, "{{< include \"../_file.md\" >}}")
-  
-  result2 <- saros.base:::create_include_content("_file.md", path_lvl = 3, prefix = "{{< include \"", suffix = "\" >}}")
-  testthat::expect_equal(result2, "{{< include \"../../../_file.md\" >}}")
 })
 
 testthat::test_that("create_include_content works with custom prefix/suffix", {
-  result <- saros.base:::create_include_content("file.qmd", path_lvl = 2, prefix = "[", suffix = "]")
-  testthat::expect_equal(result, "[../../file.qmd]")
+  result <- saros.base:::create_include_content("file.qmd", prefix = "[", suffix = "]")
+  testthat::expect_equal(result, "[../file.qmd]")
 })
 
 # Tests for add_title_if_needed
