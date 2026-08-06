@@ -170,7 +170,7 @@ create_metadata_yml <- function(main_directory = character(),
     lapply(mesos_groups_pretty, function(mesos_group_pretty) {
         out <- list(params = list(mesos_group = mesos_group_pretty))
         if (rlang::is_string(subtitle_separator)) {
-            # out$title <- mesos_group
+            out$title <- mesos_group_pretty
             out$subtitle <- paste(c(basename(main_dir), mesos_var_pretty, mesos_group_pretty), collapse = subtitle_separator)
         }
         out

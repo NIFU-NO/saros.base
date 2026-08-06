@@ -7,11 +7,15 @@ process_yaml <- function(yaml_file = NULL,
   if (!is_string(yaml_file)) {
     yaml_section <-
       list(
+        title = title,
         format = format,
         echo = FALSE,
         `fig-dpi` = 800,
         authors = authors
       )
+    # `list()` retains NULL entries, which yaml::as.yaml() would render as
+    # `title: ~`. Drop them so an absent title stays absent.
+    yaml_section <- yaml_section[!vapply(yaml_section, is.null, logical(1))]
   } else {
     yaml_section <- yaml::read_yaml(file = yaml_file)
     if (any(names(yaml_section) == "translations")) {
