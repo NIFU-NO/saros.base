@@ -283,6 +283,21 @@ draft_report <-
     data <- ungroup_data(data)
 
 
+    # Checked before anything is written, so a mismatch does not leave a
+    # half-generated report behind.
+    #
+    # `current_env()` is this frame, so cli_abort() reports the failure against
+    # the user's own `draft_report(...)` call. `caller_env()` here would name
+    # whatever called draft_report() instead, which is one frame too far out.
+    if (isTRUE(args$require_common_categories)) {
+      check_common_categories_in_sections(
+        chapter_structure = chapter_structure,
+        data = data,
+        call = rlang::current_env()
+      )
+    }
+
+
     all_authors <- get_authors(data = chapter_structure, col = args$authors_col)
 
 

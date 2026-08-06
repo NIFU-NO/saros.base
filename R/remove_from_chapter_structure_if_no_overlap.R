@@ -5,18 +5,26 @@ remove_from_chapter_structure_if_no_overlap <- function(chapter_structure, data,
     ) {
         return(chapter_structure)
     }
-    # Only process rows that have both dep and indep variables
+    # `.variable_name_dep`/`_indep` are factors that may carry NA as an explicit
+    # level (forcats::fct_na_value_to_level()), for which is.na() on the factor
+    # is FALSE even though as.character() yields NA. Compare on the character
+    # form, or such rows reach data[[NA]] and abort.
+    all_deps <- as.character(chapter_structure$.variable_name_dep)
+    all_indeps <- as.character(chapter_structure$.variable_name_indep)
+
+    # Only process rows that have both dep and indep variables, and whose
+    # variables are actually columns of `data`.
     rows_with_both <-
-        !is.na(chapter_structure$.variable_name_dep) &
-            !is.na(chapter_structure$.variable_name_indep)
+        !is.na(all_deps) & !is.na(all_indeps) &
+            all_deps %in% colnames(data) & all_indeps %in% colnames(data)
 
     if (!any(rows_with_both)) {
         return(chapter_structure)
     }
 
     # Get the combinations to check
-    deps <- chapter_structure$.variable_name_dep[rows_with_both]
-    indeps <- chapter_structure$.variable_name_indep[rows_with_both]
+    deps <- all_deps[rows_with_both]
+    indeps <- all_indeps[rows_with_both]
 
     # Check each combination
     to_keep <- logical(sum(rows_with_both))
