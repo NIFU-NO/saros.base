@@ -1,5 +1,11 @@
 # saros.base 1.2.1.9001
 
+## Bug fixes
+- `delete_freeze()` no longer warns `no non-missing arguments to max` when a `_freeze` entry contains no files (#220). Such an entry is stale and is still deleted; only the spurious warning is gone. Staleness now also ignores directory mtimes, and `_freeze` itself is excluded when discovering `.qmd` files.
+
+## Code quality improvements
+- Removed the empty file `R/utils_qmd.R` (#220), a leftover of the refactor that moved the QMD helpers into `R/qmd_utils.R`.
+
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
