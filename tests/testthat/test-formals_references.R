@@ -10,7 +10,13 @@ test_that("every formals(fn)$name reference in R/ names a real argument", {
   skip_on_cran()
 
   r_dir <- test_path("..", "..", "R")
-  skip_if_not(dir.exists(r_dir), "source tree not available (installed package)")
+  # An *installed* package also has an R/ directory, but it holds saros.base.rdb
+  # rather than sources -- so presence of the directory is not enough, and
+  # scanning it would otherwise pass vacuously.
+  skip_if(
+    length(list.files(r_dir, pattern = "[.][Rr]$")) == 0,
+    "no R/ sources available (running against an installed package)"
+  )
 
   pattern <- "formals\\(\\s*([A-Za-z._][A-Za-z0-9._]*)\\s*\\)\\$([A-Za-z._][A-Za-z0-9._]*)"
 
