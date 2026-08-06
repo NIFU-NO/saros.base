@@ -234,7 +234,7 @@ handle_data_frame <- function(mesos_groups) {
     cli::cli_abort("{.arg mesos_groups} data frame has no columns.")
   }
 
-  lapply(seq_len(ncol(mesos_groups)), function(i) {
+  out <- lapply(seq_len(ncol(mesos_groups)), function(i) {
     col_data <- clean_group_data(mesos_groups[[i]])
     col_name <- names(mesos_groups)[i]
 
@@ -249,7 +249,9 @@ handle_data_frame <- function(mesos_groups) {
     }
 
     df
-  }) |> purrr::compact()
+  })
+
+  Filter(Negate(is.null), out)
 }
 
 # Helper function to clean group data
