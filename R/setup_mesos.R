@@ -122,12 +122,21 @@ create_includes_content_path_df <-
         total_levels <- length(full_dir_path)
 
         # Levels are walked from the deepest (group folders) upwards. The
-        # outermost level is `main_directory` itself, which is where the
-        # authored source files live -- emitting a stub there would overwrite
-        # them with an include pointing outside `main_directory`. That level is
-        # the terminus of the chain, so it is not emitted.
+        # directory holding the authored sources is the terminus of the include
+        # chain and must not receive a stub -- writing one there would overwrite
+        # the sources with an include pointing outside the tree.
+        #
+        # Where that directory sits depends on `main_directory`:
+        #   supplied  -> it is `full_dir_path[1]`, so the outermost level is
+        #                skipped;
+        #   empty     -> the sources live in the working directory, which is not
+        #                part of `full_dir_path` at all, so every level here is
+        #                an intermediate one and all of them need a stub.
+        has_main_directory <- length(main_directory) > 0 && any(nzchar(main_directory))
+        n_stub_levels <- if (has_main_directory) total_levels - 1L else total_levels
+
         includes_df <-
-            seq_len(max(total_levels - 1L, 0L)) |>
+            seq_len(max(n_stub_levels, 0L)) |>
             lapply(FUN = function(path_lvl) {
                 dir_path <- fs::path_join(stringi::stri_remove_empty_na(
                     full_dir_path[seq_len(total_levels - path_lvl + 1)]

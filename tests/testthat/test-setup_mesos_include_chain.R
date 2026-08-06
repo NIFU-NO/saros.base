@@ -134,12 +134,66 @@ testthat::test_that("no stub include escapes main_directory", {
     target <- regmatches(text, regexpr('(?<=include ")[^"]+', text, perl = TRUE))
     if (length(target) == 0) next
 
+    # Compare lexically via a relative path. path_real() would resolve symlinks
+    # on one side only -- macOS tempdirs are /var -> /private/var, and Windows
+    # can hand back a short path -- so a prefix test against it fails
+    # spuriously on those platforms.
     resolved <- fs::path_norm(fs::path(dirname(file), target))
-    testthat::expect_true(
-      startsWith(as.character(resolved), as.character(fs::path_real(main))),
-      info = paste0(fs::path_rel(file, main), " -> ", target)
+    relative <- as.character(fs::path_rel(resolved, main))
+    testthat::expect_false(
+      startsWith(relative, ".."),
+      info = paste0(fs::path_rel(file, main), " -> ", target, " => ", relative)
     )
   }
+})
+
+################################################################################
+testthat::test_that("an empty main_directory still gets a stub at the mesos_var level", {
+  # setup_mesos(main_directory = character()) -- the GH #188 usage -- puts the
+  # authored sources in the working directory, which is *not* part of
+  # full_dir_path. Every level in full_dir_path is therefore an intermediate
+  # one, including the outermost, so all of them need a stub. Skipping the
+  # outermost here would leave the group stubs' "../" pointing at nothing.
+  result <- saros.base:::create_includes_content_path_df(
+    files_to_process = "_file1.md",
+    mesos_var = "mesos",
+    mesos_groups_abbr = c("groupA", "groupB"),
+    mesos_groups_pretty = c("Group A", "Group B")
+  )
+
+  testthat::expect_true("mesos/_file1.md" %in% as.character(result$path))
+  testthat::expect_true(all(result$content == "{{< include \"../_file1.md\" >}}"))
+})
+
+testthat::test_that("setup_mesos() with no main_directory builds a resolvable chain", {
+  working_dir <- withr::local_tempdir()
+  writeLines("REAL CHAPTER CONTENT", fs::path(working_dir, "_1_chapter.qmd"))
+
+  withr::with_dir(working_dir, {
+    suppressMessages(saros.base::setup_mesos(
+      main_directory = character(),
+      files_to_process = "_1_chapter.qmd",
+      mesos_df = list(Laerested = data.frame(Laerested = c("HINN", "UiO"))),
+      read_syntax_pattern = NULL,
+      read_syntax_replacement = NULL
+    ))
+  })
+
+  # The intermediate stub exists ...
+  testthat::expect_true(fs::file_exists(fs::path(working_dir, "Laerested", "_1_chapter.qmd")))
+  # ... the chain reaches the source ...
+  for (group in c("HINN", "UiO")) {
+    testthat::expect_equal(
+      resolve_include_chain(working_dir, fs::path("Laerested", group, "1_chapter.qmd")),
+      "REAL CHAPTER CONTENT",
+      info = group
+    )
+  }
+  # ... and the source itself is untouched.
+  testthat::expect_equal(
+    paste(readLines(fs::path(working_dir, "_1_chapter.qmd"), warn = FALSE), collapse = "\n"),
+    "REAL CHAPTER CONTENT"
+  )
 })
 
 ################################################################################

@@ -76,17 +76,20 @@ testthat::test_that("Handles multiple mesos_groups_abbr", {
     mesos_groups_pretty = groups_pretty
   )
 
-  # With no main_directory and no subfolders there is only the group level;
-  # "mesos/_file1.md" was the stub that would have overwritten the source.
+  # With no main_directory the authored sources live in the working directory,
+  # which is not part of full_dir_path -- so "mesos/_file1.md" is an
+  # intermediate level and must still be emitted, otherwise the group stubs'
+  # "../_file1.md" points at nothing. Only the hop length changes here.
   testthat::expect_equal(
     result,
     tibble::tibble(
-      content = rep("{{< include \"../_file1.md\" >}}", 2),
-      mesos_group = c("groupA", "groupB"),
-      mesos_group_pretty = c("Group A", "Group B"),
+      content = rep("{{< include \"../_file1.md\" >}}", 3),
+      mesos_group = c("groupA", "groupB", NA),
+      mesos_group_pretty = c("Group A", "Group B", NA),
       path = fs::as_fs_path(c(
         "mesos/groupA/file1.md",
-        "mesos/groupB/file1.md"
+        "mesos/groupB/file1.md",
+        "mesos/_file1.md"
       ))
     )
   )
