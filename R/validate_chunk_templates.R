@@ -100,7 +100,10 @@ warn_if_insert_text_duplicated <- function(chunk_templates) {
   calls <- unique(unlist(repeated[affected], use.names = FALSE))
 
   cli::cli_warn(c(
-    "!" = "{.arg chunk_templates} has {n_affected} template{?s} where the same {.code insert_text()} call appears more than once.",
+    # Counted in rows rather than template names: one name legitimately spans
+    # several rows (one per variable-type combination), so a name count and the
+    # de-duplicated list below would disagree.
+    "!" = "{.arg chunk_templates} has {n_affected} row{?s} where the same {.code insert_text()} call appears more than once.",
     i = "In {.var .template_name}: {.val {template_names}}.",
     i = "Repeated: {.code {calls}}.",
     i = "This usually means the auxiliary-text wrapping was applied twice, once when building the templates and again when mutating them. Each wrapped passage will be inserted twice in the generated qmd."

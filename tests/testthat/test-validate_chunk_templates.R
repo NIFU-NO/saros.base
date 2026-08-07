@@ -27,11 +27,16 @@ wrap_with_insert_text <- function(df) {
   df
 }
 
+# Column names follow the real schema, as built by .onLoad() and returned by
+# get_chunk_template_defaults(). (Note that the `core_columns` list inside
+# validate_chunk_templates() names a `.variable_type_dep` that no default
+# template has -- but that check is dead code, see the comment on the PR.)
 one_template <- function(.template_name, .template) {
   data.frame(
     .template_name = .template_name,
+    .template_variable_type_dep = "fct;ord",
+    .template_variable_type_indep = NA_character_,
     .template = .template,
-    .variable_type_dep = "fct;ord",
     stringsAsFactors = FALSE
   )
 }
