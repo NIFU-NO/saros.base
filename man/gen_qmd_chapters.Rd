@@ -21,7 +21,8 @@ gen_qmd_chapters(
   auxiliary_variables = NULL,
   serialized_format = "rds",
   filename_prefix = "",
-  data_filename_prefix = "data_"
+  data_filename_prefix = "data_",
+  qmd_engine = c("recursion", "loop")
 )
 }
 \arguments{
@@ -122,6 +123,25 @@ Currently only \code{"rds"} is supported.}
 \item{data_filename_prefix}{\emph{String attached to beginning of data-file and data-object}
 
 \verb{scalar<string>} // \emph{default:} \code{"data_"}}
+
+\item{qmd_engine}{\emph{Traversal engine for the grouping tree}
+
+\verb{scalar<string>} // \emph{default:} \code{"recursion"}
+
+Which implementation walks the grouping tree when assembling each chapter.
+Both produce byte-identical output; this exists so the newer one can be
+adopted, benchmarked and backed out of independently.
+\itemize{
+\item \code{"recursion"}: the original implementation. One R function call per
+node, so a deep \code{organize_by} is bounded by the expression nesting limit
+(\code{options("expressions")}) and by C stack size.
+\item \code{"loop"}: the same traversal driven by an explicit stack, so depth is
+bounded by heap instead.
+}
+
+Equivalence is asserted in \code{tests/testthat/test-qmd_engines.R}, which
+compares the two engines' output byte-for-byte across several report
+shapes.}
 }
 \value{
 Side-effects: qmd-files generated in the specified working directory.
