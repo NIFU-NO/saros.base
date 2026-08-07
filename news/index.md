@@ -4,6 +4,27 @@
 
 ### Bug fixes
 
+- [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  now warns when a `.template` repeats the same `insert_text()` call
+  ([\#210](https://github.com/NIFU-NO/saros.base/issues/210)). Projects
+  inject auxiliary text by wrapping every template with a
+  `before=TRUE`/`before=FALSE` pair, and that wrap is written out
+  longhand in two places — the generation script and
+  `apply_template_mutations()`. Neither knows about the other, so
+  applying both wraps each template twice and every inserted passage is
+  emitted twice in the generated qmd. Neither `insert_text()` nor
+  `apply_template_mutations()` lives in saros.base, so nothing here can
+  prevent the doubling; the package only ever sees the already-doubled
+  string arriving in `chunk_templates$.template`. This is therefore a
+  lint on the incoming data: it names the affected templates and the
+  repeated call, and returns the templates unchanged. **This adds a
+  warning to existing calls** that pass doubly-wrapped templates — which
+  are already producing doubled output. The check keys on an *identical*
+  repeated call rather than a count of `insert_text()` calls, because a
+  template may legitimately address several insertion points; those
+  calls differ in their arguments, whereas re-wrapping reproduces one
+  verbatim. Whitespace is ignored when comparing, since the two copies
+  of the wrap are separately authored and drift in spacing.
 - A section that matches no rows no longer emits the previous sibling’s
   chunk under its own heading
   ([\#239](https://github.com/NIFU-NO/saros.base/issues/239)). `new_out`
