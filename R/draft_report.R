@@ -193,6 +193,24 @@
 #'
 #'   Path to log file. Set to NULL to disable logging.
 #'
+#' @param qmd_engine *Traversal engine for the grouping tree*
+#'
+#'   `scalar<string>` // *default:* `"recursion"`
+#'
+#'   Which implementation walks the grouping tree when assembling each chapter.
+#'   Both produce byte-identical output; this exists so the newer one can be
+#'   adopted, benchmarked and backed out of independently.
+#'
+#'   - `"recursion"`: the original implementation. One R function call per
+#'     node, so a deep `organize_by` is bounded by the expression nesting limit
+#'     (`options("expressions")`) and by C stack size.
+#'   - `"loop"`: the same traversal driven by an explicit stack, so depth is
+#'     bounded by heap instead.
+#'
+#'   Equivalence is asserted in `tests/testthat/test-qmd_engines.R`, which
+#'   compares the two engines' output byte-for-byte across several report
+#'   shapes.
+#'
 #' @param serialized_format *Serialized format*
 #'
 #'   `scalar<string>` // *default:* `"rds"`
@@ -270,6 +288,7 @@ draft_report <-
            data_filename_prefix = "data_",
            report_includes_prefix = '{{< include "',
            report_includes_suffix = '" >}}',
+           qmd_engine = c("recursion", "loop"),
            log_file = NULL) {
     args <- utils::modifyList(
       as.list(environment()),
@@ -316,7 +335,8 @@ draft_report <-
         write_qmd = args$write_qmd,
         attach_chapter_dataset = args$attach_chapter_dataset,
         auxiliary_variables = args$auxiliary_variables,
-        serialized_format = args$serialized_format
+        serialized_format = args$serialized_format,
+        qmd_engine = args$qmd_engine
       )
 
     processed_files <- chapter_filepaths

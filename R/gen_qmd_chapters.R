@@ -33,7 +33,8 @@ gen_qmd_chapters <-
            auxiliary_variables = NULL,
            serialized_format = "rds",
            filename_prefix = "",
-           data_filename_prefix = "data_") {
+           data_filename_prefix = "data_",
+           qmd_engine = c("recursion", "loop")) {
     path <- fs::as_fs_path(path)
 
     grouping_structure <- dplyr::group_vars(chapter_structure)
@@ -88,7 +89,8 @@ gen_qmd_chapters <-
                 ignore_heading_for_group = ignore_heading_for_group,
                 replace_heading_for_group = replace_heading_for_group,
                 prefix_heading_for_group = prefix_heading_for_group,
-                suffix_heading_for_group = suffix_heading_for_group
+                suffix_heading_for_group = suffix_heading_for_group,
+                engine = qmd_engine
               )
           } else {
             chapter_contents <- NULL
