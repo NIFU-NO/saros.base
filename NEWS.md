@@ -24,6 +24,9 @@
 ## New features
 - Added `default_chunk_templates_5`: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like `get_fig_title_suffix_from_ggplot()` for more streamlined code generation.
 
+## Testing
+- Added snapshot tests of the `.qmd` text `draft_report()` writes (`tests/testthat/test-qmd_snapshots.R`). Nothing previously asserted anything about the generated content — the existing test checks file counts and file *sizes* — which is why #207, #208/#184 and #216 all shipped. Each of those was re-introduced and confirmed to fail the new tests. Only possible now that #213 made the output deterministic; `test-anchor_determinism.R` pins that property separately.
+
 ## Code quality improvements
 - Moved `tibble` from `Suggests` to `Imports` (#215). `.onLoad()` builds the default chunk templates with `tibble::add_row()`, and R-exts requires a package to declare what its own code uses directly. This corrects the declaration; it does not change observable behaviour. `tibble` is a hard dependency of `dplyr`, `tidyr` and `forcats` — all already in `Imports` — so it has always been installed alongside saros.base, and no installation could have lacked it.
 - CI now fails when `man/` or `NAMESPACE` differ from what `roxygen2::roxygenise()` produces from the roxygen comments in `R/` (#219). This is the drift that hid `delete_freeze()`: `R CMD check` accepts a package whose `NAMESPACE` is missing an export — it is simply a package without that function — and pkgdown indexes `.Rd` topics rather than exports, so neither caught it.
