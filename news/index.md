@@ -4,6 +4,31 @@
 
 ### Bug fixes
 
+- A section that matches no rows no longer emits the previous sibling’s
+  chunk under its own heading
+  ([\#239](https://github.com/NIFU-NO/saros.base/issues/239)). `new_out`
+  was threaded through the sibling loop in `gen_qmd_node()` and
+  reassigned only when a section was non-empty, so an empty section kept
+  whatever the sibling before it produced — a figure or table appearing
+  under a heading it does not belong to, with no error and no warning,
+  and looking entirely plausible in the rendered report. This was latent
+  rather than live: `grouped_data` is
+  [`distinct()`](https://dplyr.tidyverse.org/reference/distinct.html)
+  over the grouping columns of `chapter_structure`, so every traversal
+  path corresponds to at least one real row and no empty section arises
+  today (instrumenting 66 deepest-level calls across five report shapes
+  found none). But that is an invariant held elsewhere, not a local
+  guarantee — a change to how `grouped_data` is derived, to `NA`
+  handling in `prepare_chapter_structure_section()`’s filter, or a new
+  grouping column whose values do not round-trip through
+  [`as.character()`](https://rdrr.io/r/base/character.html) would have
+  made it live. `new_out` is now local to each node, so an empty section
+  contributes nothing, not even its heading. Both `qmd_engine` values
+  were affected identically and both are fixed by the one change; the
+  now-dead `new_out` state has been dropped from the recursion’s loop
+  variable and the loop engine’s stack frame.
+  `tests/testthat/test-qmd_empty_section.R` constructs the empty section
+  directly, since the integration path cannot produce one.
 - `draft_report(require_common_categories = TRUE)` now performs the
   check it documents
   ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The
