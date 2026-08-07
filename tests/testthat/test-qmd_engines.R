@@ -13,10 +13,13 @@
 #      indexes with [[ ]], which yields a one-element factor instead, so
 #      level_values() coerces. Without that, every downstream comparison of
 #      `value` shifts.
-#   2. `new_out` is declared outside the recursion's for loop and only
-#      reassigned when a section is non-empty, so an empty section reuses the
-#      previous sibling's chunk. The loop carries that state on its frame to
-#      reproduce it rather than quietly correcting it.
+#   2. The recursion returns character() as soon as `level > ncol(grouped_data)`,
+#      before it reaches its length-1 assertion. The loop carries that on its
+#      frame as `beyond` and unwinds without asserting.
+#
+# What each node emits on its own is pinned separately, in
+# test-qmd_empty_section.R -- these engines agreeing says nothing about whether
+# they agree on the right thing.
 
 draft_with <- function(overview, engine, envir = parent.frame(), ...) {
   path <- withr::local_tempdir(.local_envir = envir)

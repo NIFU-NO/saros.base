@@ -10,7 +10,7 @@
 
 # Everything one (level, value) pair does. Shared by both engines.
 #
-# Returns the updated `output` and `new_out` plus the filtered `sub_df` and the
+# Returns the updated `output` plus the filtered `sub_df` and the
 # `grouping_structure` to hand to the next level down.
 gen_qmd_node <- function(value,
                          grouped_data,
@@ -18,7 +18,6 @@ gen_qmd_node <- function(value,
                          grouping_structure,
                          chapter_structure,
                          output,
-                         new_out,
                          ignore_heading_for_group,
                          replace_heading_for_group,
                          prefix_heading_for_group,
@@ -38,6 +37,13 @@ gen_qmd_node <- function(value,
   names(grouping_structure)[level] <- value
 
   # If innermost/deepest level, insert chunk.
+  #
+  # `new_out` is local to this node and starts empty, so a section matching no
+  # rows contributes nothing. It used to be threaded through the sibling loop
+  # and only reassigned when the section was non-empty, which meant an empty
+  # section emitted the *previous* sibling's chunk under its own heading --
+  # silently, and looking entirely plausible in the rendered report (GH #239).
+  new_out <- character()
   if (level == length(grouping_structure)) {
     chapter_structure_section <-
       prepare_chapter_structure_section(
@@ -53,10 +59,6 @@ gen_qmd_node <- function(value,
         )
     }
   }
-  # NB: when the section is empty, `new_out` deliberately keeps whatever the
-  # previous sibling produced. That is what the recursive implementation has
-  # always done -- `new_out` is declared outside its for loop -- so it is
-  # preserved here rather than quietly corrected.
 
   heading_line <-
     insert_section_heading_line(
@@ -82,7 +84,6 @@ gen_qmd_node <- function(value,
 
   list(
     output = output,
-    new_out = new_out,
     grouping_structure = grouping_structure,
     sub_df = sub_df
   )
@@ -128,7 +129,6 @@ gen_group_structure_recursion <-
            suffix_heading_for_group) {
     walk <- function(grouped_data, level, grouping_structure) {
       output <- character()
-      new_out <- character()
 
       if (level > ncol(grouped_data)) {
         return(output)
@@ -143,14 +143,12 @@ gen_group_structure_recursion <-
             grouping_structure = grouping_structure,
             chapter_structure = chapter_structure,
             output = output,
-            new_out = new_out,
             ignore_heading_for_group = ignore_heading_for_group,
             replace_heading_for_group = replace_heading_for_group,
             prefix_heading_for_group = prefix_heading_for_group,
             suffix_heading_for_group = suffix_heading_for_group
           )
         output <- node$output
-        new_out <- node$new_out
 
         added <- walk(node$sub_df, level + 1, node$grouping_structure)
         output <- combine_child_output(output, added)
@@ -180,7 +178,6 @@ gen_group_structure_loop <-
         values = if (beyond) character() else level_values(grouped_data, level),
         idx = 1L,
         output = character(),
-        new_out = character(),
         beyond = beyond
       )
     }
@@ -233,14 +230,12 @@ gen_group_structure_loop <-
           grouping_structure = frame$grouping_structure,
           chapter_structure = chapter_structure,
           output = frame$output,
-          new_out = frame$new_out,
           ignore_heading_for_group = ignore_heading_for_group,
           replace_heading_for_group = replace_heading_for_group,
           prefix_heading_for_group = prefix_heading_for_group,
           suffix_heading_for_group = suffix_heading_for_group
         )
       frame$output <- node$output
-      frame$new_out <- node$new_out
 
       stack[[depth]] <- frame
       stack[[depth + 1L]] <- new_frame(node$sub_df, frame$level + 1, node$grouping_structure)
