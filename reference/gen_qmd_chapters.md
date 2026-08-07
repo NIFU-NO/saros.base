@@ -70,11 +70,21 @@ gen_qmd_chapters(
 
   *Ignore heading for group*
 
-  `vector<character>` // *default:* `NULL` (`optional`)
+  `vector<character>` // *default:* see Usage (`optional`)
 
-  Type of refined chapter_structure data for which to suppress the
-  heading in the report output. Typically variable_name_dep,
-  variable_name_indep, etc.
+  Grouping columns of the refined chapter_structure for which to
+  suppress the heading in the report output. Typically
+  variable_name_dep, variable_name_indep, etc. Names must match the
+  columns actually grouped on, i.e. the `organize_by`-argument of
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md);
+  an entry that is not a grouping column simply has no effect.
+
+  `.chapter_number` is suppressed by default because the chapter heading
+  is written directly by the chapter file, so leaving it enabled
+  produces two first-level headings. Remove it from this argument to get
+  the chapter heading from the grouping machinery instead, which gives
+  it a `{#sec-}` anchor and makes
+  `prefix_heading_for_group`/`suffix_heading_for_group` apply to it.
 
 - replace_heading_for_group:
 

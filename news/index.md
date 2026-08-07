@@ -4,6 +4,81 @@
 
 ### Bug fixes
 
+- `draft_report(require_common_categories = TRUE)` now performs the
+  check it documents
+  ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The
+  argument was validated but never read, and the
+  `check_category_pairs()` helper implementing it had no caller.
+  Dependent variables within a section — the set that ends up in one
+  figure — are now checked for at least one shared response category,
+  before any files are written. Only factor columns are compared, since
+  a “common category” is not meaningful for numeric or free-text
+  variables. Set `require_common_categories = FALSE` to skip.
+- `refine_chapter_overview(keep_dep_indep_if_no_overlap = FALSE)` now
+  removes bivariate entries whose dependent and independent variables
+  never co-occur
+  ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The call
+  site was short-circuited with `if (FALSE && ...)`, so the argument had
+  no effect. Enabling it exposed a latent crash in
+  `remove_from_chapter_structure_if_no_overlap()`:
+  `.variable_name_dep`/`_indep` are factors that may carry `NA` as an
+  explicit level, for which [`is.na()`](https://rdrr.io/r/base/NA.html)
+  on the factor is `FALSE`, so such rows reached `data[[NA]]` and
+  aborted. The comparison now runs on the character form.
+- `create_r_files(r_add_file_scope = FALSE)` now actually omits the
+  `file_scope` column from the generated placeholder files
+  ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The flag
+  was accepted and ignored, so the scope was written either way. The
+  placeholder file is still created in both cases, and the default
+  (`TRUE`) is unchanged.
+- `create_email_credentials(ignore_missing_emails = FALSE)` now warns
+  about usernames that exist in the password file but have no email
+  address ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)).
+  This is the direction the argument documents; the function previously
+  only warned about the opposite case, and never read the flag. Such
+  accounts silently received no credentials. **This adds a warning to
+  existing calls** where the password file contains accounts absent from
+  `email_data_frame`; pass `ignore_missing_emails = TRUE` to silence it.
+- [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  no longer writes `.na.character` as the title of
+  `<mesos_var>/index.qmd`
+  ([\#188](https://github.com/NIFU-NO/saros.base/issues/188)).
+  `extract_mesos_metadata()` guarded its fallback with
+  [`is.null()`](https://rdrr.io/r/base/NULL.html), but
+  [`get_raw_labels()`](https://nifu-no.github.io/saros.base/reference/get_raw_labels.md)
+  returns `NA_character_` for an unlabelled column, so the display name
+  stayed `NA` and was serialised into the site.
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  was unaffected because it always attaches a label internally — which
+  is what made the two entry points produce different output. They now
+  agree on every generated file except the `_metadata.yml` subtitle,
+  which legitimately includes the `main_directory` folder name only when
+  one is supplied.
+- Generated mesos stub and `index.qmd` files now end with a newline.
+  Their absence made
+  [`readLines()`](https://rdrr.io/r/base/readLines.html) and other text
+  tools warn about an incomplete final line.
+- [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  is now reproducible
+  ([\#213](https://github.com/NIFU-NO/saros.base/issues/213)). Heading
+  anchors carried two RNG-drawn digits, so identical inputs produced
+  different `.qmd` files on every run. Quarto’s `freeze` cache keys on
+  file content, so it missed on every chapter after every regeneration —
+  a one-line change in data preparation forced a full re-render of the
+  entire site. The suffix is now a short hash of the heading’s position
+  in the grouping tree, which is stable across runs and a stronger
+  disambiguator than two digits (which collided for 1% of colliding
+  pairs).
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  no longer draws from the session RNG at all.
+- Chapter files no longer contain two first-level headings
+  ([\#207](https://github.com/NIFU-NO/saros.base/issues/207)).
+  `.chapter_number` has been added to the `ignore_heading_for_group`
+  default. The default listed `"chapter"`, but the column grouped on is
+  `.chapter_number`, so the guard never fired and the chapter title was
+  emitted both directly and by the grouping machinery. Remove
+  `.chapter_number` from the argument to restore the previous
+  grouping-generated heading, which carries a `{#sec-}` anchor.
 - [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   and
   [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
@@ -81,15 +156,6 @@
   entry is stale and is still deleted; only the spurious warning is
   gone. Staleness now also ignores directory mtimes, and `_freeze`
   itself is excluded when discovering `.qmd` files.
-- Moved `tibble` from `Suggests` to `Imports`
-  ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)).
-  `.onLoad()` builds the default chunk templates with
-  [`tibble::add_row()`](https://tibble.tidyverse.org/reference/add_row.html),
-  so the package could not be attached at all on installations without
-  `tibble`
-  (e.g. [`install.packages()`](https://rdrr.io/r/utils/install.packages.html)
-  without `dependencies = TRUE`). No new installation burden: `dplyr`
-  already imports `tibble`.
 - Suggested packages are now used conditionally, per R-exts
   ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)). `srvyr`
   (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in
@@ -107,8 +173,41 @@
   functions like `get_fig_title_suffix_from_ggplot()` for more
   streamlined code generation.
 
+### Testing
+
+- Added snapshot tests of the `.qmd` text
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  writes (`tests/testthat/test-qmd_snapshots.R`). Nothing previously
+  asserted anything about the generated content — the existing test
+  checks file counts and file *sizes* — which is why
+  [\#207](https://github.com/NIFU-NO/saros.base/issues/207),
+  [\#208](https://github.com/NIFU-NO/saros.base/issues/208)/#184 and
+  [\#216](https://github.com/NIFU-NO/saros.base/issues/216) all shipped.
+  Each of those was re-introduced and confirmed to fail the new tests.
+  Only possible now that
+  [\#213](https://github.com/NIFU-NO/saros.base/issues/213) made the
+  output deterministic; `test-anchor_determinism.R` pins that property
+  separately.
+
 ### Code quality improvements
 
+- Moved `tibble` from `Suggests` to `Imports`
+  ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)).
+  `.onLoad()` builds the default chunk templates with
+  [`tibble::add_row()`](https://tibble.tidyverse.org/reference/add_row.html),
+  and R-exts requires a package to declare what its own code uses
+  directly. This corrects the declaration; it does not change observable
+  behaviour. `tibble` is a hard dependency of `dplyr`, `tidyr` and
+  `forcats` — all already in `Imports` — so it has always been installed
+  alongside saros.base, and no installation could have lacked it.
+- CI now fails when `man/` or `NAMESPACE` differ from what
+  `roxygen2::roxygenise()` produces from the roxygen comments in `R/`
+  ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This is
+  the drift that hid
+  [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md):
+  `R CMD check` accepts a package whose `NAMESPACE` is missing an export
+  — it is simply a package without that function — and pkgdown indexes
+  `.Rd` topics rather than exports, so neither caught it.
 - `.saros.env` is now an actual environment
   ([\#218](https://github.com/NIFU-NO/saros.base/issues/218)). A
   package-level `.saros.env <- NULL` made `exists(".saros.env")` inside

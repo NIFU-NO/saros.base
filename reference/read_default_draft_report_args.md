@@ -25,7 +25,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpT45K6s/file1ba261fac1a6.yaml"
+#> [1] "/tmp/RtmpRvDdI6/file1d4c22291659.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL
@@ -74,7 +74,7 @@ read_default_draft_report_args(path = tmpfile)
 #> 
 #> $ignore_heading_for_group
 #> [1] ".template_name"       ".variable_type_dep"   ".variable_type_indep"
-#> [4] ".variable_group_dep"  "chapter"             
+#> [4] ".variable_group_dep"  ".chapter_number"      "chapter"             
 #> 
 #> $replace_heading_for_group
 #>                      chapter   .variable_label_suffix_dep 

@@ -111,9 +111,18 @@ chapter_structure 'dep', etc columns.</p></dd>
 
 <dt id="arg-ignore-heading-for-group">ignore_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-ignore-heading-for-group"></a></dt>
 <dd><p><em>Ignore heading for group</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Type of refined chapter_structure data for which to suppress the heading
-in the report output. Typically variable_name_dep, variable_name_indep, etc.</p></dd>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> see Usage (<code>optional</code>)</p>
+<p>Grouping columns of the refined chapter_structure for which to suppress the
+heading in the report output. Typically variable_name_dep,
+variable_name_indep, etc. Names must match the columns actually grouped on,
+i.e. the <code>organize_by</code>-argument of <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code>; an entry
+that is not a grouping column simply has no effect.</p>
+<p><code>.chapter_number</code> is suppressed by default because the chapter heading is
+written directly by the chapter file, so leaving it enabled produces two
+first-level headings. Remove it from this argument to get the chapter
+heading from the grouping machinery instead, which gives it a <code>{#sec-}</code>
+anchor and makes <code>prefix_heading_for_group</code>/<code>suffix_heading_for_group</code>
+apply to it.</p></dd>
 
 
 <dt id="arg-replace-heading-for-group">replace_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-replace-heading-for-group"></a></dt>
