@@ -172,6 +172,23 @@
   single crowd reports without mesos structure. Uses cleaner helper
   functions like `get_fig_title_suffix_from_ggplot()` for more
   streamlined code generation.
+- `draft_report(qmd_engine = )` selects how the grouping tree is
+  traversed when assembling each chapter
+  ([\#19](https://github.com/NIFU-NO/saros.base/issues/19)).
+  `"recursion"` (the default, and the original implementation) makes one
+  R call per node, so a deep `organize_by` is bounded by
+  `options("expressions")` and the C stack. `"loop"` walks the same tree
+  with an explicit stack, bounded by heap instead. The two produce
+  byte-identical output; `tests/testthat/test-qmd_engines.R` asserts
+  that across five report shapes, including the bundled example, and
+  `tests/testthat/test-qmd_engines_ordering.R` additionally pins
+  ordering, grouping and sorting across five `organize_by` shapes, three
+  `arrange_section_by` directions, both `na_first_in_section` settings,
+  reversed chapter declaration and a degenerate single-value tree.
+  Measured on the bundled example the two are within noise of each other
+  (5.3s vs 4.8s at the default depth, 18.1s vs 18.2s with one extra
+  grouping level), so this is about depth headroom and having a
+  fallback, not speed.
 
 ### Testing
 

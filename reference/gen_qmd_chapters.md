@@ -23,7 +23,8 @@ gen_qmd_chapters(
   auxiliary_variables = NULL,
   serialized_format = "rds",
   filename_prefix = "",
-  data_filename_prefix = "data_"
+  data_filename_prefix = "data_",
+  qmd_engine = c("recursion", "loop")
 )
 ```
 
@@ -159,6 +160,27 @@ gen_qmd_chapters(
   *String attached to beginning of data-file and data-object*
 
   `scalar<string>` // *default:* `"data_"`
+
+- qmd_engine:
+
+  *Traversal engine for the grouping tree*
+
+  `scalar<string>` // *default:* `"recursion"`
+
+  Which implementation walks the grouping tree when assembling each
+  chapter. Both produce byte-identical output; this exists so the newer
+  one can be adopted, benchmarked and backed out of independently.
+
+  - `"recursion"`: the original implementation. One R function call per
+    node, so a deep `organize_by` is bounded by the expression nesting
+    limit (`options("expressions")`) and by C stack size.
+
+  - `"loop"`: the same traversal driven by an explicit stack, so depth
+    is bounded by heap instead.
+
+  Equivalence is asserted in `tests/testthat/test-qmd_engines.R`, which
+  compares the two engines' output byte-for-byte across several report
+  shapes.
 
 ## Value
 

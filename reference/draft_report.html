@@ -108,6 +108,7 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 <span>  data_filename_prefix <span class="op">=</span> <span class="st">"data_"</span>,</span>
 <span>  report_includes_prefix <span class="op">=</span> <span class="st">"{{&lt; include \""</span>,</span>
 <span>  report_includes_suffix <span class="op">=</span> <span class="st">"\" &gt;}}"</span>,</span>
+<span>  qmd_engine <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recursion"</span>, <span class="st">"loop"</span><span class="op">)</span>,</span>
 <span>  log_file <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -299,6 +300,21 @@ due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
 <dd><p><em>Strings around files in report.qmd</em></p>
 <p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"\{\{&lt; include "</code> and <code>" &gt;\}\}"</code></p>
 <p>The prefix and suffix for each of the chapters being included in the report.qmd file if <code>report_includes_files = TRUE</code>.</p></dd>
+
+
+<dt id="arg-qmd-engine">qmd_engine<a class="anchor" aria-label="anchor" href="#arg-qmd-engine"></a></dt>
+<dd><p><em>Traversal engine for the grouping tree</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"recursion"</code></p>
+<p>Which implementation walks the grouping tree when assembling each chapter.
+Both produce byte-identical output; this exists so the newer one can be
+adopted, benchmarked and backed out of independently.</p><ul><li><p><code>"recursion"</code>: the original implementation. One R function call per
+node, so a deep <code>organize_by</code> is bounded by the expression nesting limit
+(<code>options("expressions")</code>) and by C stack size.</p></li>
+<li><p><code>"loop"</code>: the same traversal driven by an explicit stack, so depth is
+bounded by heap instead.</p></li>
+</ul><p>Equivalence is asserted in <code>tests/testthat/test-qmd_engines.R</code>, which
+compares the two engines' output byte-for-byte across several report
+shapes.</p></dd>
 
 
 <dt id="arg-log-file">log_file<a class="anchor" aria-label="anchor" href="#arg-log-file"></a></dt>

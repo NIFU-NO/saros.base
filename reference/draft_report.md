@@ -47,6 +47,7 @@ draft_report(
   data_filename_prefix = "data_",
   report_includes_prefix = "{{< include \"",
   report_includes_suffix = "\" >}}",
+  qmd_engine = c("recursion", "loop"),
   log_file = NULL
 )
 ```
@@ -305,6 +306,27 @@ draft_report(
 
   The prefix and suffix for each of the chapters being included in the
   report.qmd file if `report_includes_files = TRUE`.
+
+- qmd_engine:
+
+  *Traversal engine for the grouping tree*
+
+  `scalar<string>` // *default:* `"recursion"`
+
+  Which implementation walks the grouping tree when assembling each
+  chapter. Both produce byte-identical output; this exists so the newer
+  one can be adopted, benchmarked and backed out of independently.
+
+  - `"recursion"`: the original implementation. One R function call per
+    node, so a deep `organize_by` is bounded by the expression nesting
+    limit (`options("expressions")`) and by C stack size.
+
+  - `"loop"`: the same traversal driven by an explicit stack, so depth
+    is bounded by heap instead.
+
+  Equivalence is asserted in `tests/testthat/test-qmd_engines.R`, which
+  compares the two engines' output byte-for-byte across several report
+  shapes.
 
 - log_file:
 

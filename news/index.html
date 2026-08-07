@@ -88,6 +88,8 @@
 <div class="section level3">
 <h3 id="new-features-1-2-1-9001">New features<a class="anchor" aria-label="anchor" href="#new-features-1-2-1-9001"></a></h3>
 <ul><li>Added <code>default_chunk_templates_5</code>: a new simplified template set for single crowd reports without mesos structure. Uses cleaner helper functions like <code>get_fig_title_suffix_from_ggplot()</code> for more streamlined code generation.</li>
+<li>
+<code>draft_report(qmd_engine = )</code> selects how the grouping tree is traversed when assembling each chapter (<a href="https://github.com/NIFU-NO/saros.base/issues/19" class="external-link">#19</a>). <code>"recursion"</code> (the default, and the original implementation) makes one R call per node, so a deep <code>organize_by</code> is bounded by <code>options("expressions")</code> and the C stack. <code>"loop"</code> walks the same tree with an explicit stack, bounded by heap instead. The two produce byte-identical output; <code>tests/testthat/test-qmd_engines.R</code> asserts that across five report shapes, including the bundled example, and <code>tests/testthat/test-qmd_engines_ordering.R</code> additionally pins ordering, grouping and sorting across five <code>organize_by</code> shapes, three <code>arrange_section_by</code> directions, both <code>na_first_in_section</code> settings, reversed chapter declaration and a degenerate single-value tree. Measured on the bundled example the two are within noise of each other (5.3s vs 4.8s at the default depth, 18.1s vs 18.2s with one extra grouping level), so this is about depth headroom and having a fallback, not speed.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="testing-1-2-1-9001">Testing<a class="anchor" aria-label="anchor" href="#testing-1-2-1-9001"></a></h3>

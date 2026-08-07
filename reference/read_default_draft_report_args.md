@@ -25,7 +25,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpRvDdI6/file1d4c22291659.yaml"
+#> [1] "/tmp/RtmpP8VDya/file1cec50b9b225.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL
@@ -117,6 +117,9 @@ read_default_draft_report_args(path = tmpfile)
 #> 
 #> $report_includes_suffix
 #> [1] "\" >}}"
+#> 
+#> $qmd_engine
+#> [1] "recursion" "loop"     
 #> 
 #> $log_file
 #> NULL
