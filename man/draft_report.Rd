@@ -40,6 +40,7 @@ draft_report(
   data_filename_prefix = "data_",
   report_includes_prefix = "{{< include \\"",
   report_includes_suffix = "\\" >}}",
+  qmd_engine = c("recursion", "loop"),
   log_file = NULL
 )
 }
@@ -229,6 +230,25 @@ due to its URL-conversion: \%20. To avoid test, set to Inf}
 \verb{scalar<string>} // \emph{default:} \code{"\\{\\{< include "} and \code{" >\\}\\}"}
 
 The prefix and suffix for each of the chapters being included in the report.qmd file if \code{report_includes_files = TRUE}.}
+
+\item{qmd_engine}{\emph{Traversal engine for the grouping tree}
+
+\verb{scalar<string>} // \emph{default:} \code{"recursion"}
+
+Which implementation walks the grouping tree when assembling each chapter.
+Both produce byte-identical output; this exists so the newer one can be
+adopted, benchmarked and backed out of independently.
+\itemize{
+\item \code{"recursion"}: the original implementation. One R function call per
+node, so a deep \code{organize_by} is bounded by the expression nesting limit
+(\code{options("expressions")}) and by C stack size.
+\item \code{"loop"}: the same traversal driven by an explicit stack, so depth is
+bounded by heap instead.
+}
+
+Equivalence is asserted in \code{tests/testthat/test-qmd_engines.R}, which
+compares the two engines' output byte-for-byte across several report
+shapes.}
 
 \item{log_file}{\emph{Path to log file}
 
