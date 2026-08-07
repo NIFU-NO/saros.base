@@ -84,8 +84,8 @@ saros.base::get_chunk_template_defaults()
 
 ### The default templates
 
-There are five variants, selected with `get_chunk_template_defaults(variant)`.
-The default is variant 1.
+There are five variants, selected with the `variant` argument — for example
+`saros.base::get_chunk_template_defaults(variant = 2)`. The default is variant 1.
 
 | `.template_name` | dep types | indep types | Produces |
 |---|---|---|---|
