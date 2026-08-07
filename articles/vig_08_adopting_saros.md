@@ -1,0 +1,203 @@
+# Adopting Saros for a project
+
+This vignette is written for project leads rather than for whoever will
+run the code. It covers what adopting Saros involves in practice, what
+kinds of output it can generate for you, and the ethical questions
+raised by offering institution-specific reports as an incentive to take
+part.
+
+If you are not yet sure whether Saros is right for your project, read
+`vig_00_about_saros` first, and `vig_10_objections_and_limitations` for
+the counter-arguments.
+
+## What adoption involves
+
+1.  **Find a colleague with a somewhat above-average interest in the
+    technical side, and give them time to set the project up.** Around
+    five hours is a reasonable first pass, covering:
+
+    1.  Copying the structure from an existing project, or following
+        `vig_02_project_setup`.
+    2.  Adapting the folder structure and settings to your project.
+    3.  Going through, with you and the rest of the team, whichever
+        settings need a decision.
+
+2.  **For each cycle of the survey, the data cleaner prepares the
+    data.** See `vig_04_prepare_data`. Make sure the datasets and file
+    paths are tidy, de-identified, and preferably consistent between
+    cycles. Budget extra hours the first time so the scripts can be made
+    as reusable as possible across later cycles.
+
+3.  **You and the data cleaner set up the chapter overview together.**
+    See `vig_06_prepare_chapter_overview`. This is usually quick if you
+    know what you want. If you skip it, everything lands in one large
+    chapter.
+
+4.  **Make the decisions that become settings** in the call to
+    [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md).
+
+5.  **The data cleaner generates the drafts**, which land in a folder
+    for generated drafts.
+
+6.  **The chapter authors take over.** Their work is documented with the
+    sibling [saros](https://github.com/NIFU-NO/saros) package rather
+    than here.
+
+> **Tip**
+>
+> The step that most repays your attention as project lead is the
+> chapter overview. It is a small spreadsheet, and it determines the
+> shape of the entire report.
+
+## What Saros can generate
+
+Historically this was described as a list of “element types” passed to
+an `element_names` argument. **That argument no longer exists.** It has
+been replaced by `chunk_templates`, an argument to
+[`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md),
+and the model behind it is different in an important way.
+
+An entry is no longer chosen by a single compound name. Instead, each
+row of the `chunk_templates` data frame carries:
+
+| Column | Meaning |
+|----|----|
+| `.template_name` | A label for the template |
+| `.template_variable_type_dep` | Which dependent variable types it applies to, semicolon-separated |
+| `.template_variable_type_indep` | Which independent variable types it applies to; `NA` means univariate |
+| `.template` | The code that gets written into the draft |
+
+Whether an entry is univariate or bivariate is therefore no longer part
+of its name — it is `NA` versus a value in
+`.template_variable_type_indep`. The variable types use short R type
+abbreviations: `fct` and `ord` for unordered and ordered factors, `int`
+and `dbl` for integer and double, `chr` for free text.
+
+Inspect the defaults with:
+
+``` r
+
+saros.base::get_chunk_template_defaults()
+```
+
+### The default templates
+
+There are five variants, selected with the `variant` argument — for
+example `saros.base::get_chunk_template_defaults(variant = 2)`. The
+default is variant 1.
+
+| `.template_name` | dep types | indep types | Produces |
+|----|----|----|----|
+| `cat_plot_html` | `fct;ord` | `fct;ord` | Bar chart, categorical by categorical |
+| `cat_plot_html` | `fct;ord` | *(none)* | Bar chart, one categorical variable |
+| `int_plot_html` | `int;dbl` | `fct;ord` | Distribution plot of a numeric variable per group |
+| `int_plot_html` | `int;dbl` | *(none)* | Distribution plot of one numeric variable |
+| `int_table_html` | `int;dbl` | *(none)* | Table for a numeric variable |
+| `cat_table_html` | `fct;ord` | `fct;ord` | Table, categorical by categorical |
+| `cat_table_html` | `fct;ord` | *(none)* | Table, one categorical variable |
+| `chr_table` | `chr` | *(none)* | Table of free-text answers |
+
+Which of these a variant contains differs:
+
+| Variant | Rows | Notes |
+|----|----|----|
+| 1 | 7 | The default. The only variant with `int_table_html`; has no univariate `int_plot_html` |
+| 2 | 7 | As variant 1, but with univariate `int_plot_html` instead of `int_table_html` |
+| 3 | 5 | Categorical and free text only — no numeric templates at all |
+| 4 | 7 | For mesos reports, using `crowd_plots_as_tabset()` and `txt_from_cat_mesos_plots()` |
+| 5 | 7 | Simplified, for single-crowd reports without a mesos structure |
+
+> **Proportions versus frequencies**
+>
+> Under the old naming there were separate `..._prop_plot` and
+> `..._freq_plot` entries. There are not any more. Whether a chart shows
+> proportions or counts is now an argument to `saros::makeme()` inside
+> the template, not a different template.
+
+> **`.template_name` is not a fixed vocabulary**
+>
+> The names above are the *defaults*, not an enumerated set.
+> `chunk_templates` accepts a user-supplied data frame with arbitrary
+> template names, and the name is only used as a label. If you need the
+> list that genuinely is validated, that is the `type` argument of
+> `saros::makeme()`, obtainable with `saros::get_makeme_types()`.
+
+### Mapping from the old element names
+
+If you are working from older documentation or an older project, this is
+where the old names went.
+
+| Old element name | Today |
+|----|----|
+| `uni_cat_prop_plot`, `uni_cat_freq_plot` | `cat_plot_html` with no indep type |
+| `bi_catcat_prop_plot`, `bi_catcat_freq_plot` | `cat_plot_html` with `fct;ord` indep |
+| `bi_catcat_prop_plot2`, `bi_catcat_freq_plot2` | No pivoted variant exists |
+| `uni_chr_table` | `chr_table` |
+| `uni_cat_table` | `cat_table_html` with no indep type |
+| `bi_catcat_table` | `cat_table_html` with `fct;ord` indep |
+| `uni_int_plot` | `int_plot_html` with no indep type |
+| `bi_intcat_plot` | `int_plot_html` with `fct;ord` indep |
+| `bi_sigtest` | Not in any default set; `sigtest_table_html` remains available to a hand-written template |
+| `uni_chr_plot` (word cloud) | Still not implemented, on either side |
+
+## Ethical reflections on incentivizing with mesos reports
+
+It is sometimes useful to motivate institutions and the people in them
+to take part in a survey by offering something in return — typically a
+report covering their own institution. This raises ethical questions,
+which are set out below by level.
+
+> **Important**
+>
+> What follows is an argument to weigh, not a compliance rule, and it
+> does not substitute for your project’s own data protection assessment.
+
+**1. Reporting without prior notice.** Producing such a report without
+having told people it is coming — so that it arrives as a surprise — may
+itself be unethical. Not informing the school and its teachers in
+advance is undesirable. People might well have answered somewhat
+differently had they known their aggregated answers would be shown to
+the whole staff and to management, even granting that we should be
+avoiding questions that single individuals out. If you do break this
+principle, you should be as confident as you can that the number of
+responses at each institution is high enough that one small group’s
+extreme answers will neither shift the overall picture nor expose the
+manager or any other individual, and that the questions are not
+sensitive.
+
+**2. Informing in advance, without stating the threshold.** It is
+therefore better to tell the school and the teachers beforehand. That
+gives the institution and its respondents the opportunity to say whether
+they want the arrangement at all, or whether it needs adapting or
+dropping in their particular case. Announcing that such reporting may
+happen, without saying what the threshold is — say, eight responses —
+does in itself put some pressure on respondents: too few answers and the
+institution loses the benefit. But because the threshold is unknown, and
+if it is also unknown who else was invited, nobody can be certain they
+are the one missing response standing between the group and the benefit.
+That degree of pressure does not appear materially worse than the
+pressure one already feels from colleagues or peers on an important
+topic one has something to say about.
+
+**3. Informing in advance and stating the threshold.** The next level is
+disclosing the specific number of responses required. Set a concrete
+minimum of eight, and the eighth teacher may feel pressure to take part
+so as not to spoil it for everyone else. That pressure can be quite
+real: others may have said they have answered, and worked out that the
+eighth person was also invited. If it is also known that the institution
+has exactly eight eligible people, the pressure on the eighth is
+unmistakable. And when no report subsequently appears, it is evident
+that either the eighth person did not in fact respond, or one of the
+others who claimed to have responded was lying. Short of an extreme
+scenario in which people are made to produce proof of their responses,
+this amounts to a moderate level of pressure — because one can always
+claim to have completed a survey, as with any survey.
+
+**4. Is eight enough?** The final question is whether the threshold
+should be higher. This is a genuinely complex question about privacy and
+anonymization, and it has a literature. See for example [this thesis at
+the University of Oslo](https://www.duo.uio.no/handle/10852/69142) and
+the [Statistical Disclosure Control practice
+guide](https://sdcpractice.readthedocs.io/en/latest/SDC_intro.html). The
+minimum will always depend on how finely the tables and figures break
+the results down, and on how sensitive the questions are.

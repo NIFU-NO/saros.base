@@ -2,6 +2,50 @@
 
 ## saros.base 1.2.1.9001
 
+### Documentation
+
+- Added four conceptual vignettes, porting the orientation material that
+  previously existed only as Norwegian prose on the Saros website
+  ([\#185](https://github.com/NIFU-NO/saros.base/issues/185)).
+  `vig_00_about_saros` covers what Saros is, its goals and success
+  criteria, the macro/mesos/micro levels, the three-phase production
+  process and the PISVEEP pass, the technology stack, and the analysis
+  of the traditional report format that motivates generating it.
+  `vig_08_adopting_saros` is written for project leads: what adoption
+  costs, what the package can generate, and the ethics of offering
+  institution-specific reports as an incentive to participate.
+  `vig_09_projects_using_saros` lists the projects the system is built
+  for. `vig_10_objections_and_limitations` collects the standard
+  objections with their answers, plus the limitations expected to
+  persist. All four are text-only — no figures, no executed code — and
+  are picked up automatically by pkgdown, which has no `articles:` key.
+- The “possible element types” table is no longer accurate and has been
+  rewritten rather than translated. It documented an `element_names`
+  argument enumerating compound names such as `uni_cat_prop_plot` and
+  `bi_catcat_freq_plot2`, in which the number of variables involved, the
+  variable type, the output form and the statistic were all encoded in
+  one string. No such argument exists in saros.base —
+  `git log -S"element_names" -- R/` returns nothing, so it never did.
+  The successor is `refine_chapter_overview(chunk_templates = )`, whose
+  rows carry `.template_name` plus
+  `.template_variable_type_dep`/`.template_variable_type_indep`;
+  univariate is now `NA` in the indep column rather than a `uni_`
+  prefix, and proportions versus frequencies moved into a
+  `saros::makeme()` argument. `vig_08_adopting_saros` documents the five
+  default variants as they actually are, and includes a mapping table
+  for anyone arriving from the old vocabulary. Worth noting for future
+  readers: `.template_name` is not a validated, fixed set of permitted
+  values — `chunk_templates` accepts arbitrary names — so the only
+  genuinely closed vocabulary is `saros::get_makeme_types()`.
+- `inst/WORDLIST` gained the Norwegian project and process names the new
+  vignettes introduce (`Kompetansebarometeret`, `Spørringene`, `Plukk`,
+  `Sammenfatt`, …), the acronyms (`PISVEEP`, `AGU`, `KYU`, `SSN`), and
+  the tool names (`Typst`, `Pandoc`, `renv`, `nifutypst`, …). Note that
+  `tests/spelling.R` runs with `error = FALSE` and there is no spelling
+  job in CI, so the check reports without failing; the pre-existing
+  British spellings in `NEWS.md` (`behaviour`, `serialised`,
+  `normalised`) are left as they are.
+
 ### Bug fixes
 
 - [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)

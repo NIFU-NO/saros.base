@@ -18,13 +18,17 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/vig_01_basic_file_system.html">Basic R, Quarto and file system setup</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/vig_00_about_saros.html">About the Saros system</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_01_basic_file_system.html">Basic R, Quarto and file system setup</a></li>
     <li><a class="dropdown-item" href="../articles/vig_02_project_setup.html">Project setup</a></li>
     <li><a class="dropdown-item" href="../articles/vig_03_configure_report_cycle.html">Configure Saros settings for a project</a></li>
     <li><a class="dropdown-item" href="../articles/vig_04_prepare_data.html">Prepare dataset</a></li>
     <li><a class="dropdown-item" href="../articles/vig_05_standard_variable_names.html">Standard variable naming in longitudinal projects</a></li>
     <li><a class="dropdown-item" href="../articles/vig_06_prepare_chapter_overview.html">Preparing the chapter overview</a></li>
     <li><a class="dropdown-item" href="../articles/vig_07_adjust_report_cycle_settings.html">Draft report</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_08_adopting_saros.html">Adopting Saros for a project</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_09_projects_using_saros.html">Projects using Saros</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_10_objections_and_limitations.html">Objections and known limitations</a></li>
     <li><a class="dropdown-item" href="../articles/vig_31_render.html">Render</a></li>
     <li><a class="dropdown-item" href="../articles/vig_32_render_problems.html">Error messages and Frequently Asked Questions</a></li>
   </ul></li>
@@ -52,6 +56,13 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1.9001" id="sarosbase-1219001">saros.base 1.2.1.9001<a class="anchor" aria-label="anchor" href="#sarosbase-1219001"></a></h2>
+<div class="section level3">
+<h3 id="documentation-1-2-1-9001">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-2-1-9001"></a></h3>
+<ul><li>Added four conceptual vignettes, porting the orientation material that previously existed only as Norwegian prose on the Saros website (<a href="https://github.com/NIFU-NO/saros.base/issues/185" class="external-link">#185</a>). <code>vig_00_about_saros</code> covers what Saros is, its goals and success criteria, the macro/mesos/micro levels, the three-phase production process and the PISVEEP pass, the technology stack, and the analysis of the traditional report format that motivates generating it. <code>vig_08_adopting_saros</code> is written for project leads: what adoption costs, what the package can generate, and the ethics of offering institution-specific reports as an incentive to participate. <code>vig_09_projects_using_saros</code> lists the projects the system is built for. <code>vig_10_objections_and_limitations</code> collects the standard objections with their answers, plus the limitations expected to persist. All four are text-only — no figures, no executed code — and are picked up automatically by pkgdown, which has no <code>articles:</code> key.</li>
+<li>The “possible element types” table is no longer accurate and has been rewritten rather than translated. It documented an <code>element_names</code> argument enumerating compound names such as <code>uni_cat_prop_plot</code> and <code>bi_catcat_freq_plot2</code>, in which the number of variables involved, the variable type, the output form and the statistic were all encoded in one string. No such argument exists in saros.base — <code>git log -S"element_names" -- R/</code> returns nothing, so it never did. The successor is <code>refine_chapter_overview(chunk_templates = )</code>, whose rows carry <code>.template_name</code> plus <code>.template_variable_type_dep</code>/<code>.template_variable_type_indep</code>; univariate is now <code>NA</code> in the indep column rather than a <code>uni_</code> prefix, and proportions versus frequencies moved into a <code>saros::makeme()</code> argument. <code>vig_08_adopting_saros</code> documents the five default variants as they actually are, and includes a mapping table for anyone arriving from the old vocabulary. Worth noting for future readers: <code>.template_name</code> is not a validated, fixed set of permitted values — <code>chunk_templates</code> accepts arbitrary names — so the only genuinely closed vocabulary is <code>saros::get_makeme_types()</code>.</li>
+<li>
+<code>inst/WORDLIST</code> gained the Norwegian project and process names the new vignettes introduce (<code>Kompetansebarometeret</code>, <code>Spørringene</code>, <code>Plukk</code>, <code>Sammenfatt</code>, …), the acronyms (<code>PISVEEP</code>, <code>AGU</code>, <code>KYU</code>, <code>SSN</code>), and the tool names (<code>Typst</code>, <code>Pandoc</code>, <code>renv</code>, <code>nifutypst</code>, …). Note that <code>tests/spelling.R</code> runs with <code>error = FALSE</code> and there is no spelling job in CI, so the check reports without failing; the pre-existing British spellings in <code>NEWS.md</code> (<code>behaviour</code>, <code>serialised</code>, <code>normalised</code>) are left as they are.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-2-1-9001">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-1-9001"></a></h3>
 <ul><li>

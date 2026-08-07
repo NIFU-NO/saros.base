@@ -25,7 +25,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpRqnDIE/file1cf15301cbc3.yaml"
+#> [1] "/tmp/RtmpziyIk1/file1d01787d83f2.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL

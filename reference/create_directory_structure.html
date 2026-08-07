@@ -18,13 +18,17 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/vig_01_basic_file_system.html">Basic R, Quarto and file system setup</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/vig_00_about_saros.html">About the Saros system</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_01_basic_file_system.html">Basic R, Quarto and file system setup</a></li>
     <li><a class="dropdown-item" href="../articles/vig_02_project_setup.html">Project setup</a></li>
     <li><a class="dropdown-item" href="../articles/vig_03_configure_report_cycle.html">Configure Saros settings for a project</a></li>
     <li><a class="dropdown-item" href="../articles/vig_04_prepare_data.html">Prepare dataset</a></li>
     <li><a class="dropdown-item" href="../articles/vig_05_standard_variable_names.html">Standard variable naming in longitudinal projects</a></li>
     <li><a class="dropdown-item" href="../articles/vig_06_prepare_chapter_overview.html">Preparing the chapter overview</a></li>
     <li><a class="dropdown-item" href="../articles/vig_07_adjust_report_cycle_settings.html">Draft report</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_08_adopting_saros.html">Adopting Saros for a project</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_09_projects_using_saros.html">Projects using Saros</a></li>
+    <li><a class="dropdown-item" href="../articles/vig_10_objections_and_limitations.html">Objections and known limitations</a></li>
     <li><a class="dropdown-item" href="../articles/vig_31_render.html">Render</a></li>
     <li><a class="dropdown-item" href="../articles/vig_32_render_problems.html">Error messages and Frequently Asked Questions</a></li>
   </ul></li>
@@ -129,102 +133,102 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">struct</span> <span class="op">&lt;-</span> <span class="fu">create_directory_structure</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, create <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/Call</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/Formalities</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/CVs</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/Collaboration and cooperation</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/Call</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/Formalities</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/CVs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/Collaboration and cooperation</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> agreements</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/Application</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/Pre-analysis</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Application/For submission</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Budget</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Contracts and agreements</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Invoices, accounting and receipts</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Status reports</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Logo and graphical materials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Internal meetings</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Internal meetings/Meeting agendas and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/Application</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/Pre-analysis</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Application/For submission</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Budget</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Contracts and agreements</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Invoices, accounting and receipts</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Status reports</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Logo and graphical materials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Internal meetings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Internal meetings/Meeting agendas and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> invitations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Internal meetings/Internal presentations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Administration/Internal meetings/Minutes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Overall planning</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Consent form</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Ethical-GDPR approval</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Survey questionnaires</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Staff</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Pupils</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Parents</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Researchers</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Leaders</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Teachers</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Principals</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Students</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Interview guides/Population</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Request of data from</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Literature review-design</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Intervention materials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Randomizing participants</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Materials/Chapter overviews</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Topic has policy relevance</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Pure theory and framework</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Similar empirical studies</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Similar instruments and guides for data collection</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Relevant analytic methodology</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Literature/Unprocessed (remove from here)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Population data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Population data/Codebook</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Sampling frame</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Registry data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Collected respondent lists</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Respondent list for survey system</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Downloaded response data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Downloaded response data/Codebook</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Qualitative data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Qualitative data/Interview recordings</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Qualitative data/Observational notes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Text corpus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/PDF-reports</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Prepared data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Data/Prepared data/Codebooks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Scripts</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Resources</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Draft generations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Draft generations/main</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Draft generations/Reports</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Drafts in editing</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Drafts in editing/main</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Drafts in editing/Reports</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Completed drafts</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Completed drafts/main</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Saros_SSN/Completed drafts/Reports</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Cover letter</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Internal meetings/Internal presentations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Administration/Internal meetings/Minutes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Overall planning</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Consent form</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Ethical-GDPR approval</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Survey questionnaires</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Staff</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Pupils</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Parents</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Researchers</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Leaders</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Teachers</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Principals</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Students</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Interview guides/Population</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Request of data from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Literature review-design</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Intervention materials</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Randomizing participants</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Materials/Chapter overviews</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Topic has policy relevance</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Pure theory and framework</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Similar empirical studies</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Similar instruments and guides for data collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Relevant analytic methodology</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Literature/Unprocessed (remove from here)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Population data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Population data/Codebook</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Sampling frame</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Registry data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Collected respondent lists</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Respondent list for survey system</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Downloaded response data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Downloaded response data/Codebook</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Qualitative data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Qualitative data/Interview recordings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Qualitative data/Observational notes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Text corpus</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/PDF-reports</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Prepared data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Data/Prepared data/Codebooks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Scripts</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Resources</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Draft generations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Draft generations/main</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Draft generations/Reports</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing/main</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing/Reports</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts/main</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts/Reports</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Cover letter</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &amp; response to reviewers</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Manuscript</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Analysis</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Figures for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Manuscript</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Analysis</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Figures for</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> submission</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Tables for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Tables for</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> submission</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Appendix</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Publications/Paper1-Short title (author initials)/Online</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Appendix</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Online</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> supplementary materials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Research conference presentation</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Research conference poster</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Stakeholders and reference group</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Stakeholders' communication channels</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Practitioners and special interest channels</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Outreach/Public through mass media channels</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpRqnDIE/Other</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Research conference presentation</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Research conference poster</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Stakeholders and reference group</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Stakeholders' communication channels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Practitioners and special interest channels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Outreach/Public through mass media channels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpziyIk1/Other</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
