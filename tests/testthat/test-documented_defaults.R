@@ -132,6 +132,7 @@ testthat::test_that("every documented default matches the function's actual defa
   for (rd in topics_rd) {
     tags <- vapply(rd, rd_tag, character(1))
 
+    topic_name <- c(trimws(vapply(rd[tags == "\\name"], rd_text, character(1))), "<unnamed>")[1]
     topics <- trimws(unique(vapply(rd[tags %in% c("\\name", "\\alias")], rd_text, character(1))))
     functions <- Filter(
       function(nm) exists(nm, envir = ns, inherits = FALSE) && is.function(get(nm, envir = ns)),
@@ -147,10 +148,15 @@ testthat::test_that("every documented default matches the function's actual defa
 
         # One `@param` tag may name several arguments, in which case its single
         # stated default has to be true of every one of them.
-        for (arg in trimws(strsplit(rd_text(item[[1]]), ",")[[1]])) {
+        arg_names <- trimws(strsplit(rd_text(item[[1]]), ",")[[1]])
+        # A `@param a,b,` with a stray trailing comma splits to an empty final
+        # element, which names no argument and is not worth reporting as one.
+        for (arg in arg_names[nzchar(arg_names)]) {
+          matched <- FALSE
           for (fn_name in functions) {
             formal_args <- formals(get(fn_name, envir = ns))
             if (!arg %in% names(formal_args)) next
+            matched <- TRUE
             checked <- checked + 1L
 
             # deparse() of the empty symbol is ""; unlike assigning it to a
@@ -178,6 +184,19 @@ testthat::test_that("every documented default matches the function's actual defa
             offenders <- c(offenders, sprintf(
               "%s(%s): documented `%s` but the default is `%s`",
               fn_name, arg, documented, canonicalise(actual)
+            ))
+          }
+
+          # An argument that states a default but belongs to no function on this
+          # help page is documentation for something that does not exist -- a
+          # renamed or mistyped argument. Without this it would simply fall out
+          # of the sweep, which is the one way a drifting argument could get
+          # past the check above. R CMD check warns about it too, but only as
+          # part of a `\usage` comparison that a `@param` typo can sidestep.
+          if (!matched) {
+            offenders <- c(offenders, sprintf(
+              "%s: `%s` states a default but is not an argument of %s",
+              topic_name, arg, paste0(functions, "()", collapse = " / ")
             ))
           }
         }

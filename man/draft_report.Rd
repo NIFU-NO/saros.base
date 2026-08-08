@@ -102,7 +102,7 @@ Only used if it exists. Multiple authors are separated by semicolon (and optiona
 
 Path to file used to insert header YAML, in each chapter.}
 
-\item{chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath, }{\emph{Path to qmd-bit for start/end of each qmd}
+\item{chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath}{\emph{Path to qmd-bit for start/end of each qmd}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 

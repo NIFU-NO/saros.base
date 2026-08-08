@@ -16,7 +16,7 @@ write_default_draft_report_args(
 Path of the YAML-file to write. There is no default; pass an explicit
 path, e.g. \code{"settings.yaml"}.}
 
-\item{ignore_args}{\verb{vector<character>} // Optional. \emph{default:} \code{c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")}
+\item{ignore_args}{\verb{vector<character>} // \emph{default:} \code{c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")} (\code{optional})
 
 A character vector of argument (names) not to be written to file. \code{"path"}
 is excluded because it names the output file of this call rather than a

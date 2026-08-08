@@ -107,7 +107,7 @@
 #'   double quote that closes the filename opened by
 #'   `report_includes_prefix`, whose default is `'{{< include "'`.
 #'
-#' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
+#' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath *Path to qmd-bit for start/end of each qmd*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'

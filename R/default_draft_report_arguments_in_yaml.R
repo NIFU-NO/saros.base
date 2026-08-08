@@ -9,7 +9,7 @@
 #'
 #' @param ignore_args
 #'
-#'   `vector<character>` // Optional. *default:* `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")`
+#'   `vector<character>` // *default:* `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")` (`optional`)
 #'
 #'   A character vector of argument (names) not to be written to file. `"path"`
 #'   is excluded because it names the output file of this call rather than a
