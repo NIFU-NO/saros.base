@@ -291,9 +291,25 @@ refine_chapter_overview(
 
   *Path to log file*
 
-  `scalar<string>` // *default:* `"_log.txt"` (`optional`)
+  `scalar<string>` // *default:* `NULL` (`optional`)
 
-  Path to log file. Set to NULL to disable logging.
+  Path to a log file, which is appended to rather than overwritten.
+  `NULL`, the default, disables logging entirely; nothing is written and
+  no file is created.
+
+  When a path is given, every entry this function drops is recorded
+  together with the reason: variables that are all `NA`, entries whose
+  `n` falls below `hide_chunk_if_n_below`, bivariate entries above
+  `hide_bi_entry_if_sig_above` or with no non-`NA` overlap, entries with
+  no chunk-template type match, and the columns of `data` left unused.
+  Nothing is written when a category has nothing to report.
+
+  Note that the unused-variable entry does not know about
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)'s
+  `auxiliary_variables`, so columns kept only for that purpose are
+  listed here as unused; `draft_report(log_file = )` writes the
+  `auxiliary_variables`-aware list. The same path may be passed to both;
+  entries accumulate.
 
 ## Value
 
@@ -389,4 +405,28 @@ ref_df <- refine_chapter_overview(
 #> `chunk_templates` is NULL. Using global defaults.
 #> Refining chapter_overview into a chapter_structure ...
 #> Warning: `data` is empty
+
+# Recording what was dropped, and why. Write the log to a tempfile(), not to
+# a bare filename -- a relative path would land in the user's working
+# directory. Logging is off unless `log_file` is set.
+log_file <- tempfile(fileext = ".txt")
+ref_df_logged <- refine_chapter_overview(
+  chapter_overview = data.frame(chapter = "Background", dep = "x1_sex", indep = ""),
+  data = ex_survey,
+  log_file = log_file
+)
+#> `chunk_templates` is NULL. Using global defaults.
+#> Refining chapter_overview into a chapter_structure ...
+#> Hiding 5 entries due to no type match: `x1_sex (fct)`.
+#> Not using the following variables in `data`: `x2_human, x3_nationality, a_1,
+#> a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, b_1, b_2, b_3, c_1, c_2, d_1, d_2, d_3,
+#> d_4, e_1, e_2, e_3, e_4, p_1, p_2, p_3, p_4, f_uni, open_comments, and
+#> resp_status`.
+cat(readLines(log_file), sep = "\n")
+#> 
+#> Hiding entries due to no type match:
+#> x1_sex (fct)
+#> 
+#> Not using the following variables:
+#> x2_human; x3_nationality; a_1; a_2; a_3; a_4; a_5; a_6; a_7; a_8; a_9; b_1; b_2; b_3; c_1; c_2; d_1; d_2; d_3; d_4; e_1; e_2; e_3; e_4; p_1; p_2; p_3; p_4; f_uni; open_comments; resp_status
 ```

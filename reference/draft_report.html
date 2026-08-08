@@ -323,8 +323,20 @@ shapes.</p></dd>
 
 <dt id="arg-log-file">log_file<a class="anchor" aria-label="anchor" href="#arg-log-file"></a></dt>
 <dd><p><em>Path to log file</em></p>
-<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"_log.txt"</code> (<code>optional</code>)</p>
-<p>Path to log file. Set to NULL to disable logging.</p></dd>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Path to a log file, which is appended to rather than overwritten. <code>NULL</code>,
+the default, disables logging entirely; nothing is written and no file is
+created.</p>
+<p>When a path is given, the columns of <code>data</code> that this report does not use
+are recorded. <code>auxiliary_variables</code> counts as used, since those columns are
+deliberately carried into the chapter datasets — which is why this entry is
+worth having in addition to the one <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code> writes:
+that function has no <code>auxiliary_variables</code> argument, so its own list
+reports auxiliary columns as unused.</p>
+<p>Nothing is written, and the file is therefore not created, when every
+column of <code>data</code> is used. An absent log file means there was nothing to
+report rather than that logging failed.</p>
+<p>The same path may be passed to both functions; entries accumulate.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -361,6 +373,24 @@ factor/ordinal and character are implemented.</p>
 <span class="r-in"><span>    data <span class="op">=</span> <span class="va">ex_survey</span>,</span></span>
 <span class="r-in"><span>    path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Recording which columns of `data` went unused. Write the log to a</span></span></span>
+<span class="r-in"><span><span class="co"># tempfile(), not to a bare filename -- a relative path would land in the</span></span></span>
+<span class="r-in"><span><span class="co"># user's working directory.</span></span></span>
+<span class="r-in"><span><span class="va">log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".txt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">index_filepath_logged</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu">draft_report</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    chapter_structure <span class="op">=</span> <span class="va">ex_survey_ch_structure</span>,</span></span>
+<span class="r-in"><span>    data <span class="op">=</span> <span class="va">ex_survey</span>,</span></span>
+<span class="r-in"><span>    path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    auxiliary_variables <span class="op">=</span> <span class="st">"resp_status"</span>,</span></span>
+<span class="r-in"><span>    log_file <span class="op">=</span> <span class="va">log_file</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Not using the following variables in `data`: `x2_human, a_7, a_8, and f_uni`.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Not using the following variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x2_human; a_7; a_8; f_uni</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

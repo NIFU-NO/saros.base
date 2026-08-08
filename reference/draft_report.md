@@ -332,9 +332,25 @@ draft_report(
 
   *Path to log file*
 
-  `scalar<string>` // *default:* `"_log.txt"` (`optional`)
+  `scalar<string>` // *default:* `NULL` (`optional`)
 
-  Path to log file. Set to NULL to disable logging.
+  Path to a log file, which is appended to rather than overwritten.
+  `NULL`, the default, disables logging entirely; nothing is written and
+  no file is created.
+
+  When a path is given, the columns of `data` that this report does not
+  use are recorded. `auxiliary_variables` counts as used, since those
+  columns are deliberately carried into the chapter datasets — which is
+  why this entry is worth having in addition to the one
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  writes: that function has no `auxiliary_variables` argument, so its
+  own list reports auxiliary columns as unused.
+
+  Nothing is written, and the file is therefore not created, when every
+  column of `data` is used. An absent log file means there was nothing
+  to report rather than that logging failed.
+
+  The same path may be passed to both functions; entries accumulate.
 
 ## Value
 
@@ -370,5 +386,23 @@ index_filepath <-
     data = ex_survey,
     path = tempdir()
   )
+
+# Recording which columns of `data` went unused. Write the log to a
+# tempfile(), not to a bare filename -- a relative path would land in the
+# user's working directory.
+log_file <- tempfile(fileext = ".txt")
+index_filepath_logged <-
+  draft_report(
+    chapter_structure = ex_survey_ch_structure,
+    data = ex_survey,
+    path = tempdir(),
+    auxiliary_variables = "resp_status",
+    log_file = log_file
+  )
+#> Not using the following variables in `data`: `x2_human, a_7, a_8, and f_uni`.
+cat(readLines(log_file), sep = "\n")
+#> 
+#> Not using the following variables:
+#> x2_human; a_7; a_8; f_uni
 # }
 ```

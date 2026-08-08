@@ -48,6 +48,67 @@
 
 ### Bug fixes
 
+- `draft_report(log_file = )` now writes the log it documents, and both
+  functions’ documented default for `log_file` has been corrected from
+  `"_log.txt"` to `NULL`
+  ([\#245](https://github.com/NIFU-NO/saros.base/issues/245)). The
+  argument was documented, declared as a formal and validated, but never
+  read — `draft_report(log_file = "run.log")` produced no file and no
+  error. It was not always inert: it once wrote a run-time entry, and
+  c73000f (“Remove timing in draft_report as it takes short time now”)
+  deleted the timing without removing the argument. Note that
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  does not call
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  — it receives an already-refined `chapter_structure` — so none of the
+  removal helpers that accept a `log_file` are on its path, and there
+  was nothing to thread through; a new call site was required. The entry
+  it now writes is the set of columns in `data` that the report does not
+  use, via the existing `log_unused_variables()`. That helper has always
+  had an `auxiliary_variables` parameter which no caller ever supplied,
+  and
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  has no such argument, so its own list reports auxiliary columns as
+  unused even though they are deliberately carried into the chapter
+  datasets;
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  is the only function able to supply it, which is what makes this entry
+  worth having alongside the existing one rather than a duplicate of it.
+  The call is guarded on `log_file` being a string rather than made
+  unconditional, because `log_unused_variables()` also informs via cli
+  irrespective of `log_file` — calling it always would add a message to
+  every existing
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  call. With the default (`NULL`) behaviour is therefore byte-identical
+  to before. **The default deliberately remains `NULL`**: the fix is to
+  the documentation, not to the default, so no run starts writing a
+  `_log.txt` into the user’s working directory. The examples for both
+  functions now demonstrate `log_file` with
+  [`tempfile()`](https://rdrr.io/r/base/tempfile.html) for the same
+  reason — an example writing a relative path would write into the
+  user’s filespace, which CRAN policy forbids.
+- `log_file = ""` is no longer accepted by either
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  or
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  ([\#245](https://github.com/NIFU-NO/saros.base/issues/245)).
+  `cat(file = "")` writes to stdout rather than to a file, and this
+  package’s
+  [`is_string()`](https://nifu-no.github.io/saros.base/reference/is_string.md)
+  is `is.character(x) && length(x) == 1`, so an empty string passed
+  validation and the log was printed to the console while no file was
+  created anywhere — the one input for which the argument silently did
+  something other than what it says. Both validators now require a
+  non-empty string. They report it differently, which is each function’s
+  pre-existing pattern and is left alone:
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  warns and falls back to `NULL`,
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  aborts. Found by review of the fix above rather than by
+  [\#245](https://github.com/NIFU-NO/saros.base/issues/245) itself; it
+  predates that fix and affected
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md),
+  whose `log_file` already worked, just as much.
 - Two default chunk templates now open the div they close
   ([\#246](https://github.com/NIFU-NO/saros.base/issues/246)). Variant
   1’s univariate `int_table_html` and variant 5’s univariate
