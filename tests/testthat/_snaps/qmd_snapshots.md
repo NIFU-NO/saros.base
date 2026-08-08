@@ -364,7 +364,7 @@
       		type = 'int_table_html')
       link <- make_link(data = c_int_table_html)
       x <- I(link)
-      c_int_table_html
+      gt(c_int_table_html)
       ```
       
       _How many years of experience do you have in_. `{r} x`.

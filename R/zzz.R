@@ -167,7 +167,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
 {.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_table_html')
 link <- make_link(data = {.obj_name})
 x <- I(link)
-{.obj_name}
+gt({.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. `{{r}} x`.
