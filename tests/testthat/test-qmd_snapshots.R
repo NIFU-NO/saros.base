@@ -112,6 +112,21 @@ one_chapter_overview <- data.frame(
   indep = ""
 )
 
+# Numeric dependents, which neither fixture above touches -- every column they
+# name is a factor. The templates keyed on `int;dbl` are unreachable without
+# this, and both templates GH #246 fixed are in that group: variant 1 routes a
+# univariate numeric to `int_table_html`, variant 5 to `int_plot_html`.
+#
+# The categorical chapter is not decoration: variant 3 declares no `int;dbl`
+# template at all, so a numeric-only overview reduces to an empty
+# chapter_structure there and draft_report() aborts on the missing core
+# columns rather than producing a report to inspect.
+mixed_chapter_overview <- data.frame(
+  chapter = c("Num", "Bakgrunn"),
+  dep = c("c_1, c_2", "x1_sex"),
+  indep = c("", "")
+)
+
 # Tests -----------------------------------------------------------------------
 
 testthat::test_that("the set of generated files is stable", {
@@ -221,6 +236,95 @@ testthat::test_that("headings are whitespace-normalised with a bare separator", 
   # Stated as a property too, so the intent survives a careless snapshot accept.
   testthat::expect_false(any(grepl("^#{1,6}  ", headings)))
   testthat::expect_false(any(grepl("[ \t]$", headings)))
+})
+
+testthat::test_that("the numeric chapter is stable -- variants 1 and 5", {
+  # Pins the two template bodies #246 fixed. Every other fixture in this file
+  # names factor columns only, so before this the `int;dbl` templates were the
+  # one group of default templates whose emitted text no snapshot covered --
+  # which is why a missing opening fence survived in two of them.
+  #
+  # Paired with the property assertion below, per the note at the top of this
+  # file: the snapshot shows what changed, the property says what must hold.
+  default_variant <- draft_into(mixed_chapter_overview, title = "Eksempelrapport")
+  variant_5 <- draft_into(
+    mixed_chapter_overview,
+    title = "Eksempelrapport",
+    chunk_templates = saros.base::get_chunk_template_defaults(5)
+  )
+
+  testthat::expect_snapshot({
+    cat("---- variant 1 (default) ----\n")
+    print_file(default_variant, "1_Num.qmd")
+    cat("---- variant 5 ----\n")
+    print_file(variant_5, "1_Num.qmd")
+  })
+})
+
+testthat::test_that("emitted .qmd has balanced div fences", {
+  # Guards #246 at the output layer. test-chunk_templates.R scans the template
+  # store, which is the stronger guard; this one pins the property on the text
+  # users actually render, because that is where the stray `:::` surfaced.
+  #
+  # Stated as a property rather than left to the snapshot above: a snapshot
+  # diff can be accepted carelessly and this cannot.
+  #
+  # Every variant is exercised, not just the two that were broken -- the
+  # property belongs to emitted .qmd generally.
+  for (variant in chunk_template_variants()) {
+    path <- draft_into(
+      mixed_chapter_overview,
+      title = "Eksempelrapport",
+      chunk_templates = saros.base::get_chunk_template_defaults(variant)
+    )
+
+    files <- fs::dir_ls(path, recurse = TRUE, type = "file", glob = "*.qmd")
+    testthat::expect_gt(length(files), 0)
+
+    for (file in files) {
+      balance <- fence_balance(readLines(file, warn = FALSE))
+      label <- paste0(
+        "variant ", variant, ", ", fs::path_rel(file, start = path)
+      )
+
+      testthat::expect_equal(balance$opens, balance$closes, info = label)
+      # A close before its open, and an unclosed div at end of file, are
+      # distinct failures that equal counts would both accept.
+      testthat::expect_true(balance$min_depth >= 0, info = label)
+      testthat::expect_equal(balance$final_depth, 0, info = label)
+    }
+  }
+})
+
+testthat::test_that("the numeric fixture reaches the templates #246 fixed", {
+  # Anti-vacuity guard for the test above. Both fixed templates are keyed on a
+  # numeric `dep`, so if `mixed_chapter_overview` ever stopped routing to them
+  # -- a renamed column in ex_survey, a changed default `organize_by` -- the
+  # fence assertions would still pass while covering nothing.
+  #
+  # Variant 1's univariate int template is a table and carries `#tbl-`;
+  # variant 5's is a plot and carries `#fig-`. Asserting the prefix, not just
+  # the presence of a fence, pins which template was instantiated.
+  expected_prefix <- c("1" = "#tbl-", "5" = "#fig-")
+
+  for (variant in names(expected_prefix)) {
+    path <- draft_into(
+      mixed_chapter_overview,
+      title = "Eksempelrapport",
+      chunk_templates = saros.base::get_chunk_template_defaults(as.integer(variant))
+    )
+    chapter <- readLines(fs::path(path, "1_Num.qmd"), warn = FALSE)
+
+    testthat::expect_true(
+      any(grepl(paste0("^::: \\{", expected_prefix[[variant]]), chapter)),
+      info = paste("variant", variant)
+    )
+    # The girafe call that variant 1's int_table_html used to make on a data
+    # frame aborted the render outright; the table template must not emit one.
+    if (variant == "1") {
+      testthat::expect_false(any(grepl("girafe", chapter, fixed = TRUE)))
+    }
+  }
 })
 
 testthat::test_that("skeleton() reports unterminated YAML instead of erroring", {
