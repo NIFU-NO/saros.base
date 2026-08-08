@@ -224,9 +224,24 @@ Glue templates for the n_range columns to be created.}
 
 \item{log_file}{\emph{Path to log file}
 
-\verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
+\verb{scalar<string>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to log file. Set to NULL to disable logging.}
+Path to a log file, which is appended to rather than overwritten. \code{NULL},
+the default, disables logging entirely; nothing is written and no file is
+created.
+
+When a path is given, every entry this function drops is recorded together
+with the reason: variables that are all \code{NA}, entries whose \code{n} falls below
+\code{hide_chunk_if_n_below}, bivariate entries above \code{hide_bi_entry_if_sig_above}
+or with no non-\code{NA} overlap, entries with no chunk-template type match, and
+the columns of \code{data} left unused. Nothing is written when a category has
+nothing to report.
+
+Note that the unused-variable entry does not know about
+\code{\link[=draft_report]{draft_report()}}'s \code{auxiliary_variables}, so columns kept only for that
+purpose are listed here as unused; \code{draft_report(log_file = )} writes the
+\code{auxiliary_variables}-aware list. The same path may be passed to both;
+entries accumulate.}
 }
 \value{
 A grouped tibble (data.frame) with columns that fall into two main categories:
@@ -288,4 +303,15 @@ Processes A 'chapter_overview' Data Frame
 ref_df <- refine_chapter_overview(
   chapter_overview = ex_survey_ch_overview
 )
+
+# Recording what was dropped, and why. Write the log to a tempfile(), not to
+# a bare filename -- a relative path would land in the user's working
+# directory. Logging is off unless `log_file` is set.
+log_file <- tempfile(fileext = ".txt")
+ref_df_logged <- refine_chapter_overview(
+  chapter_overview = data.frame(chapter = "Background", dep = "x1_sex", indep = ""),
+  data = ex_survey,
+  log_file = log_file
+)
+cat(readLines(log_file), sep = "\n")
 }

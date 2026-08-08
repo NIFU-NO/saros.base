@@ -49,7 +49,10 @@ get_draft_report_validation_rules <- function(params, env, core_chapter_structur
     data_filename_prefix = list(fun = function(x) is_string(x) || is.null(x)),
     report_includes_prefix = list(fun = function(x) is_string(x)),
     report_includes_suffix = list(fun = function(x) is_string(x)),
-    log_file = list(fun = function(x) is.null(x) || is_string(x)),
+    # `nzchar()` matters: `cat(file = "")` writes to stdout rather than to a
+    # file, so an empty string would dump the log to the console and create
+    # nothing, while `is_string("")` is TRUE.
+    log_file = list(fun = function(x) is.null(x) || (is_string(x) && nzchar(x))),
 
     # Boolean
     write_qmd = list(fun = is_bool),
