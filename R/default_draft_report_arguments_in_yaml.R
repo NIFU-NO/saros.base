@@ -2,13 +2,18 @@
 #'
 #' @param path
 #'
-#'   `scalar<character>` // Required. *default:* `settings.yaml`
+#'   `scalar<character>` // Required
+#'
+#'   Path of the YAML-file to write. There is no default; pass an explicit
+#'   path, e.g. `"settings.yaml"`.
 #'
 #' @param ignore_args
 #'
-#'   `vector<character>` // Optional. *default:* `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview")`
+#'   `vector<character>` // Optional. *default:* `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")`
 #'
-#'   A character vector of argument (names) not to be written to file.
+#'   A character vector of argument (names) not to be written to file. `"path"`
+#'   is excluded because it names the output file of this call rather than a
+#'   setting worth recording.
 #'
 #' @return The defaults as a `yaml`-object.
 #' @export
@@ -33,7 +38,10 @@ write_default_draft_report_args <-
 #'
 #' @param path
 #'
-#'   `scalar<character>` // Required. *default:* `settings.yaml`
+#'   `scalar<character>` // Required
+#'
+#'   Path of the YAML-file to read. There is no default; pass an explicit path,
+#'   e.g. the one given to [write_default_draft_report_args()].
 #'
 #' @return The defaults as a `yaml`-object.
 #' @export

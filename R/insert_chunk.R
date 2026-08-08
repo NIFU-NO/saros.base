@@ -12,9 +12,10 @@
 #'
 #' @param grouping_structure *Vector of groups*
 #'
-#'  `vector<character>` // *default:* `NULL` (`Optional`)
+#'  `vector<character>` // Required
 #'
-#'  Internal usage.
+#'  Internal usage. There is no default: the argument is read before anything
+#'  else happens, so a call that omits it fails.
 #'
 #' @return Named list of elements, where each element can UNFINISHED.
 #' @importFrom rlang !!!

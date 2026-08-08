@@ -315,13 +315,13 @@ roxygen_documented_default <- function(path, param) {
 }
 
 testthat::test_that("the documented default for log_file matches the formal", {
-  # The doc/formal drift this pins has now appeared twice (#232, #245). A
-  # general sweep of every `*default:*` in R/ is feasible -- the same parse
-  # works -- but currently reports roughly fifteen further genuine mismatches
-  # in these two files alone, plus false positives on multi-argument @param
-  # tags that carry one combined default and on `match.arg()`-style arguments
-  # whose documented default is the effective first element. That is its own
-  # piece of work; this test pins the argument at hand.
+  # The doc/formal drift this pins has appeared three times (#232, #245, #251).
+  # The general sweep this comment used to defer is now
+  # `tests/testthat/test-documented_defaults.R`, which checks every documented
+  # argument in `man/` and so subsumes this test. Kept anyway: it reads the
+  # roxygen in `R/` directly rather than the generated `man/`, so it still
+  # holds if the two ever drift, and it names the specific argument whose
+  # history motivated it.
   testthat::skip_on_cran()
 
   r_dir <- testthat::test_path("..", "..", "R")

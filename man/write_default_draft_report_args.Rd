@@ -11,11 +11,16 @@ write_default_draft_report_args(
 )
 }
 \arguments{
-\item{path}{\verb{scalar<character>} // Required. \emph{default:} \code{settings.yaml}}
+\item{path}{\verb{scalar<character>} // Required
 
-\item{ignore_args}{\verb{vector<character>} // Optional. \emph{default:} \code{c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview")}
+Path of the YAML-file to write. There is no default; pass an explicit
+path, e.g. \code{"settings.yaml"}.}
 
-A character vector of argument (names) not to be written to file.}
+\item{ignore_args}{\verb{vector<character>} // Optional. \emph{default:} \code{c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")}
+
+A character vector of argument (names) not to be written to file. \code{"path"}
+is excluded because it names the output file of this call rather than a
+setting worth recording.}
 }
 \value{
 The defaults as a \code{yaml}-object.

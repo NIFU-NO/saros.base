@@ -20,9 +20,10 @@ with similar items. See \code{draft_report()}.}
 
 \item{grouping_structure}{\emph{Vector of groups}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{Optional})
+\verb{vector<character>} // Required
 
-Internal usage.}
+Internal usage. There is no default: the argument is read before anything
+else happens, so a call that omits it fails.}
 }
 \value{
 Named list of elements, where each element can UNFINISHED.
