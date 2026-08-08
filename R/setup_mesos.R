@@ -224,12 +224,18 @@ validate_mesos_groups_abbr <- function(mesos_var,
         paste("group", seq_along(mesos_groups_abbr))
     }
 
+    # The messages name no argument. This helper is reached from setup_mesos(),
+    # whose argument is `mesos_df`, and from setup_mesos_structure(), whose
+    # argument is `mesos_groups` and may be a named list in which "a column of
+    # abbreviations" is not a thing the caller can point at. Naming either one
+    # misdirects half the callers, so the messages state the property that must
+    # hold instead.
     is_empty <- is.na(mesos_groups_abbr) | !nzchar(mesos_groups_abbr)
     if (any(is_empty)) {
         cli::cli_abort(c(
             "Every mesos group needs a non-empty abbreviation, as it names the group's folder.",
-            "x" = "In {.arg mesos_df}, mesos variable {.val {mesos_var}} has an empty abbreviation for {.val {labels[is_empty]}}.",
-            "i" = "Supply a second column of explicit abbreviations for these groups."
+            "x" = "Mesos variable {.val {mesos_var}} has no usable abbreviation for {.val {labels[is_empty]}}.",
+            "i" = "Give each of these groups an explicit, non-empty abbreviation."
         ))
     }
 
@@ -237,7 +243,7 @@ validate_mesos_groups_abbr <- function(mesos_var,
     if (length(duplicates) > 0) {
         cli::cli_abort(c(
             "Mesos group abbreviations must be unique, as each names its own folder.",
-            "x" = "In {.arg mesos_df}, mesos variable {.val {mesos_var}} uses {.val {duplicates}} for more than one group.",
+            "x" = "Mesos variable {.val {mesos_var}} uses {.val {duplicates}} for more than one group.",
             "i" = "Groups sharing an abbreviation: {.val {labels[mesos_groups_abbr %in% duplicates]}}."
         ))
     }

@@ -174,6 +174,36 @@ testthat::test_that("setup_mesos_structure() aborts on duplicated explicit abbre
   )
 })
 
+testthat::test_that("setup_mesos_structure() aborts on an empty explicit abbreviation without writing", {
+  # setup_mesos_structure() does not hand its input straight to
+  # extract_mesos_metadata(): the legacy two-column path runs both columns
+  # through clean_group_data(), which drops "" from the abbreviation column.
+  # `[[<-.data.frame` then recycles the shortened vector back over two rows, so
+  # the empty abbreviation never arrives -- "SK" is silently copied onto the
+  # second group instead (GH #248). The abort therefore comes from the
+  # uniqueness check rather than the emptiness one, which is why this asserts
+  # the property that matters (abort, nothing written) rather than a particular
+  # message. This test is what keeps that containment from regressing while
+  # #248 is open.
+  main <- local_abbr_project()
+
+  testthat::expect_error(
+    suppressMessages(saros.base::setup_mesos_structure(
+      main_directory = main,
+      files_to_process = fs::path(main, "_1_chapter.qmd"),
+      mesos_groups = list(data.frame(
+        Skole = c("Skole A", "Skole B"),
+        abbr = c("SK", "")
+      ))
+    ))
+  )
+
+  testthat::expect_equal(
+    as.character(fs::path_rel(fs::dir_ls(main, recurse = TRUE, all = TRUE), main)),
+    "_1_chapter.qmd"
+  )
+})
+
 testthat::test_that("setup_mesos() aborts on an empty explicit abbreviation without writing", {
   working_dir <- withr::local_tempdir()
   writeLines("REAL CHAPTER CONTENT", fs::path(working_dir, "_1_chapter.qmd"))
