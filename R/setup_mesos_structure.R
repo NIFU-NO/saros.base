@@ -199,10 +199,40 @@ handle_legacy_format <- function(mesos_groups) {
       ))
     }
 
-    # Clean the group column
-    df[[1]] <- clean_group_data(df[[1]])
-    if (length(df) == 2) {
-      df[[2]] <- clean_group_data(df[[2]])
+    # Filter rows, not columns (GH #248).
+    #
+    # This used to be `df[[1]] <- clean_group_data(df[[1]])` with the same for
+    # `df[[2]]`. clean_group_data() drops NA and "", so it can hand back a
+    # vector shorter than the column it replaces, and `[[<-.data.frame` then
+    # recycles that vector back over the original number of rows: the group
+    # names and their abbreviations came out of step, and one group's value was
+    # silently copied onto another. Where the length did not divide evenly it
+    # failed instead, inside `[[<-.data.frame`.
+    #
+    # A missing group name is what makes a row unusable, so the row is what
+    # goes -- taking its abbreviation with it. NA in the group column has always
+    # been ignored silently here, and `?setup_mesos` documents that for
+    # `mesos_df`; "" is treated the same way, as it was before.
+    keep <- !is.na(df[[1]]) & nzchar(as.character(df[[1]]))
+    df <- df[keep, , drop = FALSE]
+
+    if (nrow(df) == 0) {
+      cli::cli_abort(c(
+        "Data frame {i} in {.arg mesos_groups} has no usable group names.",
+        "i" = "Group names must be non-empty and not {.val {NA}}."
+      ))
+    }
+
+    # The abbreviation column is deliberately not filtered. An empty or missing
+    # abbreviation is a fault, not a row to drop, and dropping it is what
+    # shortened the column in the first place. Both spellings of "absent" are
+    # normalised to "" so that validate_mesos_groups_abbr() (GH #244) rejects
+    # it as an empty abbreviation, naming the group it belongs to, instead of
+    # the fault reaching the user as a fabricated duplicate.
+    if (ncol(df) >= 2) {
+      abbr <- as.character(df[[2]])
+      abbr[is.na(abbr)] <- ""
+      df[[2]] <- abbr
     }
 
     df
@@ -257,6 +287,14 @@ handle_data_frame <- function(mesos_groups) {
 }
 
 # Helper function to clean group data
+#
+# Only for the paths that build a data frame *from* a bare vector --
+# handle_named_list() and handle_data_frame(). There is no second column to
+# fall out of step with there, so shortening the vector is safe. Do not use it
+# to clean a column of an existing data frame in place: assigning a shortened
+# vector back makes `[[<-.data.frame` recycle it over the original rows (GH
+# #248). handle_legacy_format() filters rows instead, and carries its own
+# emptiness check because it can say which of the data frames was empty.
 clean_group_data <- function(groups) {
   groups <- as.character(groups)
 

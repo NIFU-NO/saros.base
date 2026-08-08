@@ -175,16 +175,21 @@ testthat::test_that("setup_mesos_structure() aborts on duplicated explicit abbre
 })
 
 testthat::test_that("setup_mesos_structure() aborts on an empty explicit abbreviation without writing", {
-  # setup_mesos_structure() does not hand its input straight to
-  # extract_mesos_metadata(): the legacy two-column path runs both columns
-  # through clean_group_data(), which drops "" from the abbreviation column.
-  # `[[<-.data.frame` then recycles the shortened vector back over two rows, so
-  # the empty abbreviation never arrives -- "SK" is silently copied onto the
-  # second group instead (GH #248). The abort therefore comes from the
-  # uniqueness check rather than the emptiness one, which is why this asserts
-  # the property that matters (abort, nothing written) rather than a particular
-  # message. This test is what keeps that containment from regressing while
-  # #248 is open.
+  # This test was written deliberately unpinned as to *why* it aborted, and is
+  # now pinned. When #247 added it, setup_mesos_structure() did not hand its
+  # input straight to extract_mesos_metadata(): the legacy two-column path ran
+  # both columns through clean_group_data(), which dropped "" from the
+  # abbreviation column, and `[[<-.data.frame` recycled the shortened vector
+  # back over two rows. The empty abbreviation never arrived -- "SK" was copied
+  # onto the second group -- so the abort came from the *uniqueness* check for a
+  # fault that was an *empty* abbreviation. The test asserted only the property
+  # that mattered then (abort, nothing written) because asserting the message
+  # would have pinned that wrong reason in place.
+  #
+  # #248 fixed the recycling, so the empty abbreviation now reaches
+  # validate_mesos_groups_abbr() intact and is reported as what it is. The
+  # abort-and-write-nothing assertion is unchanged; the message assertion is
+  # new, and is the reason this test needed touching at all.
   main <- local_abbr_project()
 
   testthat::expect_error(
@@ -195,7 +200,8 @@ testthat::test_that("setup_mesos_structure() aborts on an empty explicit abbrevi
         Skole = c("Skole A", "Skole B"),
         abbr = c("SK", "")
       ))
-    ))
+    )),
+    "non-empty\\s+abbreviation"
   )
 
   testthat::expect_equal(
