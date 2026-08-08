@@ -13,6 +13,27 @@
 #'
 #' @inheritParams draft_report
 #'
+#' @param path *Output path*
+#'
+#'   `scalar<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Path to save all output. Documented here rather than inherited from
+#'   [draft_report()], whose default is `tempdir()` instead. This function has
+#'   no such fallback, and the default is not usable: `fs::as_fs_path(NULL)` is
+#'   `character(0)`, so the first `dir.create()` aborts with
+#'   `invalid 'path' argument` before anything is written. A direct call must
+#'   therefore supply a path. [draft_report()] always does.
+#'
+#' @param replace_heading_for_group *Replacing heading for group*
+#'
+#'   `named vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   As in [draft_report()], but documented here rather than inherited because
+#'   no replacements are made unless asked for, whereas [draft_report()]
+#'   defaults to a three-entry vector. Use the name for the replacement and the
+#'   value for the original. [draft_report()] always supplies this explicitly,
+#'   so the default only applies to a direct call.
+#'
 #' @return Side-effects: qmd-files generated in the specified working directory.
 #' @keywords internal
 #'

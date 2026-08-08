@@ -102,7 +102,7 @@ Only used if it exists. Multiple authors are separated by semicolon (and optiona
 
 Path to file used to insert header YAML, in each chapter.}
 
-\item{chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath, }{\emph{Path to qmd-bit for start/end of each qmd}
+\item{chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath}{\emph{Path to qmd-bit for start/end of each qmd}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
@@ -156,7 +156,7 @@ apply to it.}
 
 \item{replace_heading_for_group}{\emph{Replacing heading for group}
 
-\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
+\verb{named vector<character>} // \emph{default:} \code{c("chapter" = ".chapter_number", ".variable_label_suffix_dep" = ".variable_name_dep", ".variable_label_suffix_indep" = ".variable_name_indep")}
 
 Occasionally, one needs to replace the heading with another piece of information
 in the refined chapter_structure. For instance, one may want to organize output
@@ -172,13 +172,15 @@ that prefixes should end with a \verb{\\n} as headings must begin on a new line.
 
 \item{require_common_categories}{\emph{Check common categories}
 
-\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
-Whether to check if all items share common categories.}
+Whether to check if all items share common categories. On by default: a
+section whose factor \code{dep} columns have no response category in common
+aborts the run, before any file is written. Set to \code{FALSE} to skip.}
 
 \item{combined_report}{\emph{Create a combined report?}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
 Whether to create a qmd file that merges all chapters into
 a combined report.}
@@ -192,7 +194,7 @@ without having to overwrite the qmd files.}
 
 \item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+\verb{scalar<logical>} // \emph{default:} \code{TRUE}
 
 Whether to save in each chapter folder an 'Rds'-file with the
 chapter-specific dataset, and load it at the top of each QMD-file.}
@@ -225,11 +227,23 @@ due to its URL-conversion: \%20. To avoid test, set to Inf}
 
 \verb{scalar<string>} // \emph{default:} \code{"data_"}}
 
-\item{report_includes_prefix, report_includes_suffix}{\emph{Strings around files in report.qmd}
+\item{report_includes_prefix}{\emph{String before each file in report.qmd}
 
-\verb{scalar<string>} // \emph{default:} \code{"\\{\\{< include "} and \code{" >\\}\\}"}
+\verb{scalar<string>} // \emph{default:} \code{'{{< include "'}
 
-The prefix and suffix for each of the chapters being included in the report.qmd file if \code{report_includes_files = TRUE}.}
+The prefix placed before each of the chapters being included in the
+report.qmd file if \code{report_includes_files = TRUE}. Shown single-quoted
+because the value itself ends in the double quote that opens the included
+filename, which \code{report_includes_suffix} then closes with \code{'" >}}'}.}
+
+\item{report_includes_suffix}{\emph{String after each file in report.qmd}
+
+\verb{scalar<string>} // \emph{default:} \code{'" >}}'}
+
+The suffix placed after each of the chapters being included in the
+report.qmd file if \code{report_includes_files = TRUE}. It opens with the
+double quote that closes the filename opened by
+\code{report_includes_prefix}, whose default is \code{'{{< include "'}.}
 
 \item{qmd_engine}{\emph{Traversal engine for the grouping tree}
 

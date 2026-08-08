@@ -89,13 +89,25 @@
 #'   Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.
 #'
 #'
-#' @param report_includes_prefix,report_includes_suffix *Strings around files in report.qmd*
+#' @param report_includes_prefix *String before each file in report.qmd*
 #'
-#'   `scalar<string>` // *default:* `"\{\{< include "` and `" >\}\}"`
+#'   `scalar<string>` // *default:* `'{{< include "'`
 #'
-#'   The prefix and suffix for each of the chapters being included in the report.qmd file if `report_includes_files = TRUE`.
+#'   The prefix placed before each of the chapters being included in the
+#'   report.qmd file if `report_includes_files = TRUE`. Shown single-quoted
+#'   because the value itself ends in the double quote that opens the included
+#'   filename, which `report_includes_suffix` then closes with `'" >}}'`.
 #'
-#' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
+#' @param report_includes_suffix *String after each file in report.qmd*
+#'
+#'   `scalar<string>` // *default:* `'" >}}'`
+#'
+#'   The suffix placed after each of the chapters being included in the
+#'   report.qmd file if `report_includes_files = TRUE`. It opens with the
+#'   double quote that closes the filename opened by
+#'   `report_includes_prefix`, whose default is `'{{< include "'`.
+#'
+#' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath *Path to qmd-bit for start/end of each qmd*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
@@ -109,14 +121,16 @@
 #'
 #' @param require_common_categories *Check common categories*
 #'
-#'   `scalar<logical>` // *default:* `NULL` (`optional`)
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
-#'   Whether to check if all items share common categories.
+#'   Whether to check if all items share common categories. On by default: a
+#'   section whose factor `dep` columns have no response category in common
+#'   aborts the run, before any file is written. Set to `FALSE` to skip.
 #'
 #'
 #' @param replace_heading_for_group *Replacing heading for group*
 #'
-#'  `named vector<character>` // *default:* `c(".variable_label_suffix_dep" = ".variable_name_dep")`
+#'  `named vector<character>` // *default:* `c("chapter" = ".chapter_number", ".variable_label_suffix_dep" = ".variable_name_dep", ".variable_label_suffix_indep" = ".variable_name_indep")`
 #'
 #'  Occasionally, one needs to replace the heading with another piece of information
 #'  in the refined chapter_structure. For instance, one may want to organize output
@@ -158,7 +172,7 @@
 #'
 #' @param attach_chapter_dataset *Toggle inclusion of chapter-specific datasets in qmd-files*
 #'
-#'   `scalar<logical>` // *default:* `FALSE`
+#'   `scalar<logical>` // *default:* `TRUE`
 #'
 #'   Whether to save in each chapter folder an 'Rds'-file with the
 #'   chapter-specific dataset, and load it at the top of each QMD-file.
@@ -172,7 +186,7 @@
 #'
 #' @param combined_report *Create a combined report?*
 #'
-#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
 #'   Whether to create a qmd file that merges all chapters into
 #'   a combined report.

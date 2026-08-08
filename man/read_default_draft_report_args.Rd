@@ -7,7 +7,10 @@
 read_default_draft_report_args(path)
 }
 \arguments{
-\item{path}{\verb{scalar<character>} // Required. \emph{default:} \code{settings.yaml}}
+\item{path}{\verb{scalar<character>} // Required
+
+Path of the YAML-file to read. There is no default; pass an explicit path,
+e.g. the one given to \code{\link[=write_default_draft_report_args]{write_default_draft_report_args()}}.}
 }
 \value{
 The defaults as a \code{yaml}-object.

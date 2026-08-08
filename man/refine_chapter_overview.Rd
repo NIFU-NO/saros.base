@@ -69,7 +69,7 @@ for the specific template.}
 
 \item{label_separator}{\emph{Variable label separator}
 
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{" - "} (\code{optional})
 
 String to split labels on main question and sub-items.}
 
@@ -131,13 +131,13 @@ Whether to keep dep-indep rows if there is no overlap.}
 
 \item{organize_by}{\emph{Grouping columns}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{vector<character>} // \emph{default:} \code{c(".chapter_number", ".variable_label_prefix_dep", ".variable_name_indep", ".template_name")} (\code{optional})
 
 Column names used for identifying chapters and sections.}
 
 \item{arrange_section_by}{\emph{Sorting columns}
 
-\verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{c(.chapter_number = FALSE, chapter = FALSE, .variable_position_dep = FALSE, .variable_position_indep = FALSE, .template_name = FALSE)} (\code{optional})
 
 Column names used for sorting sections within each organize_by group. Can include
 any column present in the output dataframe (both original and generated columns).
@@ -156,33 +156,48 @@ Default ascending and descending sorting with \code{dplyr::arrange()} is to plac
 NAs at the end. This would have placed univariates at the end, etc. Thus,
 saros places NAs first in the section. Set this to FALSE to override.}
 
-\item{max_width_obj, max_width_chunk, max_width_file}{\emph{Maximum object width}
+\item{max_width_obj, max_width_chunk}{\emph{Maximum object and chunk-label width}
 
-\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<integer>} // \emph{default:} \code{128} (\code{optional})
 
-Maximum width for names of objects (in R/Python environment),
-chunks (#| label: ) and optional files. Note, will always replace variable
-labels with variable names, to avoid very long file names.
-Note for filenames: Due to OneDrive having a max path of about
-400 characters, this can quickly be exceeded with a long path base path,
-long file names if using labels as part of structure, and hashing with
-Quarto's \code{cache: true} feature. Thus consider restricting max_width_file
-to lower than what you optimally would have wished for.}
+Maximum width for names of objects (in R/Python environment) and
+chunks (#| label: ). Note, will always replace variable
+labels with variable names, to avoid very long names.}
+
+\item{max_width_file}{\emph{Maximum file name width}
+
+\verb{scalar<integer>} // \emph{default:} \code{64} (\code{optional})
+
+Maximum width for the names of the generated files. Shorter than
+\code{max_width_obj}/\code{max_width_chunk} on purpose: due to OneDrive having a max
+path of about 400 characters, this can quickly be exceeded with a long
+base path, long file names if using labels as part of structure, and
+hashing with Quarto's \code{cache: true} feature. Thus consider restricting
+\code{max_width_file} to lower still than what you optimally would have wished
+for.}
 
 \item{max_width_folder_name}{\emph{Maximum clean folder name length}
 
-\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<integer>} // \emph{default:} \code{12} (\code{optional})
 
 Whereas \code{max_width_file} truncates the file name, this argument truncates
 the folder name. It will not impact the report or chapter names in website,
 only the folders.}
 
-\item{sep_obj, sep_chunk, sep_file}{\emph{Separator string}
+\item{sep_obj}{\emph{Separator string for object names}
 
 \verb{scalar<character>} // \emph{default:} \code{"_"} (\code{optional})
 
-Separator to use between grouping variables. Defaults to underscore for
-object names and hyphen for chunk labels and file names.}
+Separator to use between grouping variables in object names.}
+
+\item{sep_chunk, sep_file}{\emph{Separator string for chunk labels and file names}
+
+\verb{scalar<character>} // \emph{default:} \code{"-"} (\code{optional})
+
+Separator to use between grouping variables in chunk labels and file
+names. A hyphen rather than the underscore used for object names: only
+\code{.obj_name} becomes an R identifier in the generated chunks, so only it is
+bound by R's syntactic naming rules.}
 
 \item{filename_prefix}{\emph{Prefix string for all qmd filenames}
 
@@ -218,9 +233,18 @@ use this as part of your object/label/filename numbering scheme, a number
 by itself will not be very informative. Hence you could set a prefix such
 as "Group" to distinguish this column from other columns in the chapter_structure.}
 
-\item{n_range_glue_template_1, n_range_glue_template_2}{\verb{scalar<string>} // \emph{default:} \verb{"\{n\}" and "[\{n[1]\}, \{n[2]\}]} (\code{optional})
+\item{n_range_glue_template_1}{\emph{Glue template when N does not vary}
 
-Glue templates for the n_range columns to be created.}
+\verb{scalar<string>} // \emph{default:} \code{"{n}"} (\code{optional})
+
+Glue template for the n_range column when every item shares one N.}
+
+\item{n_range_glue_template_2}{\emph{Glue template when N varies}
+
+\verb{scalar<string>} // \emph{default:} \code{"[{n[1]}-{n[2]}]"} (\code{optional})
+
+Glue template for the n_range column when N differs across items, taking
+the lowest and highest as \code{n[1]} and \code{n[2]}.}
 
 \item{log_file}{\emph{Path to log file}
 

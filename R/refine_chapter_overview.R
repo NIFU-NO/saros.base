@@ -34,7 +34,7 @@
 #'   Arguments forwarded to the corresponding functions that create the elements.
 #' @param label_separator *Variable label separator*
 #'
-#'   `scalar<character>` // *default:* `NULL` (`optional`)
+#'   `scalar<character>` // *default:* `" - "` (`optional`)
 #'
 #'   String to split labels on main question and sub-items.
 #'
@@ -45,13 +45,13 @@
 #'   String to split column names in data between main question and sub-items
 #' @param organize_by *Grouping columns*
 #'
-#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'   `vector<character>` // *default:* `c(".chapter_number", ".variable_label_prefix_dep", ".variable_name_indep", ".template_name")` (`optional`)
 #'
 #'   Column names used for identifying chapters and sections.
 #'
 #' @param arrange_section_by *Sorting columns*
 #'
-#'   `vector<character>` or `named vector<logical>` // *default:* `NULL` (`optional`)
+#'   `vector<character>` or `named vector<logical>` // *default:* `c(.chapter_number = FALSE, chapter = FALSE, .variable_position_dep = FALSE, .variable_position_indep = FALSE, .template_name = FALSE)` (`optional`)
 #'
 #'   Column names used for sorting sections within each organize_by group. Can include
 #'   any column present in the output dataframe (both original and generated columns).
@@ -120,25 +120,40 @@
 #'
 #'   Whether to keep dep-indep rows if there is no overlap.
 #'
-#' @param max_width_obj,max_width_chunk,max_width_file *Maximum object width*
+#' @param max_width_obj,max_width_chunk *Maximum object and chunk-label width*
 #'
-#'   `scalar<integer>` // *default:* `NULL` (`optional`)
+#'   `scalar<integer>` // *default:* `128` (`optional`)
 #'
-#'   Maximum width for names of objects (in R/Python environment),
-#'   chunks (#| label: ) and optional files. Note, will always replace variable
-#'   labels with variable names, to avoid very long file names.
-#'   Note for filenames: Due to OneDrive having a max path of about
-#'   400 characters, this can quickly be exceeded with a long path base path,
-#'   long file names if using labels as part of structure, and hashing with
-#'   Quarto's `cache: true` feature. Thus consider restricting max_width_file
-#'   to lower than what you optimally would have wished for.
+#'   Maximum width for names of objects (in R/Python environment) and
+#'   chunks (#| label: ). Note, will always replace variable
+#'   labels with variable names, to avoid very long names.
 #'
-#' @param sep_obj,sep_chunk,sep_file *Separator string*
+#' @param max_width_file *Maximum file name width*
+#'
+#'   `scalar<integer>` // *default:* `64` (`optional`)
+#'
+#'   Maximum width for the names of the generated files. Shorter than
+#'   `max_width_obj`/`max_width_chunk` on purpose: due to OneDrive having a max
+#'   path of about 400 characters, this can quickly be exceeded with a long
+#'   base path, long file names if using labels as part of structure, and
+#'   hashing with Quarto's `cache: true` feature. Thus consider restricting
+#'   `max_width_file` to lower still than what you optimally would have wished
+#'   for.
+#'
+#' @param sep_obj *Separator string for object names*
 #'
 #'   `scalar<character>` // *default:* `"_"` (`optional`)
 #'
-#'   Separator to use between grouping variables. Defaults to underscore for
-#'   object names and hyphen for chunk labels and file names.
+#'   Separator to use between grouping variables in object names.
+#'
+#' @param sep_chunk,sep_file *Separator string for chunk labels and file names*
+#'
+#'   `scalar<character>` // *default:* `"-"` (`optional`)
+#'
+#'   Separator to use between grouping variables in chunk labels and file
+#'   names. A hyphen rather than the underscore used for object names: only
+#'   `.obj_name` becomes an R identifier in the generated chunks, so only it is
+#'   bound by R's syntactic naming rules.
 #'
 #' @param filename_prefix *Prefix string for all qmd filenames*
 #'
@@ -149,7 +164,7 @@
 #'
 #' @param max_width_folder_name *Maximum clean folder name length*
 #'
-#'   `scalar<integer>` // *default:* `NULL` (`optional`)
+#'   `scalar<integer>` // *default:* `12` (`optional`)
 #'
 #'   Whereas `max_width_file` truncates the file name, this argument truncates
 #'   the folder name. It will not impact the report or chapter names in website,
@@ -197,11 +212,18 @@
 #'   `auxiliary_variables`-aware list. The same path may be passed to both;
 #'   entries accumulate.
 #'
-#' @param n_range_glue_template_1,n_range_glue_template_2
+#' @param n_range_glue_template_1 *Glue template when N does not vary*
 #'
-#'   `scalar<string>` // *default:* `"{n}" and "[{n[1]}, {n[2]}]` (`optional`)
+#'   `scalar<string>` // *default:* `"{n}"` (`optional`)
 #'
-#'   Glue templates for the n_range columns to be created.
+#'   Glue template for the n_range column when every item shares one N.
+#'
+#' @param n_range_glue_template_2 *Glue template when N varies*
+#'
+#'   `scalar<string>` // *default:* `"[{n[1]}-{n[2]}]"` (`optional`)
+#'
+#'   Glue template for the n_range column when N differs across items, taking
+#'   the lowest and highest as `n[1]` and `n[2]`.
 #'
 #' @return
 #' A grouped tibble (data.frame) with columns that fall into two main categories:

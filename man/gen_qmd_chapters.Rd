@@ -49,9 +49,14 @@ Only used if it exists. Multiple authors are separated by semicolon (and optiona
 
 \item{path}{\emph{Output path}
 
-\verb{scalar<character>} // \emph{default:} \code{tempdir()} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to save all output. Defaults to a temporary directory.}
+Path to save all output. Documented here rather than inherited from
+\code{\link[=draft_report]{draft_report()}}, whose default is \code{tempdir()} instead. This function has
+no such fallback, and the default is not usable: \code{fs::as_fs_path(NULL)} is
+\code{character(0)}, so the first \code{dir.create()} aborts with
+\verb{invalid 'path' argument} before anything is written. A direct call must
+therefore supply a path. \code{\link[=draft_report]{draft_report()}} always does.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
@@ -72,12 +77,13 @@ apply to it.}
 
 \item{replace_heading_for_group}{\emph{Replacing heading for group}
 
-\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
+\verb{named vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Occasionally, one needs to replace the heading with another piece of information
-in the refined chapter_structure. For instance, one may want to organize output
-by variable_name_indep, but to display the variable_label_indep instead. Use
-the name for the replacement and the value for the original.}
+As in \code{\link[=draft_report]{draft_report()}}, but documented here rather than inherited because
+no replacements are made unless asked for, whereas \code{\link[=draft_report]{draft_report()}}
+defaults to a three-entry vector. Use the name for the replacement and the
+value for the original. \code{\link[=draft_report]{draft_report()}} always supplies this explicitly,
+so the default only applies to a direct call.}
 
 \item{prefix_heading_for_group, suffix_heading_for_group}{\emph{Prefix and suffix headings}
 
@@ -101,7 +107,7 @@ without having to overwrite the qmd files.}
 
 \item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+\verb{scalar<logical>} // \emph{default:} \code{TRUE}
 
 Whether to save in each chapter folder an 'Rds'-file with the
 chapter-specific dataset, and load it at the top of each QMD-file.}
