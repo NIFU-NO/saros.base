@@ -328,3 +328,89 @@
       ## Gender{#sec-Gender-b4e6c9}
       ### Gender{#sec-Gender-740b46}
 
+# the numeric chapter is stable -- variants 1 and 5
+
+    Code
+      cat("---- variant 1 (default) ----\n")
+    Output
+      ---- variant 1 (default) ----
+    Code
+      print_file(default_variant, "1_Num.qmd")
+    Output
+      == 1_Num.qmd ==
+      ---
+      title: Num
+      format: html
+      echo: false
+      fig-dpi: 800.0
+      number-offset: 0.0
+      
+      ---
+      # Num
+      ```{r}
+      #| label: 'Import data for 1_Num'
+      data_1_Num <- readRDS('1_Num/data_1_Num.rds')
+      ```
+      
+      ## How many years of experience do you have in{#sec-How-many-years-of-experience-do-you-have-in-9c9145}
+      
+      
+      ::: {#tbl-c-int-table-html}
+      
+      ```{r}
+      c_int_table_html <- 
+      	data_1_Num |>
+      		makeme(dep = c(c_1,c_2), 
+      		type = 'int_table_html')
+      link <- make_link(data = c_int_table_html)
+      x <- I(link)
+      gt(c_int_table_html)
+      ```
+      
+      _How many years of experience do you have in_. `{r} x`.
+      
+      :::
+      
+      
+    Code
+      cat("---- variant 5 ----\n")
+    Output
+      ---- variant 5 ----
+    Code
+      print_file(variant_5, "1_Num.qmd")
+    Output
+      == 1_Num.qmd ==
+      ---
+      title: Num
+      format: html
+      echo: false
+      fig-dpi: 800.0
+      number-offset: 0.0
+      
+      ---
+      # Num
+      ```{r}
+      #| label: 'Import data for 1_Num'
+      data_1_Num <- readRDS('1_Num/data_1_Num.rds')
+      ```
+      
+      ## How many years of experience do you have in{#sec-How-many-years-of-experience-do-you-have-in-9c9145}
+      
+      
+      ::: {#fig-c-int-plot-html}
+      
+      ```{r}
+      plot <- 
+      	data_1_Num |>
+      		makeme(dep = c(c_1,c_2), 
+      		type = 'int_plot_html')
+      x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+      girafe(ggobj = plot)
+      ```
+      
+      _How many years of experience do you have in_. `{r} x`.
+      
+      :::
+      
+      
+
