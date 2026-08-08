@@ -48,6 +48,79 @@
 
 ### Bug fixes
 
+- A mesos group whose name sanitizes to an empty string no longer
+  overwrites `<mesos_var>/_metadata.yml`
+  ([\#244](https://github.com/NIFU-NO/saros.base/issues/244)).
+  [`filename_sanitizer()`](https://nifu-no.github.io/saros.base/reference/filename_sanitizer.md)
+  returned `""` for a group name in which every character was illegal —
+  `"***"` became separators only, and `avoid_ending_with_specials()`
+  then removed those — and
+  [`fs::path()`](https://fs.r-lib.org/reference/path.html) drops an
+  empty segment silently, so the group’s `_metadata.yml` was written to
+  the *mesos variable’s* metadata file instead of to a folder of its
+  own. That destroyed `params$mesos_var` and `params$mesos_var_pretty`
+  for every sibling group, and the group’s own folder was never created;
+  its stub also landed at `<mesos_var>/<file>.qmd`.
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  reported `Mesos structure created successfully` throughout. Note which
+  group was hit:
+  [`make.unique()`](https://rdrr.io/r/base/make.unique.html)
+  disambiguated the second and later collisions into `_1`, `_2`, so the
+  *first* group with an unsanitizable name got the empty name and the
+  ones after it were merely renamed oddly. Same failure shape as
+  [\#212](https://github.com/NIFU-NO/saros.base/issues/212) — a path
+  computation that silently escapes its intended directory, with a
+  success message. Two independent guards now:
+  [`filename_sanitizer()`](https://nifu-no.github.io/saros.base/reference/filename_sanitizer.md)
+  substitutes `"unnamed"` for any element that would come back empty,
+  and `extract_mesos_metadata()` aborts if any abbreviation is empty or
+  duplicated. The substitute is one fixed word rather than anything
+  derived from the element’s position, because the function must map
+  equal inputs to equal outputs:
+  `add_chapter_foldername_to_chapter_structure()` sanitizes the whole
+  `chapter` column — one element per row, so a chapter repeats — with
+  `make_unique = FALSE`, and a positional substitute would give a single
+  chapter a different folder name in each of its rows. Two *different*
+  names that both sanitize away therefore collapse onto each other,
+  which is ordinary behaviour for this function (`"a b"` and `"a-b"`
+  already both give `"a_b"`) and is what `make_unique` exists to
+  resolve. `"unnamed"` is purely alphanumeric, so it survives
+  `valid_obj`, `to_lower`, the trailing-separator trim and any `sep`; it
+  is deliberately not truncated to `max_chars`, since a name a few
+  characters too long is harmless where an empty one is not. `NA` is
+  still passed through as `NA`, which callers distinguish from a name
+  that sanitized away.
+- [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  and
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  now abort when two mesos groups share an abbreviation
+  ([\#244](https://github.com/NIFU-NO/saros.base/issues/244)).
+  [`make.unique()`](https://rdrr.io/r/base/make.unique.html) is applied
+  to generated abbreviations only, never to a user-supplied abbreviation
+  column, so two groups given the same explicit abbreviation collapsed
+  into one folder and the last one written won — again silently, and
+  again with a success message. The check is in
+  `extract_mesos_metadata()`, so it covers both entry points and any
+  future route to a bad abbreviation, and metadata for every mesos
+  variable is now extracted before the writing loop begins, so a fault
+  in the second mesos variable no longer leaves the first one
+  half-written. **This turns two previously silent cases into errors**,
+  which is the intended change: both destroy files that already exist,
+  so continuing is worse than stopping. An all-`NA` abbreviation column
+  is unaffected — such a column is filtered to length zero upstream, has
+  nothing empty or duplicated in it, and its existing pinned behaviour
+  in `tests/testthat/test-setup_mesos.R` is unchanged. One caveat on the
+  wording of the error: reached through
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)’s
+  legacy two-column path, an *empty* explicit abbreviation is reported
+  as a *duplicate* one, because `handle_legacy_format()` drops the empty
+  string and `[[<-.data.frame` recycles the shortened column,
+  fabricating a copy of the neighbouring group’s abbreviation before the
+  check ever sees it
+  ([\#248](https://github.com/NIFU-NO/saros.base/issues/248)). The abort
+  still happens and nothing is written, which is what matters here; the
+  fabrication itself is left for
+  [\#248](https://github.com/NIFU-NO/saros.base/issues/248).
 - [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
   now warns when a `.template` repeats the same `insert_text()` call
   ([\#210](https://github.com/NIFU-NO/saros.base/issues/210)). Projects

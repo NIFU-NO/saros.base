@@ -80,100 +80,100 @@ No return value, called for side effects
 
 ``` r
 struct <- create_directory_structure(path = tempdir(), create = FALSE)
-#> /tmp/RtmpziyIk1/Administration
-#> /tmp/RtmpziyIk1/Administration/Application
-#> /tmp/RtmpziyIk1/Administration/Application/Call
-#> /tmp/RtmpziyIk1/Administration/Application/Formalities
-#> /tmp/RtmpziyIk1/Administration/Application/CVs
-#> /tmp/RtmpziyIk1/Administration/Application/Collaboration and cooperation
+#> /tmp/RtmphbzvBO/Administration
+#> /tmp/RtmphbzvBO/Administration/Application
+#> /tmp/RtmphbzvBO/Administration/Application/Call
+#> /tmp/RtmphbzvBO/Administration/Application/Formalities
+#> /tmp/RtmphbzvBO/Administration/Application/CVs
+#> /tmp/RtmphbzvBO/Administration/Application/Collaboration and cooperation
 #> agreements
-#> /tmp/RtmpziyIk1/Administration/Application/Application
-#> /tmp/RtmpziyIk1/Administration/Application/Pre-analysis
-#> /tmp/RtmpziyIk1/Administration/Application/For submission
-#> /tmp/RtmpziyIk1/Administration/Budget
-#> /tmp/RtmpziyIk1/Administration/Contracts and agreements
-#> /tmp/RtmpziyIk1/Administration/Invoices, accounting and receipts
-#> /tmp/RtmpziyIk1/Administration/Status reports
-#> /tmp/RtmpziyIk1/Administration/Logo and graphical materials
-#> /tmp/RtmpziyIk1/Administration/Internal meetings
-#> /tmp/RtmpziyIk1/Administration/Internal meetings/Meeting agendas and
+#> /tmp/RtmphbzvBO/Administration/Application/Application
+#> /tmp/RtmphbzvBO/Administration/Application/Pre-analysis
+#> /tmp/RtmphbzvBO/Administration/Application/For submission
+#> /tmp/RtmphbzvBO/Administration/Budget
+#> /tmp/RtmphbzvBO/Administration/Contracts and agreements
+#> /tmp/RtmphbzvBO/Administration/Invoices, accounting and receipts
+#> /tmp/RtmphbzvBO/Administration/Status reports
+#> /tmp/RtmphbzvBO/Administration/Logo and graphical materials
+#> /tmp/RtmphbzvBO/Administration/Internal meetings
+#> /tmp/RtmphbzvBO/Administration/Internal meetings/Meeting agendas and
 #> invitations
-#> /tmp/RtmpziyIk1/Administration/Internal meetings/Internal presentations
-#> /tmp/RtmpziyIk1/Administration/Internal meetings/Minutes
-#> /tmp/RtmpziyIk1/Materials
-#> /tmp/RtmpziyIk1/Materials/Overall planning
-#> /tmp/RtmpziyIk1/Materials/Consent form
-#> /tmp/RtmpziyIk1/Materials/Ethical-GDPR approval
-#> /tmp/RtmpziyIk1/Materials/Survey questionnaires
-#> /tmp/RtmpziyIk1/Materials/Interview guides
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Staff
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Pupils
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Parents
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Researchers
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Leaders
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Teachers
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Principals
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Students
-#> /tmp/RtmpziyIk1/Materials/Interview guides/Population
-#> /tmp/RtmpziyIk1/Materials/Request of data from
-#> /tmp/RtmpziyIk1/Materials/Literature review-design
-#> /tmp/RtmpziyIk1/Materials/Intervention materials
-#> /tmp/RtmpziyIk1/Materials/Randomizing participants
-#> /tmp/RtmpziyIk1/Materials/Chapter overviews
-#> /tmp/RtmpziyIk1/Literature
-#> /tmp/RtmpziyIk1/Literature/Topic has policy relevance
-#> /tmp/RtmpziyIk1/Literature/Pure theory and framework
-#> /tmp/RtmpziyIk1/Literature/Similar empirical studies
-#> /tmp/RtmpziyIk1/Literature/Similar instruments and guides for data collection
-#> /tmp/RtmpziyIk1/Literature/Relevant analytic methodology
-#> /tmp/RtmpziyIk1/Literature/Unprocessed (remove from here)
-#> /tmp/RtmpziyIk1/Data
-#> /tmp/RtmpziyIk1/Data/Population data
-#> /tmp/RtmpziyIk1/Data/Population data/Codebook
-#> /tmp/RtmpziyIk1/Data/Sampling frame
-#> /tmp/RtmpziyIk1/Data/Registry data
-#> /tmp/RtmpziyIk1/Data/Collected respondent lists
-#> /tmp/RtmpziyIk1/Data/Respondent list for survey system
-#> /tmp/RtmpziyIk1/Data/Downloaded response data
-#> /tmp/RtmpziyIk1/Data/Downloaded response data/Codebook
-#> /tmp/RtmpziyIk1/Data/Qualitative data
-#> /tmp/RtmpziyIk1/Data/Qualitative data/Interview recordings
-#> /tmp/RtmpziyIk1/Data/Qualitative data/Observational notes
-#> /tmp/RtmpziyIk1/Data/Text corpus
-#> /tmp/RtmpziyIk1/Data/PDF-reports
-#> /tmp/RtmpziyIk1/Data/Prepared data
-#> /tmp/RtmpziyIk1/Data/Prepared data/Codebooks
-#> /tmp/RtmpziyIk1/Saros_SSN
-#> /tmp/RtmpziyIk1/Saros_SSN/Scripts
-#> /tmp/RtmpziyIk1/Saros_SSN/Resources
-#> /tmp/RtmpziyIk1/Saros_SSN/Draft generations
-#> /tmp/RtmpziyIk1/Saros_SSN/Draft generations/main
-#> /tmp/RtmpziyIk1/Saros_SSN/Draft generations/Reports
-#> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing
-#> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing/main
-#> /tmp/RtmpziyIk1/Saros_SSN/Drafts in editing/Reports
-#> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts
-#> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts/main
-#> /tmp/RtmpziyIk1/Saros_SSN/Completed drafts/Reports
-#> /tmp/RtmpziyIk1/Publications
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Cover letter
+#> /tmp/RtmphbzvBO/Administration/Internal meetings/Internal presentations
+#> /tmp/RtmphbzvBO/Administration/Internal meetings/Minutes
+#> /tmp/RtmphbzvBO/Materials
+#> /tmp/RtmphbzvBO/Materials/Overall planning
+#> /tmp/RtmphbzvBO/Materials/Consent form
+#> /tmp/RtmphbzvBO/Materials/Ethical-GDPR approval
+#> /tmp/RtmphbzvBO/Materials/Survey questionnaires
+#> /tmp/RtmphbzvBO/Materials/Interview guides
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Staff
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Pupils
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Parents
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Researchers
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Leaders
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Teachers
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Principals
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Students
+#> /tmp/RtmphbzvBO/Materials/Interview guides/Population
+#> /tmp/RtmphbzvBO/Materials/Request of data from
+#> /tmp/RtmphbzvBO/Materials/Literature review-design
+#> /tmp/RtmphbzvBO/Materials/Intervention materials
+#> /tmp/RtmphbzvBO/Materials/Randomizing participants
+#> /tmp/RtmphbzvBO/Materials/Chapter overviews
+#> /tmp/RtmphbzvBO/Literature
+#> /tmp/RtmphbzvBO/Literature/Topic has policy relevance
+#> /tmp/RtmphbzvBO/Literature/Pure theory and framework
+#> /tmp/RtmphbzvBO/Literature/Similar empirical studies
+#> /tmp/RtmphbzvBO/Literature/Similar instruments and guides for data collection
+#> /tmp/RtmphbzvBO/Literature/Relevant analytic methodology
+#> /tmp/RtmphbzvBO/Literature/Unprocessed (remove from here)
+#> /tmp/RtmphbzvBO/Data
+#> /tmp/RtmphbzvBO/Data/Population data
+#> /tmp/RtmphbzvBO/Data/Population data/Codebook
+#> /tmp/RtmphbzvBO/Data/Sampling frame
+#> /tmp/RtmphbzvBO/Data/Registry data
+#> /tmp/RtmphbzvBO/Data/Collected respondent lists
+#> /tmp/RtmphbzvBO/Data/Respondent list for survey system
+#> /tmp/RtmphbzvBO/Data/Downloaded response data
+#> /tmp/RtmphbzvBO/Data/Downloaded response data/Codebook
+#> /tmp/RtmphbzvBO/Data/Qualitative data
+#> /tmp/RtmphbzvBO/Data/Qualitative data/Interview recordings
+#> /tmp/RtmphbzvBO/Data/Qualitative data/Observational notes
+#> /tmp/RtmphbzvBO/Data/Text corpus
+#> /tmp/RtmphbzvBO/Data/PDF-reports
+#> /tmp/RtmphbzvBO/Data/Prepared data
+#> /tmp/RtmphbzvBO/Data/Prepared data/Codebooks
+#> /tmp/RtmphbzvBO/Saros_SSN
+#> /tmp/RtmphbzvBO/Saros_SSN/Scripts
+#> /tmp/RtmphbzvBO/Saros_SSN/Resources
+#> /tmp/RtmphbzvBO/Saros_SSN/Draft generations
+#> /tmp/RtmphbzvBO/Saros_SSN/Draft generations/main
+#> /tmp/RtmphbzvBO/Saros_SSN/Draft generations/Reports
+#> /tmp/RtmphbzvBO/Saros_SSN/Drafts in editing
+#> /tmp/RtmphbzvBO/Saros_SSN/Drafts in editing/main
+#> /tmp/RtmphbzvBO/Saros_SSN/Drafts in editing/Reports
+#> /tmp/RtmphbzvBO/Saros_SSN/Completed drafts
+#> /tmp/RtmphbzvBO/Saros_SSN/Completed drafts/main
+#> /tmp/RtmphbzvBO/Saros_SSN/Completed drafts/Reports
+#> /tmp/RtmphbzvBO/Publications
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Cover letter
 #> & response to reviewers
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Manuscript
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Analysis
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Figures for
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Manuscript
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Analysis
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Figures for
 #> submission
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Tables for
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Tables for
 #> submission
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Appendix
-#> /tmp/RtmpziyIk1/Publications/Paper1-Short title (author initials)/Online
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Appendix
+#> /tmp/RtmphbzvBO/Publications/Paper1-Short title (author initials)/Online
 #> supplementary materials
-#> /tmp/RtmpziyIk1/Outreach
-#> /tmp/RtmpziyIk1/Outreach/Research conference presentation
-#> /tmp/RtmpziyIk1/Outreach/Research conference poster
-#> /tmp/RtmpziyIk1/Outreach/Stakeholders and reference group
-#> /tmp/RtmpziyIk1/Outreach/Stakeholders' communication channels
-#> /tmp/RtmpziyIk1/Outreach/Practitioners and special interest channels
-#> /tmp/RtmpziyIk1/Outreach/Public through mass media channels
-#> /tmp/RtmpziyIk1/Other
+#> /tmp/RtmphbzvBO/Outreach
+#> /tmp/RtmphbzvBO/Outreach/Research conference presentation
+#> /tmp/RtmphbzvBO/Outreach/Research conference poster
+#> /tmp/RtmphbzvBO/Outreach/Stakeholders and reference group
+#> /tmp/RtmphbzvBO/Outreach/Stakeholders' communication channels
+#> /tmp/RtmphbzvBO/Outreach/Practitioners and special interest channels
+#> /tmp/RtmphbzvBO/Outreach/Public through mass media channels
+#> /tmp/RtmphbzvBO/Other
 ```
