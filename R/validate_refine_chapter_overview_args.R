@@ -44,7 +44,10 @@ get_arg_validation_rules <- function(params) {
     n_range_glue_template_2 = list(fun = function(x) is_string(x)),
     variable_group_dep = list(fun = function(x) is_string(x)),
     variable_group_prefix = list(fun = function(x) is.null(x) || is_string(x)),
-    log_file = list(fun = function(x) is.null(x) || is_string(x)),
+    # `nzchar()` matters: `cat(file = "")` writes to stdout rather than to a
+    # file, so an empty string would dump the log to the console and create
+    # nothing, while `is_string("")` is TRUE.
+    log_file = list(fun = function(x) is.null(x) || (is_string(x) && nzchar(x))),
 
     # Boolean
     hide_variable_if_all_na = list(fun = is_bool),

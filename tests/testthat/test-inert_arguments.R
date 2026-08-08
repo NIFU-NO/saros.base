@@ -230,6 +230,47 @@ testthat::test_that("draft_report(log_file=) writes nothing when every column is
   testthat::expect_false(file.exists(log_file))
 })
 
+testthat::test_that("an empty-string log_file is rejected rather than sent to stdout", {
+  # Raised in review of #245. `cat(file = "")` writes to stdout rather than to
+  # a file, and the package's `is_string()` is `is.character(x) && length(x) ==
+  # 1`, so `""` passed validation and the log was printed to the console with
+  # no file created anywhere. Pre-existing and identical in both functions, so
+  # both validators are fixed.
+  #
+  # The two report it differently, which is pre-existing and deliberate here:
+  # `draft_report()` validates through `create_arg_validator_with_default()`
+  # and so warns and falls back to the default, whereas
+  # `refine_chapter_overview()` uses `create_arg_validator()` and aborts. Each
+  # is pinned to its own function's established pattern rather than being
+  # forced to agree.
+  chapter_structure <- local_one_chapter_structure()
+
+  testthat::expect_warning(
+    suppressMessages(
+      saros.base::draft_report(
+        chapter_structure = chapter_structure,
+        data = saros.base::ex_survey,
+        path = withr::local_tempdir(),
+        log_file = ""
+      )
+    ),
+    regexp = "log_file"
+  )
+
+  testthat::expect_error(
+    suppressMessages(
+      saros.base::refine_chapter_overview(
+        chapter_overview = data.frame(
+          chapter = "Bakgrunn", dep = "x1_sex", indep = ""
+        ),
+        data = saros.base::ex_survey,
+        log_file = ""
+      )
+    ),
+    regexp = "log_file"
+  )
+})
+
 testthat::test_that("draft_report(log_file = NULL) writes no log at all", {
   # Pins the decision that logging stays off by default, and in particular that
   # the `"_log.txt"` the docs used to claim is never written into the working
