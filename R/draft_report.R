@@ -202,6 +202,10 @@
 #'   that function has no `auxiliary_variables` argument, so its own list
 #'   reports auxiliary columns as unused.
 #'
+#'   Nothing is written, and the file is therefore not created, when every
+#'   column of `data` is used. An absent log file means there was nothing to
+#'   report rather than that logging failed.
+#'
 #'   The same path may be passed to both functions; entries accumulate.
 #'
 #' @param qmd_engine *Traversal engine for the grouping tree*

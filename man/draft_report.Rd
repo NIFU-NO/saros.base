@@ -265,6 +265,10 @@ worth having in addition to the one \code{\link[=refine_chapter_overview]{refine
 that function has no \code{auxiliary_variables} argument, so its own list
 reports auxiliary columns as unused.
 
+Nothing is written, and the file is therefore not created, when every
+column of \code{data} is used. An absent log file means there was nothing to
+report rather than that logging failed.
+
 The same path may be passed to both functions; entries accumulate.}
 }
 \value{

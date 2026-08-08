@@ -208,6 +208,28 @@ testthat::test_that("draft_report(log_file=) counts auxiliary_variables as used"
   )
 })
 
+testthat::test_that("draft_report(log_file=) writes nothing when every column is used", {
+  # Raised in review of #245: `log_unused_variables()` only appends inside
+  # `if (length(not_used_vars) > 0)`, so a `log_file` that is set but never
+  # written to leaves no file behind. Verified end to end here rather than
+  # only at the helper, and stated in the @param block, so that an absent log
+  # is not mistaken for a logging failure.
+  chapter_structure <- local_one_chapter_structure()
+
+  log_file <- withr::local_tempfile(fileext = ".txt")
+  suppressMessages(
+    saros.base::draft_report(
+      chapter_structure = chapter_structure,
+      # Trimmed to the single column the chapter_structure uses.
+      data = saros.base::ex_survey[, "x1_sex", drop = FALSE],
+      path = withr::local_tempdir(),
+      log_file = log_file
+    )
+  )
+
+  testthat::expect_false(file.exists(log_file))
+})
+
 testthat::test_that("draft_report(log_file = NULL) writes no log at all", {
   # Pins the decision that logging stays off by default, and in particular that
   # the `"_log.txt"` the docs used to claim is never written into the working
