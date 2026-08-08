@@ -118,3 +118,86 @@ testthat::test_that("the only metadata difference is the optional directory in t
     )
   }
 })
+
+################################################################################
+# Regression tests for GH #254.
+#
+# handle_legacy_format() row-subsets the legacy `mesos_groups` data frame with
+# `[.data.frame`, which subsets each column with `[` and so drops every
+# attribute but names/dim/dimnames. A `label` on the group column did not
+# survive. extract_mesos_metadata() reads that label through
+# get_raw_labels(col_pos = 1) and falls back to the column name (#188), so the
+# same labelled input produced a human-readable mesos_var_pretty through
+# setup_mesos() and the bare column name through setup_mesos_structure().
+#
+# Not a regression from #248: the clean_group_data() call this replaced began
+# with as.character(), which drops the label just as thoroughly. The label has
+# never survived this path.
+#
+# Labels are in scope here. The two sibling handlers in the same file both set
+# one explicitly -- handle_named_list() assigns the variable name, and
+# handle_data_frame() carries the source label through with a fallback to the
+# column name. handle_legacy_format() was the only one of the three that did
+# not. No fallback is added here: extract_mesos_metadata() already has one.
+
+labelled_legacy_entry <- function() {
+  df <- data.frame(Laerested = c("HINN", "UiO"), abbr = c("HI", "UO"))
+  attr(df$Laerested, "label") <- "Higher education institution"
+  df
+}
+
+testthat::test_that("the legacy path keeps the group column's label", {
+  converted <- saros.base:::handle_legacy_format(list(labelled_legacy_entry()))
+
+  testthat::expect_equal(
+    attr(converted[[1]][[1]], "label"),
+    "Higher education institution"
+  )
+})
+
+testthat::test_that("a labelled legacy column gives the same mesos_var_pretty as mesos_df", {
+  entry <- labelled_legacy_entry()
+
+  by_setup_mesos <- saros.base:::extract_mesos_metadata(entry)
+  by_structure <- saros.base:::extract_mesos_metadata(
+    saros.base:::handle_legacy_format(list(entry))[[1]]
+  )
+
+  testthat::expect_equal(
+    by_structure$mesos_var_pretty,
+    by_setup_mesos$mesos_var_pretty
+  )
+  testthat::expect_equal(by_structure$mesos_var_pretty, "Higher education institution")
+})
+
+testthat::test_that("the label survives a row that the legacy filter drops", {
+  # The filter is the mechanism that lost it, so a frame that actually loses a
+  # row is the case that matters.
+  df <- data.frame(Laerested = c("HINN", NA, "UiO"), abbr = c("HI", "XX", "UO"))
+  attr(df$Laerested, "label") <- "Higher education institution"
+
+  converted <- saros.base:::handle_legacy_format(list(df))[[1]]
+
+  testthat::expect_equal(nrow(converted), 2)
+  testthat::expect_equal(
+    attr(converted[[1]], "label"),
+    "Higher education institution"
+  )
+})
+
+testthat::test_that("setup_mesos_structure titles the index page with the label", {
+  path <- withr::local_tempdir()
+  writeLines("REAL CHAPTER CONTENT", fs::path(path, "_1_chapter.qmd"))
+
+  suppressMessages(saros.base::setup_mesos_structure(
+    main_directory = path,
+    files_to_process = fs::path(path, "_1_chapter.qmd"),
+    mesos_groups = list(labelled_legacy_entry())
+  ))
+
+  index <- yaml::read_yaml(fs::path(path, "Laerested", "index.qmd"))
+  testthat::expect_equal(index$title, "Higher education institution")
+
+  metadata <- yaml::read_yaml(fs::path(path, "Laerested", "_metadata.yml"))
+  testthat::expect_equal(metadata$params$mesos_var_pretty, "Higher education institution")
+})

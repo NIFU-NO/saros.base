@@ -29,9 +29,14 @@ places the group folders in \verb{<mesos_var>/Rapport/Del1/}.}
 
 \item{files_to_process}{Character vector of files used as templates for the mesos stubs.}
 
-\item{mesos_df}{List of single-column data frames where each variable is a
-mesos variable, optionally with a variable label indicating its pretty name.
-The values in each variable are the mesos groups. NA is silently ignored.}
+\item{mesos_df}{List of data frames where each is a mesos variable, optionally
+with a variable label indicating its pretty name. The values in the first
+column are the mesos groups, and NA among them is silently ignored,
+dropping the row. An optional second column gives each group's
+abbreviation, which names its folder; supply one for every group, as an
+abbreviation that is NA or empty is an error naming the group it belongs
+to. Omit the column entirely to have abbreviations generated from the
+group names.}
 
 \item{files_taking_title}{Character vector of files for which titles should
 be set. Optional but recommended.}
