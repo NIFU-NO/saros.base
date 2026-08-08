@@ -48,6 +48,52 @@
 
 ### Bug fixes
 
+- Two default chunk templates now open the div they close
+  ([\#246](https://github.com/NIFU-NO/saros.base/issues/246)). Variant
+  1’s univariate `int_table_html` and variant 5’s univariate
+  `int_plot_html` both ended with a bare `:::` and never emitted an
+  opening fence. Both read as a bivariate sibling copied with the opener
+  dropped rather than as a spurious close: the caption line survived
+  intact, and the shape is otherwise identical to the sibling. The
+  unmatched close reached generated `.qmd`, where Pandoc renders it as
+  literal text or silently absorbs it depending on context — the benign
+  direction, which is why it went unnoticed. An unmatched *open* is the
+  dangerous one: it swallows subsequent content into the div and drops
+  it from the table of contents, warning only in the render log. The
+  templates now open `::: {#tbl-{.chunk_name}}` and
+  `::: {#fig-{.chunk_name}}` respectively, each matching what the body
+  actually emits — the first is a table, the second a plot. Neither
+  template is reachable without a numeric `dep`, and no snapshot fixture
+  had one, which is why nothing caught this;
+  `tests/testthat/test-qmd_snapshots.R` now carries a numeric fixture
+  and pins both bodies.
+- Variant 1’s univariate `int_table_html` now returns its summary table
+  instead of calling `girafe()` on it
+  ([\#246](https://github.com/NIFU-NO/saros.base/issues/246)). This is
+  the same template as the missing `#tbl-` fence above and is fixed with
+  it, because a table cross-reference anchor on a body emitting a
+  ggiraph widget would be a knowingly-broken cross-reference. The
+  template was in fact not renderable at all:
+  `makeme(type = 'int_table_html')` returns a plain tibble, so
+  `{.obj_name}$data` was `NULL` and the download link silently resolved
+  to nothing, and the following `make_link(..., save_fn = ggsaver)`
+  aborted the whole chapter with
+  `no applicable method for 'grid.draw' applied to an object of class "tbl_df"`
+  — reported as a misleading `Do you have write access to '.'?`. The
+  render never reached the `girafe()` call. The body now takes its
+  download link from the table itself and wraps the result in `gt()`,
+  following the `cat_table_html` siblings
+  (`make_link(data = {.obj_name})`, `gt({.obj_name})`). `gt()` matters
+  here rather than returning the bare tibble: a data frame printed by
+  knitr becomes a verbatim console dump inside the table float, and
+  tibble’s print method drops trailing columns at the default width —
+  the `Max` column vanished from the rendered report. With `gt()` the
+  chapter renders a real HTML table carrying all eleven columns, and
+  `@tbl-` resolves to “Table 1”. **The `[PNG]` download link is gone
+  from this template**, deliberately: there is no plot to save. It is
+  the only default template that called `girafe()` on a table, and there
+  is no bivariate `int_table_html` anywhere — it exists once, in variant
+  1, univariate.
 - A mesos group whose name sanitizes to an empty string no longer
   overwrites `<mesos_var>/_metadata.yml`
   ([\#244](https://github.com/NIFU-NO/saros.base/issues/244)).
