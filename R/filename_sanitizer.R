@@ -37,6 +37,7 @@ filename_sanitizer <- function(x,
 
   out <- truncator(x = out, max_chars = max_chars)
   out <- avoid_ending_with_specials(out)
+  out <- avoid_empty(out)
   if (isTRUE(make_unique)) out <- make.unique(out, sep = sep)
   out
 }
@@ -52,4 +53,34 @@ truncator <- function(x, max_chars = NA_integer_) {
 
 avoid_ending_with_specials <- function(x) {
   stringi::stri_replace_last_regex(x, pattern = "[^[:alnum:]]+$", replacement = "")
+}
+
+# Guarantee a non-empty name for every non-NA element (GH #244)
+#
+# Every character can be stripped: "***" becomes separators only, and
+# avoid_ending_with_specials() then removes those, leaving "". Truncation can do
+# the same to a name whose first `max_chars` characters are all illegal. An
+# empty string is not a name -- fs::path() drops the segment entirely, so a
+# caller composing <parent>/<name>/file.yml silently writes to
+# <parent>/file.yml and overwrites whatever lives there.
+#
+# The substitute is one fixed word rather than anything derived from the
+# element's position, because filename_sanitizer() must map equal inputs to
+# equal outputs: add_chapter_foldername_to_chapter_structure() passes the whole
+# chapter column -- one element per row, so a chapter repeats -- with
+# make_unique = FALSE, and a positional substitute would give one chapter a
+# different folder name in each of its rows. Two *different* names that both
+# sanitize away therefore collapse onto each other, which is ordinary behaviour
+# for this function ("a b" and "a-b" already both give "a_b") and is what
+# `make_unique` exists to resolve.
+#
+# "unnamed" is purely alphanumeric, so it survives `valid_obj`, `to_lower`,
+# avoid_ending_with_specials() and any `sep`. It is deliberately not truncated
+# to `max_chars`: a name a few characters too long is harmless, an empty one is
+# not. NA is left alone -- callers distinguish "no name given" from "a name that
+# sanitized away".
+avoid_empty <- function(x) {
+  is_empty <- !is.na(x) & !nzchar(x)
+  if (any(is_empty)) x[is_empty] <- "unnamed"
+  x
 }

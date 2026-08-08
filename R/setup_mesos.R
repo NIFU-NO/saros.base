@@ -200,6 +200,51 @@ create_metadata_yml <- function(main_directory = character(),
 }
 
 
+# Helper: Refuse abbreviations that cannot address a folder of their own (GH #244)
+#
+# Each abbreviation names one group folder. An empty one makes fs::path() drop
+# the segment, so the group's _metadata.yml lands on <mesos_var>/_metadata.yml
+# and destroys params$mesos_var for every sibling group, while the group's own
+# folder is never created. A duplicated one makes two groups share a folder, and
+# the last group written wins. Both failures are silent and both destroy files
+# that already exist, so this aborts rather than warns.
+#
+# This guards the abbreviations however they arose -- filename_sanitizer() no
+# longer returns "", but an explicit abbreviation column is passed through
+# untouched and make.unique() is not applied to it.
+validate_mesos_groups_abbr <- function(mesos_var,
+                                       mesos_groups_pretty,
+                                       mesos_groups_abbr) {
+    # The pretty names identify the offending groups in the message, but the
+    # two vectors are NA-filtered independently above and can differ in length;
+    # fall back to positions when they do not line up.
+    labels <- if (length(mesos_groups_pretty) == length(mesos_groups_abbr)) {
+        mesos_groups_pretty
+    } else {
+        paste("group", seq_along(mesos_groups_abbr))
+    }
+
+    is_empty <- is.na(mesos_groups_abbr) | !nzchar(mesos_groups_abbr)
+    if (any(is_empty)) {
+        cli::cli_abort(c(
+            "Every mesos group needs a non-empty abbreviation, as it names the group's folder.",
+            "x" = "In {.arg mesos_df}, mesos variable {.val {mesos_var}} has an empty abbreviation for {.val {labels[is_empty]}}.",
+            "i" = "Supply a second column of explicit abbreviations for these groups."
+        ))
+    }
+
+    duplicates <- unique(mesos_groups_abbr[duplicated(mesos_groups_abbr)])
+    if (length(duplicates) > 0) {
+        cli::cli_abort(c(
+            "Mesos group abbreviations must be unique, as each names its own folder.",
+            "x" = "In {.arg mesos_df}, mesos variable {.val {mesos_var}} uses {.val {duplicates}} for more than one group.",
+            "i" = "Groups sharing an abbreviation: {.val {labels[mesos_groups_abbr %in% duplicates]}}."
+        ))
+    }
+
+    invisible(mesos_groups_abbr)
+}
+
 # Helper: Extract mesos variable metadata from data frame
 extract_mesos_metadata <- function(mesos_df_entry) {
     mesos_var <- names(mesos_df_entry)[1]
@@ -221,6 +266,12 @@ extract_mesos_metadata <- function(mesos_df_entry) {
     } else {
         mesos_groups_abbr <- filename_sanitizer(mesos_groups_pretty, max_chars = 12, accept_hyphen = TRUE, make_unique = TRUE)
     }
+
+    validate_mesos_groups_abbr(
+        mesos_var = mesos_var,
+        mesos_groups_pretty = mesos_groups_pretty,
+        mesos_groups_abbr = mesos_groups_abbr
+    )
 
     list(
         mesos_var = mesos_var,
@@ -299,10 +350,16 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
                                                subtitle_separator = " - ",
                                                prefix = '{{< include \"',
                                                suffix = '\" >}}') {
+    # Metadata for every mesos_var is extracted -- and therefore validated by
+    # validate_mesos_groups_abbr() -- before the writing loop starts, so a bad
+    # abbreviation in the second mesos variable does not leave the first one
+    # half-written (GH #244).
+    metadata_per_var <- lapply(mesos_df, extract_mesos_metadata)
+
     # For each mesos_var
     for (j in seq_len(length(mesos_df))) {
         # Extract metadata
-        metadata <- extract_mesos_metadata(mesos_df[[j]])
+        metadata <- metadata_per_var[[j]]
         mesos_var_subfolders <- process_mesos_subfolders(mesos_var_subfolder, j)
 
         # Create all the brief qmd stubs
