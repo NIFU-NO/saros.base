@@ -161,12 +161,13 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = NA_character_,
       .template = "
+::: {{#tbl-{.chunk_name}}}
+
 ```{{r}}
 {.obj_name} <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_table_html')
-link <- make_link(data = {.obj_name}$data)
-link_plot <- make_link(data = {.obj_name}, \n\t\tfile_suffix = '.png', link_prefix='[PNG](', \n\t\tsave_fn = ggsaver)
-x <- I(paste0(c(link, link_plot), collapse=', '))
-girafe(ggobj = {.obj_name})
+link <- make_link(data = {.obj_name})
+x <- I(link)
+gt({.obj_name})
 ```
 
 _{.variable_label_prefix_dep}_. `{{r}} x`.
@@ -1090,6 +1091,8 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
       .template_variable_type_dep = "int;dbl",
       .template_variable_type_indep = NA_character_,
       .template = "
+::: {{#fig-{.chunk_name}}}
+
 ```{{r}}
 plot <- \n\tdata_{.chapter_foldername} |>\n\t\tmakeme(dep = c({.variable_name_dep}), \n\t\ttype = 'int_plot_html')
 x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
