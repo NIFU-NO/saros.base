@@ -311,8 +311,56 @@
   check ever sees it
   ([\#248](https://github.com/NIFU-NO/saros.base/issues/248)). The abort
   still happens and nothing is written, which is what matters here; the
-  fabrication itself is left for
-  [\#248](https://github.com/NIFU-NO/saros.base/issues/248).
+  fabrication itself, and that mis-wording with it, is fixed by the
+  entry immediately below.
+- [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  no longer copies one mesos group’s value onto another when a legacy
+  `mesos_groups` data frame needs cleaning
+  ([\#248](https://github.com/NIFU-NO/saros.base/issues/248)).
+  `handle_legacy_format()` cleaned the two columns of such a frame
+  independently and in place — `df[[1]] <- clean_group_data(df[[1]])`,
+  and the same for `df[[2]]`. `clean_group_data()` drops `NA` and `""`,
+  so it can hand back a vector shorter than the column it replaces, and
+  `[[<-.data.frame` then recycles that vector back over the original
+  number of rows.
+  `data.frame(Skole = c("Skole A", "Skole B"), abbr = c("SK", ""))` came
+  back with `abbr` of `c("SK", "SK")`: the empty abbreviation was not
+  rejected, it was replaced by the previous group’s. Where the shortened
+  length did not divide evenly the conversion died instead, with the raw
+  base R message `replacement has 2 rows, data has 3`, which names an
+  internal assignment rather than anything the caller supplied. Rows are
+  now filtered as rows, so a group name and its abbreviation stay on the
+  same row. The abbreviation case had been contained since
+  [\#244](https://github.com/NIFU-NO/saros.base/issues/244) — the
+  fabricated duplicate collided, so `validate_mesos_groups_abbr()`
+  aborted before anything was written — but only because it collided,
+  and it was reported as a uniqueness fault when it was an emptiness
+  one. **The shape that containment did not cover is a fabricated group
+  *name***: `data.frame(Skole = c("Skole A", ""), abbr = c("A", "B"))`
+  recycled `"Skole A"` onto the second row while the abbreviations
+  stayed distinct and non-empty, so nothing objected — the run wrote
+  `Skole/A` and `Skole/B`, both recording `params$mesos_group: Skole A`,
+  and reported `Mesos structure created successfully`. One group was
+  addressable under two folders, and the row that should have been
+  dropped was not. An empty abbreviation is now left in the column
+  rather than dropped, so `validate_mesos_groups_abbr()` rejects it by
+  naming the group it belongs to; `NA` is normalised to `""` alongside
+  it, which matters precisely because the column is no longer filtered —
+  an `NA` left as it is would be dropped further downstream by
+  `extract_mesos_metadata()`, which filters the group names and the
+  abbreviations separately, and the run would then have got as far as
+  writing the stubs before aborting on the resulting length mismatch.
+  `clean_group_data()`’s
+  `Group data must be a non-empty character vector.` abort stays where
+  it is and keeps serving `handle_named_list()` and
+  `handle_data_frame()`, which build a data frame *from* a bare vector
+  and so have no second column to fall out of step with; the legacy path
+  carries its own emptiness check instead, which can say which of the
+  supplied data frames was empty. Group names of only whitespace are
+  unaffected — [`nzchar()`](https://rdrr.io/r/base/nchar.html) is the
+  test, not [`trimws()`](https://rdrr.io/r/base/trimws.html), so `" "`
+  remains a usable if odd group name, as
+  [\#244](https://github.com/NIFU-NO/saros.base/issues/244) pinned.
 - [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
   now warns when a `.template` repeats the same `insert_text()` call
   ([\#210](https://github.com/NIFU-NO/saros.base/issues/210)). Projects
