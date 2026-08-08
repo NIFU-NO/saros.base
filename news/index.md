@@ -4,6 +4,91 @@
 
 ### Documentation
 
+- Corrected the documented default of 24 arguments across 6 functions
+  ([\#251](https://github.com/NIFU-NO/saros.base/issues/251)). Every
+  `@param` block in this package states the argument’s default on its
+  second line, and that line is the only thing most users read before
+  calling a function; it had drifted away from the signature everywhere
+  it was not being actively edited. **No actual default changed** — this
+  is a documentation-only fix, and every one of the package’s 618
+  formals deparses identically to before. Three of the corrections
+  reverse the reader’s expectation outright:
+  `draft_report(combined_report = )`,
+  `draft_report(attach_chapter_dataset = )` (and its counterpart in
+  [`gen_qmd_chapters()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_chapters.md))
+  and `draft_report(require_common_categories = )` were each documented
+  as `FALSE`/`NULL` while defaulting to `TRUE`, so three features
+  documented as off are in fact on.
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  accounted for eleven:
+  `max_width_obj`/`max_width_chunk`/`max_width_file`/`max_width_folder_name`
+  were documented `NULL` — unlimited — while actually truncating at
+  `128`/`128`/`64`/`12`; `sep_chunk` and `sep_file` were documented
+  `"_"` while defaulting to `"-"`, contradicting the prose two lines
+  below them, which already said “hyphen for chunk labels and file
+  names”; `label_separator`, `organize_by` and `arrange_section_by` were
+  documented `NULL` while carrying real values.
+  `gen_qmd_chapters(path = )` was documented
+  [`tempdir()`](https://rdrr.io/r/base/tempfile.html) while defaulting
+  to `NULL`, and `n_range_glue_template_2` documented a comma where the
+  template uses a hyphen. Three arguments —
+  `insert_chunk(grouping_structure = )`,
+  `read_default_draft_report_args(path = )` and
+  `write_default_draft_report_args(path = )` — were given a documented
+  default despite having none at all; they now read `// Required`, the
+  form this package already uses for `data` and `chapter_structure`.
+  `write_default_draft_report_args(ignore_args = )` was missing `"path"`
+  from its listed vector.
+- `draft_report(qmd_engine = )` is deliberately **not** part of the
+  above, and the check added below encodes that. Its formal is
+  `c("recursion", "loop")` — the whole menu
+  [`rlang::arg_match()`](https://rlang.r-lib.org/reference/arg_match.html)
+  picks from — but only the first element is ever the default, so the
+  documented `"recursion"` is both correct and the more useful thing to
+  state. The same reasoning covers `case`, `numbering_prefix`,
+  `password_input` and `engine`, the package’s four other `arg_match()`
+  arguments; none of them currently states a default in this format, but
+  they are exempt on the same terms if they ever do.
+- Four `@param` tags that named several arguments at once have been
+  split, because a tag can carry only one `*default:*` line and the
+  arguments sharing it no longer agree:
+  `max_width_obj,max_width_chunk,max_width_file`,
+  `sep_obj,sep_chunk,sep_file`,
+  `n_range_glue_template_1,n_range_glue_template_2` and
+  `report_includes_prefix,report_includes_suffix`. This is what had let
+  the `max_width_*` and `sep_*` errors above hide — one `NULL` and one
+  `"_"` standing in for three arguments each.
+  [`gen_qmd_chapters()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_chapters.md)
+  likewise now documents `path` and `replace_heading_for_group` itself
+  rather than inheriting them from
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  via `@inheritParams`, since its own defaults for both are `NULL` where
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)’s
+  are [`tempdir()`](https://rdrr.io/r/base/tempfile.html) and a
+  three-entry vector;
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  always passes both explicitly, so the difference is only visible to a
+  direct call.
+- Two smaller consistency fixes in the same blocks, both found by review
+  of the above.
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)’s
+  combined `@param` tag for the six `*_qmd_start/end_section_filepath`
+  arguments ended in a stray comma, so the generated `.Rd` listed an
+  empty seventh argument name alongside them. And
+  `write_default_draft_report_args(ignore_args = )` wrote its optional
+  marker as `// Optional.` where the other 40 occurrences in the package
+  use `` // *default:* `x` (`optional`) ``; it now matches.
+- Fixed a stray backslash in four rendered defaults.
+  `report_includes_prefix`, `report_includes_suffix` and both
+  `n_range_glue_template_*` values contain braces, which the roxygen
+  sources escaped by hand as `\{`. roxygen2 then escaped the backslash,
+  so
+  [`?draft_report`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  displayed `"\{\{< include "` rather than `"{{< include "` — a value no
+  user could copy. Inline code spans need no manual brace escaping; what
+  they do need is *balanced* braces within the tag, which is why each of
+  the two `report_includes_*` blocks now also names its counterpart’s
+  value.
 - Added four conceptual vignettes, porting the orientation material that
   previously existed only as Norwegian prose on the Saros website
   ([\#185](https://github.com/NIFU-NO/saros.base/issues/185)).
@@ -462,6 +547,40 @@
 
 ### Testing
 
+- Added `tests/testthat/test-documented_defaults.R`, which reads the
+  `*default:*` value out of every documented argument and compares it
+  against [`formals()`](https://rdrr.io/r/base/formals.html)
+  ([\#251](https://github.com/NIFU-NO/saros.base/issues/251)). Verified
+  to report exactly the 24 corrections listed above, and nothing else,
+  when run against the pre-fix sources. The comparison is made on R code
+  rather than on text — both sides are parsed and re-deparsed — so
+  `c("a" = 1)` and `c(a = 1)` count as equal. It takes the value from
+  the parsed `Rd` node rather than from the raw `.Rd` bytes, so it
+  compares what `?topic` actually displays, which is what makes it catch
+  the stray-backslash class above. Two things are deliberately outside
+  it: a block stating `*default:* see Usage` in prose rather than as a
+  value states nothing to compare and is skipped, which is how
+  `ignore_heading_for_group` stays as it is; and the `arg_match()`
+  exemption applies only to arguments genuinely handed to
+  [`rlang::arg_match()`](https://rlang.r-lib.org/reference/arg_match.html)/[`match.arg()`](https://rdrr.io/r/base/match.arg.html),
+  discovered by deparsing the package’s own function bodies rather than
+  listed in the test, so it cannot quietly widen to any argument that
+  merely happens to default to a character vector — `organize_by` and
+  `ignore_heading_for_group` are such arguments, and a second test pins
+  that they do not qualify. `qmd_engine` reaches `arg_match()` under the
+  name `engine`, so it is mapped across explicitly, and the mapping is
+  written so the exemption lapses if `gen_qmd_structure()` ever stops
+  calling `arg_match()`. The test reads the installed help and the
+  installed function bodies when package sources are absent, so unlike
+  the other source-scanning tests in this suite it runs under
+  `R CMD check` rather than skipping there — which is where CI would
+  otherwise have missed it — and it asserts a floor on how many
+  arguments it matched, so a future roxygen2 that renders `*default:*`
+  differently fails the test rather than silently disarming it. This
+  supersedes the narrower `log_file` check added in
+  [\#245](https://github.com/NIFU-NO/saros.base/issues/245), which is
+  kept because it reads the roxygen in `R/` rather than the generated
+  `man/`.
 - Added snapshot tests of the `.qmd` text
   [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   writes (`tests/testthat/test-qmd_snapshots.R`). Nothing previously

@@ -62,10 +62,18 @@ gen_qmd_chapters(
 
   *Output path*
 
-  `scalar<character>` // *default:*
-  [`tempdir()`](https://rdrr.io/r/base/tempfile.html) (`optional`)
+  `scalar<character>` // *default:* `NULL` (`optional`)
 
-  Path to save all output. Defaults to a temporary directory.
+  Path to save all output. Documented here rather than inherited from
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md),
+  whose default is [`tempdir()`](https://rdrr.io/r/base/tempfile.html)
+  instead. This function has no such fallback, and the default is not
+  usable: `fs::as_fs_path(NULL)` is `character(0)`, so the first
+  [`dir.create()`](https://rdrr.io/r/base/files2.html) aborts with
+  `invalid 'path' argument` before anything is written. A direct call
+  must therefore supply a path.
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  always does.
 
 - ignore_heading_for_group:
 
@@ -91,14 +99,18 @@ gen_qmd_chapters(
 
   *Replacing heading for group*
 
-  `named vector<character>` // *default:*
-  `c(".variable_label_suffix_dep" = ".variable_name_dep")`
+  `named vector<character>` // *default:* `NULL` (`optional`)
 
-  Occasionally, one needs to replace the heading with another piece of
-  information in the refined chapter_structure. For instance, one may
-  want to organize output by variable_name_indep, but to display the
-  variable_label_indep instead. Use the name for the replacement and the
-  value for the original.
+  As in
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md),
+  but documented here rather than inherited because no replacements are
+  made unless asked for, whereas
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  defaults to a three-entry vector. Use the name for the replacement and
+  the value for the original.
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  always supplies this explicitly, so the default only applies to a
+  direct call.
 
 - prefix_heading_for_group, suffix_heading_for_group:
 
@@ -131,7 +143,7 @@ gen_qmd_chapters(
 
   *Toggle inclusion of chapter-specific datasets in qmd-files*
 
-  `scalar<logical>` // *default:* `FALSE`
+  `scalar<logical>` // *default:* `TRUE`
 
   Whether to save in each chapter folder an 'Rds'-file with the
   chapter-specific dataset, and load it at the top of each QMD-file.

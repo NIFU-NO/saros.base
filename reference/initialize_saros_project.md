@@ -116,5 +116,5 @@ Returns invisibly `path`
 
 ``` r
 initialize_saros_project(path = tempdir())
-#> RtmpppBKC1
+#> RtmpGZot8Q
 ```

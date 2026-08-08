@@ -177,7 +177,7 @@ If multiple authors per chapter, separate with semicolon. Ensure consistency.</p
 <p>Path to file used to insert header YAML, in each chapter.</p></dd>
 
 
-<dt id="arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath-">chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath, <a class="anchor" aria-label="anchor" href="#arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath-"></a></dt>
+<dt id="arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath">chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath<a class="anchor" aria-label="anchor" href="#arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath"></a></dt>
 <dd><p><em>Path to qmd-bit for start/end of each qmd</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.</p></dd>
@@ -230,7 +230,7 @@ apply to it.</p></dd>
 
 <dt id="arg-replace-heading-for-group">replace_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-replace-heading-for-group"></a></dt>
 <dd><p><em>Replacing heading for group</em></p>
-<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c(".variable_label_suffix_dep" = ".variable_name_dep")</code></p>
+<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c("chapter" = ".chapter_number", ".variable_label_suffix_dep" = ".variable_name_dep", ".variable_label_suffix_indep" = ".variable_name_indep")</code></p>
 <p>Occasionally, one needs to replace the heading with another piece of information
 in the refined chapter_structure. For instance, one may want to organize output
 by variable_name_indep, but to display the variable_label_indep instead. Use
@@ -246,13 +246,15 @@ that prefixes should end with a <code>\n</code> as headings must begin on a new 
 
 <dt id="arg-require-common-categories">require_common_categories<a class="anchor" aria-label="anchor" href="#arg-require-common-categories"></a></dt>
 <dd><p><em>Check common categories</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Whether to check if all items share common categories.</p></dd>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Whether to check if all items share common categories. On by default: a
+section whose factor <code>dep</code> columns have no response category in common
+aborts the run, before any file is written. Set to <code>FALSE</code> to skip.</p></dd>
 
 
 <dt id="arg-combined-report">combined_report<a class="anchor" aria-label="anchor" href="#arg-combined-report"></a></dt>
 <dd><p><em>Create a combined report?</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
 <p>Whether to create a qmd file that merges all chapters into
 a combined report.</p></dd>
 
@@ -266,7 +268,7 @@ without having to overwrite the qmd files.</p></dd>
 
 <dt id="arg-attach-chapter-dataset">attach_chapter_dataset<a class="anchor" aria-label="anchor" href="#arg-attach-chapter-dataset"></a></dt>
 <dd><p><em>Toggle inclusion of chapter-specific datasets in qmd-files</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code></p>
 <p>Whether to save in each chapter folder an 'Rds'-file with the
 chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
 
@@ -300,10 +302,22 @@ due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
 <p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"data_"</code></p></dd>
 
 
-<dt id="arg-report-includes-prefix-report-includes-suffix">report_includes_prefix, report_includes_suffix<a class="anchor" aria-label="anchor" href="#arg-report-includes-prefix-report-includes-suffix"></a></dt>
-<dd><p><em>Strings around files in report.qmd</em></p>
-<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"\{\{&lt; include "</code> and <code>" &gt;\}\}"</code></p>
-<p>The prefix and suffix for each of the chapters being included in the report.qmd file if <code>report_includes_files = TRUE</code>.</p></dd>
+<dt id="arg-report-includes-prefix">report_includes_prefix<a class="anchor" aria-label="anchor" href="#arg-report-includes-prefix"></a></dt>
+<dd><p><em>String before each file in report.qmd</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>'{{&lt; include "'</code></p>
+<p>The prefix placed before each of the chapters being included in the
+report.qmd file if <code>report_includes_files = TRUE</code>. Shown single-quoted
+because the value itself ends in the double quote that opens the included
+filename, which <code>report_includes_suffix</code> then closes with <code>'" &gt;}}'</code>.</p></dd>
+
+
+<dt id="arg-report-includes-suffix">report_includes_suffix<a class="anchor" aria-label="anchor" href="#arg-report-includes-suffix"></a></dt>
+<dd><p><em>String after each file in report.qmd</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>'" &gt;}}'</code></p>
+<p>The suffix placed after each of the chapters being included in the
+report.qmd file if <code>report_includes_files = TRUE</code>. It opens with the
+double quote that closes the filename opened by
+<code>report_includes_prefix</code>, whose default is <code>'{{&lt; include "'</code>.</p></dd>
 
 
 <dt id="arg-qmd-engine">qmd_engine<a class="anchor" aria-label="anchor" href="#arg-qmd-engine"></a></dt>

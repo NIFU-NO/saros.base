@@ -81,8 +81,9 @@ with similar items. See <code><a href="draft_report.html">draft_report()</a></co
 
 <dt id="arg-grouping-structure">grouping_structure<a class="anchor" aria-label="anchor" href="#arg-grouping-structure"></a></dt>
 <dd><p><em>Vector of groups</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>Optional</code>)</p>
-<p>Internal usage.</p></dd>
+<p><code>vector&lt;character&gt;</code> // Required</p>
+<p>Internal usage. There is no default: the argument is read before anything
+else happens, so a call that omits it fails.</p></dd>
 
 </dl></div>
     <div class="section level2">

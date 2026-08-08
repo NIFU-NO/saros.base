@@ -110,8 +110,13 @@ chapter_structure 'dep', etc columns.</p></dd>
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
 <dd><p><em>Output path</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> (<code>optional</code>)</p>
-<p>Path to save all output. Defaults to a temporary directory.</p></dd>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Path to save all output. Documented here rather than inherited from
+<code><a href="draft_report.html">draft_report()</a></code>, whose default is <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> instead. This function has
+no such fallback, and the default is not usable: <code>fs::as_fs_path(NULL)</code> is
+<code>character(0)</code>, so the first <code><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create()</a></code> aborts with
+<code>invalid 'path' argument</code> before anything is written. A direct call must
+therefore supply a path. <code><a href="draft_report.html">draft_report()</a></code> always does.</p></dd>
 
 
 <dt id="arg-ignore-heading-for-group">ignore_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-ignore-heading-for-group"></a></dt>
@@ -132,11 +137,12 @@ apply to it.</p></dd>
 
 <dt id="arg-replace-heading-for-group">replace_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-replace-heading-for-group"></a></dt>
 <dd><p><em>Replacing heading for group</em></p>
-<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c(".variable_label_suffix_dep" = ".variable_name_dep")</code></p>
-<p>Occasionally, one needs to replace the heading with another piece of information
-in the refined chapter_structure. For instance, one may want to organize output
-by variable_name_indep, but to display the variable_label_indep instead. Use
-the name for the replacement and the value for the original.</p></dd>
+<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>As in <code><a href="draft_report.html">draft_report()</a></code>, but documented here rather than inherited because
+no replacements are made unless asked for, whereas <code><a href="draft_report.html">draft_report()</a></code>
+defaults to a three-entry vector. Use the name for the replacement and the
+value for the original. <code><a href="draft_report.html">draft_report()</a></code> always supplies this explicitly,
+so the default only applies to a direct call.</p></dd>
 
 
 <dt id="arg-prefix-heading-for-group-suffix-heading-for-group">prefix_heading_for_group, suffix_heading_for_group<a class="anchor" aria-label="anchor" href="#arg-prefix-heading-for-group-suffix-heading-for-group"></a></dt>
@@ -161,7 +167,7 @@ without having to overwrite the qmd files.</p></dd>
 
 <dt id="arg-attach-chapter-dataset">attach_chapter_dataset<a class="anchor" aria-label="anchor" href="#arg-attach-chapter-dataset"></a></dt>
 <dd><p><em>Toggle inclusion of chapter-specific datasets in qmd-files</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code></p>
 <p>Whether to save in each chapter folder an 'Rds'-file with the
 chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
 

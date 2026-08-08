@@ -130,7 +130,7 @@ for the specific template.</p></dd>
 
 <dt id="arg-label-separator">label_separator<a class="anchor" aria-label="anchor" href="#arg-label-separator"></a></dt>
 <dd><p><em>Variable label separator</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>" - "</code> (<code>optional</code>)</p>
 <p>String to split labels on main question and sub-items.</p></dd>
 
 
@@ -192,13 +192,13 @@ a separate argument.</p></dd>
 
 <dt id="arg-organize-by">organize_by<a class="anchor" aria-label="anchor" href="#arg-organize-by"></a></dt>
 <dd><p><em>Grouping columns</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>c(".chapter_number", ".variable_label_prefix_dep", ".variable_name_indep", ".template_name")</code> (<code>optional</code>)</p>
 <p>Column names used for identifying chapters and sections.</p></dd>
 
 
 <dt id="arg-arrange-section-by">arrange_section_by<a class="anchor" aria-label="anchor" href="#arg-arrange-section-by"></a></dt>
 <dd><p><em>Sorting columns</em></p>
-<p><code>vector&lt;character&gt;</code> or <code>named vector&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p><code>vector&lt;character&gt;</code> or <code>named vector&lt;logical&gt;</code> // <em>default:</em> <code>c(.chapter_number = FALSE, chapter = FALSE, .variable_position_dep = FALSE, .variable_position_indep = FALSE, .template_name = FALSE)</code> (<code>optional</code>)</p>
 <p>Column names used for sorting sections within each organize_by group. Can include
 any column present in the output dataframe (both original and generated columns).
 If character vector, will assume all are to be arranged in ascending order.
@@ -217,32 +217,47 @@ NAs at the end. This would have placed univariates at the end, etc. Thus,
 saros places NAs first in the section. Set this to FALSE to override.</p></dd>
 
 
-<dt id="arg-max-width-obj-max-width-chunk-max-width-file">max_width_obj, max_width_chunk, max_width_file<a class="anchor" aria-label="anchor" href="#arg-max-width-obj-max-width-chunk-max-width-file"></a></dt>
-<dd><p><em>Maximum object width</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Maximum width for names of objects (in R/Python environment),
-chunks (#| label: ) and optional files. Note, will always replace variable
-labels with variable names, to avoid very long file names.
-Note for filenames: Due to OneDrive having a max path of about
-400 characters, this can quickly be exceeded with a long path base path,
-long file names if using labels as part of structure, and hashing with
-Quarto's <code>cache: true</code> feature. Thus consider restricting max_width_file
-to lower than what you optimally would have wished for.</p></dd>
+<dt id="arg-max-width-obj-max-width-chunk">max_width_obj, max_width_chunk<a class="anchor" aria-label="anchor" href="#arg-max-width-obj-max-width-chunk"></a></dt>
+<dd><p><em>Maximum object and chunk-label width</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>128</code> (<code>optional</code>)</p>
+<p>Maximum width for names of objects (in R/Python environment) and
+chunks (#| label: ). Note, will always replace variable
+labels with variable names, to avoid very long names.</p></dd>
+
+
+<dt id="arg-max-width-file">max_width_file<a class="anchor" aria-label="anchor" href="#arg-max-width-file"></a></dt>
+<dd><p><em>Maximum file name width</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>64</code> (<code>optional</code>)</p>
+<p>Maximum width for the names of the generated files. Shorter than
+<code>max_width_obj</code>/<code>max_width_chunk</code> on purpose: due to OneDrive having a max
+path of about 400 characters, this can quickly be exceeded with a long
+base path, long file names if using labels as part of structure, and
+hashing with Quarto's <code>cache: true</code> feature. Thus consider restricting
+<code>max_width_file</code> to lower still than what you optimally would have wished
+for.</p></dd>
 
 
 <dt id="arg-max-width-folder-name">max_width_folder_name<a class="anchor" aria-label="anchor" href="#arg-max-width-folder-name"></a></dt>
 <dd><p><em>Maximum clean folder name length</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>12</code> (<code>optional</code>)</p>
 <p>Whereas <code>max_width_file</code> truncates the file name, this argument truncates
 the folder name. It will not impact the report or chapter names in website,
 only the folders.</p></dd>
 
 
-<dt id="arg-sep-obj-sep-chunk-sep-file">sep_obj, sep_chunk, sep_file<a class="anchor" aria-label="anchor" href="#arg-sep-obj-sep-chunk-sep-file"></a></dt>
-<dd><p><em>Separator string</em></p>
+<dt id="arg-sep-obj">sep_obj<a class="anchor" aria-label="anchor" href="#arg-sep-obj"></a></dt>
+<dd><p><em>Separator string for object names</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"_"</code> (<code>optional</code>)</p>
-<p>Separator to use between grouping variables. Defaults to underscore for
-object names and hyphen for chunk labels and file names.</p></dd>
+<p>Separator to use between grouping variables in object names.</p></dd>
+
+
+<dt id="arg-sep-chunk-sep-file">sep_chunk, sep_file<a class="anchor" aria-label="anchor" href="#arg-sep-chunk-sep-file"></a></dt>
+<dd><p><em>Separator string for chunk labels and file names</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"-"</code> (<code>optional</code>)</p>
+<p>Separator to use between grouping variables in chunk labels and file
+names. A hyphen rather than the underscore used for object names: only
+<code>.obj_name</code> becomes an R identifier in the generated chunks, so only it is
+bound by R's syntactic naming rules.</p></dd>
 
 
 <dt id="arg-filename-prefix">filename_prefix<a class="anchor" aria-label="anchor" href="#arg-filename-prefix"></a></dt>
@@ -279,9 +294,17 @@ by itself will not be very informative. Hence you could set a prefix such
 as "Group" to distinguish this column from other columns in the chapter_structure.</p></dd>
 
 
-<dt id="arg-n-range-glue-template-n-range-glue-template-">n_range_glue_template_1, n_range_glue_template_2<a class="anchor" aria-label="anchor" href="#arg-n-range-glue-template-n-range-glue-template-"></a></dt>
-<dd><p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"{n}" and "[{n[1]}, {n[2]}]</code> (<code>optional</code>)</p>
-<p>Glue templates for the n_range columns to be created.</p></dd>
+<dt id="arg-n-range-glue-template-">n_range_glue_template_1<a class="anchor" aria-label="anchor" href="#arg-n-range-glue-template-"></a></dt>
+<dd><p><em>Glue template when N does not vary</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"{n}"</code> (<code>optional</code>)</p>
+<p>Glue template for the n_range column when every item shares one N.</p></dd>
+
+
+<dt id="arg-n-range-glue-template-">n_range_glue_template_2<a class="anchor" aria-label="anchor" href="#arg-n-range-glue-template-"></a></dt>
+<dd><p><em>Glue template when N varies</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"[{n[1]}-{n[2]}]"</code> (<code>optional</code>)</p>
+<p>Glue template for the n_range column when N differs across items, taking
+the lowest and highest as <code>n[1]</code> and <code>n[2]</code>.</p></dd>
 
 
 <dt id="arg-log-file">log_file<a class="anchor" aria-label="anchor" href="#arg-log-file"></a></dt>

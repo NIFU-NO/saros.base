@@ -14,7 +14,11 @@ read_default_draft_report_args(path)
 
 - path:
 
-  `scalar<character>` // Required. *default:* `settings.yaml`
+  `scalar<character>` // Required
+
+  Path of the YAML-file to read. There is no default; pass an explicit
+  path, e.g. the one given to
+  [`write_default_draft_report_args()`](https://nifu-no.github.io/saros.base/reference/write_default_draft_report_args.md).
 
 ## Value
 
@@ -25,7 +29,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpppBKC1/file1d2a4ea0d5a2.yaml"
+#> [1] "/tmp/RtmpGZot8Q/file1d431c68385.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL

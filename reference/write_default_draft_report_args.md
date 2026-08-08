@@ -18,14 +18,20 @@ write_default_draft_report_args(
 
 - path:
 
-  `scalar<character>` // Required. *default:* `settings.yaml`
+  `scalar<character>` // Required
+
+  Path of the YAML-file to write. There is no default; pass an explicit
+  path, e.g. `"settings.yaml"`.
 
 - ignore_args:
 
-  `vector<character>` // Optional. *default:*
-  `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview")`
+  `vector<character>` // *default:*
+  `c("data", "...", "dep", "indep", "chapter_structure", "chapter_overview", "path")`
+  (`optional`)
 
   A character vector of argument (names) not to be written to file.
+  `"path"` is excluded because it names the output file of this call
+  rather than a setting worth recording.
 
 ## Value
 
@@ -35,5 +41,5 @@ The defaults as a `yaml`-object.
 
 ``` r
 write_default_draft_report_args(path = tempfile(fileext = ".yaml"))
-#> [1] "/tmp/RtmpppBKC1/file1d2a438d4cc8.yaml"
+#> [1] "/tmp/RtmpGZot8Q/file1d434384ca.yaml"
 ```
