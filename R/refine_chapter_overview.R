@@ -178,9 +178,24 @@
 #'
 #' @param log_file *Path to log file*
 #'
-#'   `scalar<string>` // *default:* `"_log.txt"` (`optional`)
+#'   `scalar<string>` // *default:* `NULL` (`optional`)
 #'
-#'   Path to log file. Set to NULL to disable logging.
+#'   Path to a log file, which is appended to rather than overwritten. `NULL`,
+#'   the default, disables logging entirely; nothing is written and no file is
+#'   created.
+#'
+#'   When a path is given, every entry this function drops is recorded together
+#'   with the reason: variables that are all `NA`, entries whose `n` falls below
+#'   `hide_chunk_if_n_below`, bivariate entries above `hide_bi_entry_if_sig_above`
+#'   or with no non-`NA` overlap, entries with no chunk-template type match, and
+#'   the columns of `data` left unused. Nothing is written when a category has
+#'   nothing to report.
+#'
+#'   Note that the unused-variable entry does not know about
+#'   [draft_report()]'s `auxiliary_variables`, so columns kept only for that
+#'   purpose are listed here as unused; `draft_report(log_file = )` writes the
+#'   `auxiliary_variables`-aware list. The same path may be passed to both;
+#'   entries accumulate.
 #'
 #' @param n_range_glue_template_1,n_range_glue_template_2
 #'
@@ -238,6 +253,17 @@
 #' ref_df <- refine_chapter_overview(
 #'   chapter_overview = ex_survey_ch_overview
 #' )
+#'
+#' # Recording what was dropped, and why. Write the log to a tempfile(), not to
+#' # a bare filename -- a relative path would land in the user's working
+#' # directory. Logging is off unless `log_file` is set.
+#' log_file <- tempfile(fileext = ".txt")
+#' ref_df_logged <- refine_chapter_overview(
+#'   chapter_overview = data.frame(chapter = "Background", dep = "x1_sex", indep = ""),
+#'   data = ex_survey,
+#'   log_file = log_file
+#' )
+#' cat(readLines(log_file), sep = "\n")
 refine_chapter_overview <-
   function(chapter_overview = NULL,
            data = NULL,

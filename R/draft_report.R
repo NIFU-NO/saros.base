@@ -189,9 +189,20 @@
 #'
 #' @param log_file *Path to log file*
 #'
-#'   `scalar<string>` // *default:* `"_log.txt"` (`optional`)
+#'   `scalar<string>` // *default:* `NULL` (`optional`)
 #'
-#'   Path to log file. Set to NULL to disable logging.
+#'   Path to a log file, which is appended to rather than overwritten. `NULL`,
+#'   the default, disables logging entirely; nothing is written and no file is
+#'   created.
+#'
+#'   When a path is given, the columns of `data` that this report does not use
+#'   are recorded. `auxiliary_variables` counts as used, since those columns are
+#'   deliberately carried into the chapter datasets — which is why this entry is
+#'   worth having in addition to the one [refine_chapter_overview()] writes:
+#'   that function has no `auxiliary_variables` argument, so its own list
+#'   reports auxiliary columns as unused.
+#'
+#'   The same path may be passed to both functions; entries accumulate.
 #'
 #' @param qmd_engine *Traversal engine for the grouping tree*
 #'
@@ -241,6 +252,20 @@
 #'     data = ex_survey,
 #'     path = tempdir()
 #'   )
+#'
+#' # Recording which columns of `data` went unused. Write the log to a
+#' # tempfile(), not to a bare filename -- a relative path would land in the
+#' # user's working directory.
+#' log_file <- tempfile(fileext = ".txt")
+#' index_filepath_logged <-
+#'   draft_report(
+#'     chapter_structure = ex_survey_ch_structure,
+#'     data = ex_survey,
+#'     path = tempdir(),
+#'     auxiliary_variables = "resp_status",
+#'     log_file = log_file
+#'   )
+#' cat(readLines(log_file), sep = "\n")
 #' }
 draft_report <-
   function(data,
@@ -385,6 +410,34 @@ draft_report <-
       path = args$path,
       max_path_warning_threshold = max_path_warning_threshold
     )
+
+
+    # Written last, so the log describes a run that actually completed rather
+    # than one that aborted partway through. (This is where the argument's
+    # original run-time entry lived before c73000f dropped the timing and left
+    # `log_file` wired to nothing.)
+    #
+    # `draft_report()` does not call `refine_chapter_overview()` -- it receives
+    # an already-refined `chapter_structure` -- so none of the removal helpers
+    # that take a `log_file` are on this path, and there is nothing to thread
+    # through. `log_unused_variables()` is the one existing logger whose inputs
+    # this function has, and it is the only caller able to supply
+    # `auxiliary_variables`: `refine_chapter_overview()` has no such argument,
+    # so its own call reports auxiliary columns as unused even though they are
+    # deliberately carried into the chapter datasets.
+    #
+    # Guarded on the path rather than called unconditionally, because
+    # `log_unused_variables()` also informs via cli irrespective of `log_file`.
+    # Calling it always would add a message to every existing `draft_report()`
+    # call; with the default (`log_file = NULL`) behaviour is unchanged.
+    if (is_string(args$log_file)) {
+      log_unused_variables(
+        data = data,
+        chapter_structure = chapter_structure,
+        auxiliary_variables = args$auxiliary_variables,
+        log_file = args$log_file
+      )
+    }
 
 
     stringi::stri_replace_all_regex(processed_files, pattern = "\\\\+", replacement = "/")

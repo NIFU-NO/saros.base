@@ -252,9 +252,20 @@ shapes.}
 
 \item{log_file}{\emph{Path to log file}
 
-\verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
+\verb{scalar<string>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to log file. Set to NULL to disable logging.}
+Path to a log file, which is appended to rather than overwritten. \code{NULL},
+the default, disables logging entirely; nothing is written and no file is
+created.
+
+When a path is given, the columns of \code{data} that this report does not use
+are recorded. \code{auxiliary_variables} counts as used, since those columns are
+deliberately carried into the chapter datasets — which is why this entry is
+worth having in addition to the one \code{\link[=refine_chapter_overview]{refine_chapter_overview()}} writes:
+that function has no \code{auxiliary_variables} argument, so its own list
+reports auxiliary columns as unused.
+
+The same path may be passed to both functions; entries accumulate.}
 }
 \value{
 The \code{path}-argument.
@@ -285,5 +296,19 @@ index_filepath <-
     data = ex_survey,
     path = tempdir()
   )
+
+# Recording which columns of `data` went unused. Write the log to a
+# tempfile(), not to a bare filename -- a relative path would land in the
+# user's working directory.
+log_file <- tempfile(fileext = ".txt")
+index_filepath_logged <-
+  draft_report(
+    chapter_structure = ex_survey_ch_structure,
+    data = ex_survey,
+    path = tempdir(),
+    auxiliary_variables = "resp_status",
+    log_file = log_file
+  )
+cat(readLines(log_file), sep = "\n")
 }
 }
