@@ -299,10 +299,11 @@
   half-written. **This turns two previously silent cases into errors**,
   which is the intended change: both destroy files that already exist,
   so continuing is worse than stopping. An all-`NA` abbreviation column
-  is unaffected — such a column is filtered to length zero upstream, has
-  nothing empty or duplicated in it, and its existing pinned behaviour
-  in `tests/testthat/test-setup_mesos.R` is unchanged. One caveat on the
-  wording of the error: reached through
+  is rejected too, by the entry immediately below
+  ([\#253](https://github.com/NIFU-NO/saros.base/issues/253)); this
+  check did not reach it, because such a column was filtered to length
+  zero upstream and a length-zero vector has nothing empty or duplicated
+  in it. One caveat on the wording of the error: reached through
   [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)’s
   legacy two-column path, an *empty* explicit abbreviation is reported
   as a *duplicate* one, because `handle_legacy_format()` drops the empty
@@ -346,11 +347,12 @@
   rather than dropped, so `validate_mesos_groups_abbr()` rejects it by
   naming the group it belongs to; `NA` is normalised to `""` alongside
   it, which matters precisely because the column is no longer filtered —
-  an `NA` left as it is would be dropped further downstream by
-  `extract_mesos_metadata()`, which filters the group names and the
-  abbreviations separately, and the run would then have got as far as
-  writing the stubs before aborting on the resulting length mismatch.
-  `clean_group_data()`’s
+  an `NA` left as it is would have been dropped further downstream by
+  `extract_mesos_metadata()`, which filtered the group names and the
+  abbreviations separately until
+  [\#253](https://github.com/NIFU-NO/saros.base/issues/253) below, and
+  the run would then have got as far as writing the stubs before
+  aborting on the resulting length mismatch. `clean_group_data()`’s
   `Group data must be a non-empty character vector.` abort stays where
   it is and keeps serving `handle_named_list()` and
   `handle_data_frame()`, which build a data frame *from* a bare vector
@@ -361,6 +363,93 @@
   test, not [`trimws()`](https://rdrr.io/r/base/trimws.html), so `" "`
   remains a usable if odd group name, as
   [\#244](https://github.com/NIFU-NO/saros.base/issues/244) pinned.
+- [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  no longer pairs a mesos group with another group’s abbreviation
+  ([\#253](https://github.com/NIFU-NO/saros.base/issues/253)). This is
+  [\#248](https://github.com/NIFU-NO/saros.base/issues/248) at the
+  second entry point. `extract_mesos_metadata()` filtered two parallel
+  vectors for `NA` independently —
+  `mesos_groups_pretty <- mesos_groups_pretty[!is.na(mesos_groups_pretty)]`,
+  and the same for `mesos_groups_abbr` — and nothing held them in step,
+  so an `NA` in one column but not the other shifted every later element
+  of that vector relative to the other.
+  `data.frame(Skole = c("Skole A", "Skole B"), abbr = c(NA, "B"))` came
+  back with two group names and the single abbreviation `"B"`, giving
+  `"Skole A"` — the group with no abbreviation — the folder belonging to
+  `"Skole B"`. `validate_mesos_groups_abbr()`
+  ([\#244](https://github.com/NIFU-NO/saros.base/issues/244)) did not
+  catch it: a borrowed abbreviation is neither empty nor duplicated. End
+  to end the misalignment did not stay silent, but it never reached a
+  guard in this package either — the shortened vector was recycled into
+  a [`data.frame()`](https://rdrr.io/r/base/data.frame.html) beside a
+  full-length one and the run died in base R with
+  `arguments imply differing number of rows: 1, 2`, which names neither
+  the mesos variable, nor the group, nor the fact that an abbreviation
+  was what was missing. A single `keep` mask, derived from the group
+  names, now indexes both vectors, so they are aligned by construction
+  rather than by coincidence; the group names are what it is derived
+  from because a missing group name is what makes a row unusable, which
+  is the rule `handle_legacy_format()` already applies. **An
+  abbreviation column of nothing but `NA` is now an error rather than a
+  silent length-zero vector**, which is the intended change and the
+  reason the pinned test at `tests/testthat/test-setup_mesos.R` was
+  rewritten. That length-zero vector looked like “no abbreviations
+  supplied, so generate them” and was not: it made
+  `create_includes_content_path_df()` skip the group-folder level and
+  `create_metadata_yml()` abort on its length guard, *after*
+  `<mesos_var>/_metadata.yml`, `index.qmd` and the stubs had been
+  written — a failed run leaving a directory standing that a retry would
+  have to overwrite, reported with a message naming
+  `mesos_groups_pretty` and `mesos_groups_abbr`, two internal variables
+  the caller never supplied. The legacy route had reported that same
+  input properly since
+  [\#248](https://github.com/NIFU-NO/saros.base/issues/248), so the two
+  entry points disagreed; both now abort by naming the groups, and
+  neither writes anything. Only an *absent* column still means “generate
+  them”.
+- [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  now keeps the label on a legacy `mesos_groups` column, so both entry
+  points title the mesos variable the same way
+  ([\#254](https://github.com/NIFU-NO/saros.base/issues/254)).
+  `handle_legacy_format()` row-subsets with `[.data.frame`, which
+  subsets each column with `[` and so keeps names/dim/dimnames and drops
+  everything else — a `label` among them. `extract_mesos_metadata()`
+  reads that label through `get_raw_labels(col_pos = 1)` and falls back
+  to the column name
+  ([\#188](https://github.com/NIFU-NO/saros.base/issues/188)), so a
+  labelled data frame produced a human-readable `mesos_var_pretty`
+  through
+  [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  and the bare column name through
+  [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
+  — the same asymmetry between the two routes that
+  [\#188](https://github.com/NIFU-NO/saros.base/issues/188) closed. Not
+  a regression from
+  [\#248](https://github.com/NIFU-NO/saros.base/issues/248): the
+  `clean_group_data()` call the row filter replaced began with
+  [`as.character()`](https://rdrr.io/r/base/character.html), which drops
+  the label just as thoroughly, so the label had never survived this
+  path; [\#248](https://github.com/NIFU-NO/saros.base/issues/248)
+  changed the mechanism, not the outcome. Labels belong here, and the
+  question did not need a judgement call — the two sibling handlers in
+  the same file both set one explicitly, `handle_named_list()` assigning
+  the variable name and `handle_data_frame()` carrying the source label
+  through with a fallback to the column name, and
+  `handle_legacy_format()` was the only one of the three that did not.
+  The attribute is captured before the filter and restored after the
+  abbreviation column has been rebuilt, so that replacing that column
+  does not undo the restoration. Only `label` is restored, because
+  nothing downstream reads any other attribute, and columns are
+  addressed by position rather than by name, because a legacy data frame
+  may repeat a column name. No column-name fallback is added here, since
+  `extract_mesos_metadata()` already has one and duplicating it would
+  put the same fallback in two places. One divergence of the same class
+  is left open deliberately: `handle_legacy_format()` drops rows whose
+  group name is `""` while `extract_mesos_metadata()` keeps them, and
+  [`?setup_mesos`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  documents only that `NA` is ignored — closing it would renegotiate
+  [\#244](https://github.com/NIFU-NO/saros.base/issues/244)’s pin that a
+  whitespace-only group name stays usable.
 - [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
   now warns when a `.template` repeats the same `insert_text()` call
   ([\#210](https://github.com/NIFU-NO/saros.base/issues/210)). Projects
