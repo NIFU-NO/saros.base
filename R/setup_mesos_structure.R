@@ -213,6 +213,22 @@ handle_legacy_format <- function(mesos_groups) {
     # goes -- taking its abbreviation with it. NA in the group column has always
     # been ignored silently here, and `?setup_mesos` documents that for
     # `mesos_df`; "" is treated the same way, as it was before.
+    #
+    # Row-subsetting costs the columns their attributes (GH #254): `[
+    # .data.frame` subsets each column with `[`, which keeps names/dim/dimnames
+    # and drops everything else -- a `label` among them. extract_mesos_metadata()
+    # reads that label through get_raw_labels(col_pos = 1), so losing it made a
+    # labelled data frame come out with the bare column name as its display name
+    # here, while the same input through setup_mesos() kept the label. Labels
+    # belong on this path: handle_named_list() and handle_data_frame() both set
+    # one explicitly, and this was the only one of the three that did not.
+    #
+    # Only `label` is restored, because that is the only attribute anything
+    # downstream reads, and by position rather than by name, because a legacy
+    # data frame may repeat a column name. No column-name fallback is added:
+    # extract_mesos_metadata() already has one (GH #188).
+    labels <- lapply(df, function(column) attr(column, "label"))
+
     keep <- !is.na(df[[1]]) & nzchar(as.character(df[[1]]))
     df <- df[keep, , drop = FALSE]
 
@@ -233,6 +249,12 @@ handle_legacy_format <- function(mesos_groups) {
       abbr <- as.character(df[[2]])
       abbr[is.na(abbr)] <- ""
       df[[2]] <- abbr
+    }
+
+    # After the abbreviation column has been rebuilt, so that replacing it does
+    # not undo the restoration.
+    for (k in seq_along(labels)) {
+      if (!is.null(labels[[k]])) attr(df[[k]], "label") <- labels[[k]]
     }
 
     df

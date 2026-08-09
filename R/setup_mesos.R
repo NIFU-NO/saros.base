@@ -263,12 +263,41 @@ extract_mesos_metadata <- function(mesos_df_entry) {
         mesos_var_pretty <- mesos_var
     }
 
+    # One mask over both columns (GH #253), the same shape as #248's fix in
+    # handle_legacy_format().
+    #
+    # These two vectors used to be filtered for NA independently, and nothing
+    # held them in step: an NA in one column but not the other shifted every
+    # later element of that vector relative to the other, so a group was paired
+    # with the abbreviation belonging to a different group.
+    # validate_mesos_groups_abbr() (GH #244) did not object, because the
+    # borrowed abbreviation is neither empty nor duplicated.
+    #
+    # `keep` is derived from the group names because a missing group name is
+    # what makes a row unusable, and `?setup_mesos` documents that NA in
+    # `mesos_df` is silently ignored. The abbreviation column is indexed by that
+    # same mask rather than filtered on its own, so the row's abbreviation goes
+    # with the row.
     mesos_groups_pretty <- as.character(mesos_df_entry[[1]])
-    mesos_groups_pretty <- mesos_groups_pretty[!is.na(mesos_groups_pretty)]
+    keep <- !is.na(mesos_groups_pretty)
+    mesos_groups_pretty <- mesos_groups_pretty[keep]
 
     if (ncol(mesos_df_entry) >= 2 && !is.null(mesos_df_entry[[2]])) {
-        mesos_groups_abbr <- as.character(mesos_df_entry[[2]])
-        mesos_groups_abbr <- mesos_groups_abbr[!is.na(mesos_groups_abbr)]
+        # A missing abbreviation is a fault to be reported, not a row to drop --
+        # dropping it is what shortened the column in the first place. Both
+        # spellings of "absent" become "" so that validate_mesos_groups_abbr()
+        # rejects it by naming the group it belongs to, as #252 already arranged
+        # for the setup_mesos_structure() route.
+        #
+        # That includes an abbreviation column of nothing but NA. Filtering used
+        # to reduce such a column to length zero, which did not mean "generate
+        # abbreviations": it made create_includes_content_path_df() skip the
+        # group-folder level and create_metadata_yml() abort on its length
+        # guard, after <mesos_var>/_metadata.yml, index.qmd and the stubs had
+        # been written, with a message naming two internal variables. Only an
+        # absent column means "generate them".
+        mesos_groups_abbr <- as.character(mesos_df_entry[[2]])[keep]
+        mesos_groups_abbr[is.na(mesos_groups_abbr)] <- ""
     } else {
         mesos_groups_abbr <- filename_sanitizer(mesos_groups_pretty, max_chars = 12, accept_hyphen = TRUE, make_unique = TRUE)
     }
@@ -413,9 +442,14 @@ create_mesos_stubs_from_main_files <- function(mesos_df,
 #'      containing `/` or `\` creates nested directories, so `"Rapport/Del1"`
 #'      places the group folders in `<mesos_var>/Rapport/Del1/`.
 #' @param files_to_process Character vector of files used as templates for the mesos stubs.
-#' @param mesos_df List of single-column data frames where each variable is a
-#'      mesos variable, optionally with a variable label indicating its pretty name.
-#'      The values in each variable are the mesos groups. NA is silently ignored.
+#' @param mesos_df List of data frames where each is a mesos variable, optionally
+#'      with a variable label indicating its pretty name. The values in the first
+#'      column are the mesos groups, and NA among them is silently ignored,
+#'      dropping the row. An optional second column gives each group's
+#'      abbreviation, which names its folder; supply one for every group, as an
+#'      abbreviation that is NA or empty is an error naming the group it belongs
+#'      to. Omit the column entirely to have abbreviations generated from the
+#'      group names.
 #' @param files_taking_title Character vector of files for which titles should
 #'      be set. Optional but recommended.
 #' @param read_syntax_pattern,read_syntax_replacement Optional strings, any

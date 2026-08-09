@@ -306,19 +306,39 @@ testthat::test_that("extract_mesos_metadata extracts basic metadata", {
   testthat::expect_equal(result$mesos_groups_abbr, c("N", "S", "E"))
 })
 
-testthat::test_that("extract_mesos_metadata handles missing abbreviations column", {
-  # When second column has all NAs, they get filtered out
+testthat::test_that("extract_mesos_metadata rejects an all-NA abbreviations column", {
+  # This used to assert that an all-NA column was filtered to length zero (GH
+  # #253). That looked like "no abbreviations supplied, so generate them", but
+  # it was not: a length-zero vector made create_includes_content_path_df() skip
+  # the group-folder level and create_metadata_yml() abort on its length guard,
+  # after <mesos_var>/_metadata.yml, index.qmd and the stubs had been written.
+  # The message named `mesos_groups_pretty` and `mesos_groups_abbr`, neither of
+  # which the caller supplied. The legacy entry point had reported the same
+  # input properly since #252, so the two routes disagreed.
+  #
+  # Only an absent column now means "generate them"; a column of nothing but NA
+  # is a group without a usable folder name, and is reported as one.
   test_df <- data.frame(
     region = c("North Region", "South Region"),
     abbr = c(NA, NA)
   )
-  
+
+  testthat::expect_error(
+    saros.base:::extract_mesos_metadata(test_df),
+    "non-empty\\s+abbreviation"
+  )
+})
+
+testthat::test_that("extract_mesos_metadata generates abbreviations when no column is supplied", {
+  # The behaviour the test above was mistaken for.
+  test_df <- data.frame(region = c("North Region", "South Region"))
+
   result <- saros.base:::extract_mesos_metadata(test_df)
-  
+
   testthat::expect_equal(result$mesos_var, "region")
   testthat::expect_equal(result$mesos_groups_pretty, c("North Region", "South Region"))
-  # With all NAs in abbr column, they get filtered out (length 0)
-  testthat::expect_equal(length(result$mesos_groups_abbr), 0)
+  testthat::expect_length(result$mesos_groups_abbr, 2)
+  testthat::expect_true(all(nzchar(result$mesos_groups_abbr)))
 })
 
 testthat::test_that("extract_mesos_metadata handles NA values", {
