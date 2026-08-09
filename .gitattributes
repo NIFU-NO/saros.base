@@ -1,0 +1,14 @@
+# testthat snapshots are written by the test suite, so git and testthat must
+# agree on their line endings.
+#
+# `core.autocrlf=true` checks these files out with CRLF on Windows, and testthat
+# rewrites them with LF on every run. The content is identical -- the file is
+# exactly one byte per line shorter afterwards -- so each local run left
+# tests/testthat/_snaps/*.md showing as modified against an empty diff, and the
+# only safe response was to leave it unstaged and remember why. Pinning the
+# working-tree ending to LF makes what git checks out and what testthat writes
+# byte-identical, on every platform.
+#
+# The index is already LF throughout (`git ls-files --eol`), so this changes no
+# stored blob.
+tests/testthat/_snaps/** text eol=lf

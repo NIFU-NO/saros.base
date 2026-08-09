@@ -14,3 +14,7 @@ coverage-report.html
 lib
 .vscode/
 settings.local.json
+
+# msys/Git Bash crash dumps. These regenerate constantly on this machine
+# and are never package content.
+*.stackdump
