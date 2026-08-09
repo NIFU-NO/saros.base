@@ -11,4 +11,14 @@
 #
 # The index is already LF throughout (`git ls-files --eol`), so this changes no
 # stored blob.
-tests/testthat/_snaps/** text eol=lf
+#
+# Restricted to *.md rather than the whole directory. `text` forces EOL
+# normalisation on the way into the index, which mangles any file that is not
+# text: a `expect_snapshot_file()` PNG under _snaps/ had its magic header
+# 89504e47 0d0a1a0a stored as 89504e47 0a1a0a under a directory-wide pattern --
+# the CRLF pair collapsed, the file corrupt. testthat writes .md for
+# expect_snapshot() and arbitrary files for expect_snapshot_file(), so the
+# directory is not safe to treat as text wholesale even though it holds only
+# .md today. `**` matches zero or more directories, so this one line covers
+# both _snaps/*.md and the per-test subdirectories.
+tests/testthat/_snaps/**/*.md text eol=lf
