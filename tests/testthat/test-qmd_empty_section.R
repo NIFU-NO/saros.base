@@ -65,7 +65,8 @@ gen_structure <- function(engine, grouped_data) {
     ignore_heading_for_group = NULL,
     replace_heading_for_group = NULL,
     prefix_heading_for_group = NULL,
-    suffix_heading_for_group = NULL
+    suffix_heading_for_group = NULL,
+    glue_heading_for_group = NULL
   )
 }
 
@@ -137,7 +138,8 @@ testthat::test_that("gen_qmd_node leaves `output` untouched for a path with no r
     ignore_heading_for_group = NULL,
     replace_heading_for_group = NULL,
     prefix_heading_for_group = NULL,
-    suffix_heading_for_group = NULL
+    suffix_heading_for_group = NULL,
+    glue_heading_for_group = NULL
   )
   testthat::expect_identical(node$output, "CHUNK-FROM-TMPL-A")
 })
@@ -155,7 +157,8 @@ testthat::test_that("gen_qmd_node still emits heading and chunk for a path with 
     ignore_heading_for_group = NULL,
     replace_heading_for_group = NULL,
     prefix_heading_for_group = NULL,
-    suffix_heading_for_group = NULL
+    suffix_heading_for_group = NULL,
+    glue_heading_for_group = NULL
   )
   testthat::expect_match(node$output, "^EARLIER OUTPUT")
   testthat::expect_match(node$output, "## tmpl_a{#sec-tmpl-a-", fixed = TRUE)

@@ -138,6 +138,21 @@ testthat::test_that("engines agree on a deeper grouping", {
   testthat::expect_identical(qmd_contents(path_loop), qmd_contents(path_recursion))
 })
 
+testthat::test_that("engines agree when a heading template is in force", {
+  # `glue_heading_for_group` is handed to gen_qmd_node() separately by each
+  # engine, so threading it into one and not the other would leave every other
+  # test green: the integration test in test-insert_section_heading_line.R runs
+  # only the default engine.
+  expect_engines_agree(
+    data.frame(
+      chapter = c("Trivsel", "Bakgrunn"),
+      dep = c("a_1, a_2", "x1_sex"),
+      indep = c("x1_sex", "")
+    ),
+    glue_heading_for_group = c(.variable_name_indep = "By {tolower(heading)}")
+  )
+})
+
 testthat::test_that("engines agree under non-default chunk templates", {
   path_recursion <- withr::local_tempdir()
   path_loop <- withr::local_tempdir()

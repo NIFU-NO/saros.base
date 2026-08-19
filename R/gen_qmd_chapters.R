@@ -46,6 +46,7 @@ gen_qmd_chapters <-
            replace_heading_for_group = NULL,
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
+           glue_heading_for_group = NULL,
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
@@ -111,6 +112,7 @@ gen_qmd_chapters <-
                 replace_heading_for_group = replace_heading_for_group,
                 prefix_heading_for_group = prefix_heading_for_group,
                 suffix_heading_for_group = suffix_heading_for_group,
+                glue_heading_for_group = glue_heading_for_group,
                 engine = qmd_engine
               )
           } else {
