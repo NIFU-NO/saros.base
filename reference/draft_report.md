@@ -37,6 +37,7 @@ draft_report(
     ".variable_name_dep", .variable_label_suffix_indep = ".variable_name_indep"),
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
+  glue_heading_for_group = NULL,
   require_common_categories = TRUE,
   combined_report = TRUE,
   write_qmd = TRUE,
@@ -221,9 +222,53 @@ draft_report(
 
   `vector<named character>` // *default:* `NULL` (`optional`)
 
-  Names are heading_groups, values are the prefixes and suffixes. Note
-  that prefixes should end with a `\n` as headings must begin on a new
-  line.
+  Names are heading_groups, values are the prefixes and suffixes. These
+  are placed on their own lines, above and below the heading; to change
+  the heading text itself use `glue_heading_for_group`. Note that
+  prefixes should end with a `\n` as headings must begin on a new line.
+
+- glue_heading_for_group:
+
+  *Glue templates for heading text*
+
+  `vector<named character>` // *default:* `NULL` (`optional`)
+
+  Rewrites the text of the headings at one level of the grouping tree.
+  Names are grouping columns, following the same rule as
+  `ignore_heading_for_group`: they must match the columns actually
+  grouped on, i.e. the `organize_by`-argument of
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md),
+  and an entry that is not a grouping column simply has no effect. Note
+  that this is the grouped column, not the one
+  `replace_heading_for_group` may have chosen to supply the label – with
+  the defaults, `.variable_name_indep` rather than
+  `.variable_label_suffix_indep`.
+
+  Values are
+  [`glue::glue()`](https://glue.tidyverse.org/reference/glue.html)
+  templates in which `{heading}` is the heading text that would
+  otherwise have been written. Because each grouping column occupies a
+  fixed level, this targets a heading level:
+  `c(.variable_name_indep = "By {tolower(heading)}")` turns
+
+      ## Self-efficacy
+      ### Gender
+
+  into
+
+      ## Self-efficacy
+      ### By gender
+
+  which reads correctly for someone who sees the sub-heading and the
+  figure without the parent heading above them. Arbitrary R runs inside
+  the braces, so `{sub("^(.)", "\\L\\1", heading, perl = TRUE)}`
+  lowercases only the first letter, and a template needs no placeholder
+  at all if a fixed heading is wanted.
+
+  The `{#sec-}` anchor is derived from the group's value rather than
+  from the heading text, so changing a template moves no cross-reference
+  and invalidates no Quarto `freeze` cache. A group listed in
+  `ignore_heading_for_group` emits no heading and so is unaffected.
 
 - require_common_categories:
 

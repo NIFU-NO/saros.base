@@ -29,7 +29,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpgZ21X3/file1db021e16ef.yaml"
+#> [1] "/tmp/RtmpBTNcfC/file1c9f5fd2e4d.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL
@@ -90,6 +90,9 @@ read_default_draft_report_args(path = tmpfile)
 #> NULL
 #> 
 #> $suffix_heading_for_group
+#> NULL
+#> 
+#> $glue_heading_for_group
 #> NULL
 #> 
 #> $require_common_categories

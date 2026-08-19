@@ -681,6 +681,41 @@
   (5.3s vs 4.8s at the default depth, 18.1s vs 18.2s with one extra
   grouping level), so this is about depth headroom and having a
   fallback, not speed.
+- `draft_report(glue_heading_for_group = )` rewrites the *text* of the
+  headings at one level of the grouping tree, which nothing could
+  previously reach. Names are grouping columns, as in
+  `ignore_heading_for_group`; values are `glue` templates in which
+  `{heading}` is the label that would otherwise have been written.
+  `c(.variable_name_indep = "By {tolower(heading)}")` turns `### Gender`
+  into `### By gender`, so a reader who sees the sub-heading and the
+  figure without the parent heading above them still knows the section
+  is about self-efficacy. Note the key: `.variable_name_indep` is the
+  column *grouped on*, while `replace_heading_for_group` makes
+  `.variable_label_suffix_indep` supply the label — the four
+  `*_heading_for_group` arguments all key on the former, and this one
+  follows them rather than inventing a second convention. Because each
+  grouping column occupies a fixed position in `organize_by`, naming a
+  column is how a heading *level* is targeted. Arbitrary R runs inside
+  the braces, so `{sub("^(.)", "\\L\\1", heading, perl = TRUE)}`
+  lowercases only the first letter and a template with no placeholder at
+  all gives a fixed heading; a malformed template aborts through the
+  package’s existing `glue_err()`, naming the argument. **The existing
+  `prefix_heading_for_group`/`suffix_heading_for_group` are not this**
+  and are unchanged: they emit whole lines above and below the heading —
+  `stri_c(prefix, "\n", "##", ...)` — so they can add a paragraph around
+  a section but cannot alter the heading itself. The two compose. The
+  template is applied after `replace_heading_for_group` has chosen the
+  source column and before the `{#sec-}` anchor is appended, so the
+  anchor stays derived from the group’s *value*: editing a template
+  moves no cross-reference and invalidates no Quarto `freeze` cache, the
+  property [\#213](https://github.com/NIFU-NO/saros.base/issues/213)
+  established. A group listed in `ignore_heading_for_group` emits no
+  heading and is therefore unaffected. The default is `NULL` and output
+  is byte-identical to before when it is not set. Both `qmd_engine`
+  engines hand the argument to `gen_qmd_node()` separately, so
+  `test-qmd_engines.R` pins them equal with a template in force —
+  threading it into only one would otherwise have left every other test
+  green, since the integration test runs the default engine alone.
 
 ### Testing
 
@@ -734,6 +769,27 @@
 
 ### Code quality improvements
 
+- The roxygen2 pin moved from 7.3.3 to 8.0.0, in `DESCRIPTION` and in
+  the `roxygen-drift` workflow, which must agree or the job aborts
+  before it checks anything. **No generated documentation changed**:
+  `roxygen2::roxygenise()` under 8.0.0 reproduces the checked-in `man/`
+  and `NAMESPACE` byte for byte, so the entire upgrade is the pin plus a
+  field rename — 8.0.0 records its version as `Config/roxygen2/version`
+  where 7.x used `RoxygenNote`, and appends it at the end of the file
+  rather than writing it in place. The workflow needed nothing beyond
+  the pin, because it already read whichever of the two fields is
+  present and already excluded `DESCRIPTION` from its diff. The pin
+  remains deliberately not `latest`: 8.1.0 reflows multiple
+  `importFrom()` entries from one package into a multi-line call, so it
+  would disagree with the checked-in `NAMESPACE` without either version
+  being wrong, which is the reason the job pins at all
+  ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This
+  retires the last of the recurring working-tree artifacts
+  [\#257](https://github.com/NIFU-NO/saros.base/issues/257) addressed —
+  with a local roxygen2 newer than the pin, every `devtools::document()`
+  rewrote `DESCRIPTION` as a side effect of documenting something else,
+  and the rewrite had to be reverted by hand before staging or it rode
+  along in an unrelated commit.
 - Moved `tibble` from `Suggests` to `Imports`
   ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)).
   `.onLoad()` builds the default chunk templates with
