@@ -40,4 +40,15 @@ testthat::test_that("validate_draft_report_args", {
      saros.base:::validate_draft_report_args() |>
      testthat::expect_warning(regexp = "`data` is invalid")
 
+    # Test Case 5: An unnamed heading template. Without a rule of its own the
+    # argument is silently a no-op -- `current_group %in% names(NULL)` is FALSE
+    # for every group -- so the warning is the only thing that tells the caller
+    # their template was never applied.
+   args |>
+     utils::modifyList(keep.null = TRUE,
+                       val =
+                         list(glue_heading_for_group = "By {tolower(heading)}")) |>
+     saros.base:::validate_draft_report_args() |>
+     testthat::expect_warning(regexp = "`glue_heading_for_group` is invalid")
+
 })

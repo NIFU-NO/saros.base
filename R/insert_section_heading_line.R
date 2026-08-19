@@ -33,7 +33,8 @@ insert_section_heading_line <- function(grouped_data,
                                         ignore_heading_for_group = NULL,
                                         replace_heading_for_group = NULL,
                                         prefix_heading_for_group = NULL,
-                                        suffix_heading_for_group = NULL) {
+                                        suffix_heading_for_group = NULL,
+                                        glue_heading_for_group = NULL) {
 
   current_group <- names(grouped_data)[level]
 
@@ -46,6 +47,30 @@ insert_section_heading_line <- function(grouped_data,
 
   heading <-
     unique(chapter_structure[chapter_structure[[current_group]] %in% value, renamed_group][[1]])
+
+  # The only route into the heading *text*. `prefix_heading_for_group` and
+  # `suffix_heading_for_group` below wrap the heading in whole lines, so they
+  # cannot turn "Gender" into "By gender" under a "Self-efficacy" parent.
+  #
+  # Keyed on `current_group` -- the column actually grouped on -- like its four
+  # siblings, not on `renamed_group`. Under the default
+  # `replace_heading_for_group` those differ: `.variable_name_indep` is the
+  # group, `.variable_label_suffix_indep` merely supplies the label.
+  #
+  # Placed after the label has been chosen, so `{heading}` is what the reader
+  # would otherwise have seen, and before the anchor is appended, so `{#sec-}`
+  # stays derived from `value` alone -- editing a template must not move a
+  # cross-reference or invalidate Quarto's freeze cache (GH #213).
+  if (current_group %in% names(glue_heading_for_group)) {
+    heading <-
+      tryCatch(
+        as.character(glue::glue_data(
+          list(heading = heading),
+          glue_heading_for_group[[current_group]]
+        )),
+        error = function(cnd) glue_err(cnd = cnd, arg_name = "glue_heading_for_group")
+      )
+  }
 
   prefix <- if(current_group %in% names(prefix_heading_for_group)) {
     prefix_heading_for_group[current_group]

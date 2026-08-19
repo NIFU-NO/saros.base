@@ -13,6 +13,7 @@ gen_qmd_chapters(
   replace_heading_for_group = NULL,
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
+  glue_heading_for_group = NULL,
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
@@ -89,8 +90,49 @@ so the default only applies to a direct call.}
 
 \verb{vector<named character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Names are heading_groups, values are the prefixes and suffixes. Note
+Names are heading_groups, values are the prefixes and suffixes. These are
+placed on their own lines, above and below the heading; to change the
+heading text itself use \code{glue_heading_for_group}. Note
 that prefixes should end with a \verb{\\n} as headings must begin on a new line.}
+
+\item{glue_heading_for_group}{\emph{Glue templates for heading text}
+
+\verb{vector<named character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Rewrites the text of the headings at one level of the grouping tree.
+Names are grouping columns, following the same rule as
+\code{ignore_heading_for_group}: they must match the columns actually grouped
+on, i.e. the \code{organize_by}-argument of \code{\link[=refine_chapter_overview]{refine_chapter_overview()}}, and an
+entry that is not a grouping column simply has no effect. Note that this is
+the grouped column, not the one \code{replace_heading_for_group} may have chosen
+to supply the label -- with the defaults, \code{.variable_name_indep} rather
+than \code{.variable_label_suffix_indep}.
+
+Values are \code{\link[glue:glue]{glue::glue()}} templates in which \code{{heading}} is the heading
+text that would otherwise have been written. Because each grouping column
+occupies a fixed level, this targets a heading level:
+\code{c(.variable_name_indep = "By {tolower(heading)}")} turns
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Self-efficacy
+### Gender
+}\if{html}{\out{</div>}}
+
+into
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Self-efficacy
+### By gender
+}\if{html}{\out{</div>}}
+
+which reads correctly for someone who sees the sub-heading and the figure
+without the parent heading above them. Arbitrary R runs inside the braces,
+so \code{{sub("^(.)", "\\\\L\\\\1", heading, perl = TRUE)}} lowercases only the
+first letter, and a template needs no placeholder at all if a fixed
+heading is wanted.
+
+The \verb{\{#sec-\}} anchor is derived from the group's value rather than from the
+heading text, so changing a template moves no cross-reference and
+invalidates no Quarto \code{freeze} cache. A group listed in
+\code{ignore_heading_for_group} emits no heading and so is unaffected.}
 
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 

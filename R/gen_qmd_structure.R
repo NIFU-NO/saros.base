@@ -21,7 +21,8 @@ gen_qmd_node <- function(value,
                          ignore_heading_for_group,
                          replace_heading_for_group,
                          prefix_heading_for_group,
-                         suffix_heading_for_group) {
+                         suffix_heading_for_group,
+                         glue_heading_for_group) {
   # Keep only the part of the metadata that belongs below this value.
   sub_df <-
     vctrs::vec_slice(
@@ -70,7 +71,8 @@ gen_qmd_node <- function(value,
       ignore_heading_for_group = ignore_heading_for_group,
       replace_heading_for_group = replace_heading_for_group,
       prefix_heading_for_group = prefix_heading_for_group,
-      suffix_heading_for_group = suffix_heading_for_group
+      suffix_heading_for_group = suffix_heading_for_group,
+      glue_heading_for_group = glue_heading_for_group
     )
 
   output <-
@@ -126,7 +128,8 @@ gen_group_structure_recursion <-
            ignore_heading_for_group,
            replace_heading_for_group,
            prefix_heading_for_group,
-           suffix_heading_for_group) {
+           suffix_heading_for_group,
+           glue_heading_for_group) {
     walk <- function(grouped_data, level, grouping_structure) {
       output <- character()
 
@@ -146,7 +149,8 @@ gen_group_structure_recursion <-
             ignore_heading_for_group = ignore_heading_for_group,
             replace_heading_for_group = replace_heading_for_group,
             prefix_heading_for_group = prefix_heading_for_group,
-            suffix_heading_for_group = suffix_heading_for_group
+            suffix_heading_for_group = suffix_heading_for_group,
+            glue_heading_for_group = glue_heading_for_group
           )
         output <- node$output
 
@@ -167,7 +171,8 @@ gen_group_structure_loop <-
            ignore_heading_for_group,
            replace_heading_for_group,
            prefix_heading_for_group,
-           suffix_heading_for_group) {
+           suffix_heading_for_group,
+           glue_heading_for_group) {
     # One list element per activation the recursion would have had.
     new_frame <- function(grouped_data, level, grouping_structure) {
       beyond <- level > ncol(grouped_data)
@@ -233,7 +238,8 @@ gen_group_structure_loop <-
           ignore_heading_for_group = ignore_heading_for_group,
           replace_heading_for_group = replace_heading_for_group,
           prefix_heading_for_group = prefix_heading_for_group,
-          suffix_heading_for_group = suffix_heading_for_group
+          suffix_heading_for_group = suffix_heading_for_group,
+          glue_heading_for_group = glue_heading_for_group
         )
       frame$output <- node$output
 
@@ -249,6 +255,7 @@ gen_qmd_structure <-
            replace_heading_for_group = NULL,
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
+           glue_heading_for_group = NULL,
            engine = c("recursion", "loop")) {
     engine <- rlang::arg_match(engine)
 
@@ -272,6 +279,7 @@ gen_qmd_structure <-
       ignore_heading_for_group = ignore_heading_for_group,
       replace_heading_for_group = replace_heading_for_group,
       prefix_heading_for_group = prefix_heading_for_group,
-      suffix_heading_for_group = suffix_heading_for_group
+      suffix_heading_for_group = suffix_heading_for_group,
+      glue_heading_for_group = glue_heading_for_group
     )
   }
