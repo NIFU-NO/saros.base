@@ -41,13 +41,13 @@ jobs:
           # roxygen2 produces?" -- rather than a moving one. Tracking the
           # latest release instead makes the job unfixable for a maintainer on
           # an older roxygen2: 8.1.0 reflows multiple importFrom() entries from
-          # one package into a multi-line call, so it disagrees with 7.3.3 on a
+          # one package into a multi-line call, so it disagrees with 8.0.0 on a
           # NAMESPACE neither version is wrong about.
           #
           # Keep this in sync with DESCRIPTION; the next step fails loudly if
           # it drifts. roxygenise() also loads the package source with pkgload,
           # so every package in Imports has to be present -- hence local::.
-          extra-packages: roxygen2@7.3.3, local::.
+          extra-packages: roxygen2@8.0.0, local::.
           needs: check
 
       - name: Check the pin still matches DESCRIPTION
