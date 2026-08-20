@@ -47,6 +47,7 @@ gen_qmd_chapters <-
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
            glue_heading_for_group = NULL,
+           chapter_setup_packages = c("saros", "gt"),
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
@@ -150,7 +151,7 @@ gen_qmd_chapters <-
           out <- c(
             yaml_section,
             stringi::stri_c("# ", chapter), # Should use generalized function to get also reference, prefix and suffix
-            chapter_setup_chunk(chapter_foldername_clean),
+            chapter_setup_chunk(chapter_foldername_clean, packages = chapter_setup_packages),
             load_dataset,
             qmd_start_section,
             chapter_contents,

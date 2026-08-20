@@ -126,6 +126,21 @@
 #'   project-specific, including further `library()` calls if your own
 #'   `chunk_templates` reach for other packages.
 #'
+#' @param chapter_setup_packages *Packages attached at the top of each chapter*
+#'
+#'   `vector<character>` // *default:* `c("saros", "gt")` (`optional`)
+#'
+#'   Every generated chapter opens with a setup chunk attaching these, so that
+#'   a chunk template calling `makeme(...)` or `gt(...)` unqualified still
+#'   works. The default `chunk_templates` do not rely on this — they are
+#'   namespace-qualified — but a project supplying its own templates written
+#'   the older way does.
+#'
+#'   Set to `NULL` or `character()` to emit no setup chunk at all. That matters
+#'   because neither `saros` nor `gt` is a dependency of this package: if your
+#'   own `chunk_templates` need neither, attaching them would fail every
+#'   chapter of a project that has not installed them.
+#'
 #' @param path *Output path*
 #'
 #'   `scalar<character>` // *default:* `tempdir()` (`optional`)
@@ -378,6 +393,7 @@ draft_report <-
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
            glue_heading_for_group = NULL,
+           chapter_setup_packages = c("saros", "gt"),
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
            # Formats and attachments
            combined_report = TRUE,
@@ -465,6 +481,7 @@ draft_report <-
         prefix_heading_for_group = args$prefix_heading_for_group,
         suffix_heading_for_group = args$suffix_heading_for_group,
         glue_heading_for_group = args$glue_heading_for_group,
+        chapter_setup_packages = args$chapter_setup_packages,
         chapter_yaml_file = args$chapter_yaml_file,
         chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
         chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,

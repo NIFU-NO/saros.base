@@ -18,6 +18,14 @@
 # the YAML.
 chapter_setup_chunk <- function(chapter_foldername_clean,
                                 packages = c("saros", "gt")) {
+  # No packages means no chunk, not an empty one: knitr executes an empty
+  # ```{r}``` block and renders a cell for it. `saros` and `gt` are in neither
+  # Imports nor Suggests of this package, so a project whose own
+  # `chunk_templates` need neither must be able to switch this off rather than
+  # gain a hard dependency it never asked for.
+  if (length(packages) == 0L) {
+    return(NULL)
+  }
   stringi::stri_c(
     "```{r}\n",
     "#| label: 'Setup for ", chapter_foldername_clean, "'\n",
