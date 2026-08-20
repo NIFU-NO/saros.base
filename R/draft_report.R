@@ -113,6 +113,19 @@
 #'
 #'   Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.
 #'
+#'   **The contents are processed as a [glue::glue()] template**, with the
+#'   chapter's own metadata available as `{.chapter}`, `{.variable_name_dep}`
+#'   and so on. Braces that are meant to survive into the generated file must
+#'   therefore be doubled: an R chunk has to open with ```` ```{{r}} ````, not
+#'   ```` ```{r} ````, or the run aborts with `object 'r' not found`.
+#'
+#'   Note that a start section is no longer needed merely to make a chapter
+#'   render. The default `chunk_templates` are namespace-qualified, and every
+#'   generated chapter opens with a setup chunk attaching `saros` and `gt`, so
+#'   a chapter renders as generated. A snippet is still the place for anything
+#'   project-specific, including further `library()` calls if your own
+#'   `chunk_templates` reach for other packages.
+#'
 #' @param path *Output path*
 #'
 #'   `scalar<character>` // *default:* `tempdir()` (`optional`)
@@ -385,6 +398,30 @@ draft_report <-
 
 
     args <- validate_draft_report_args(params = args)
+
+
+    # `combined_report` defaults to TRUE and `report_includes_files` to FALSE,
+    # so the shipped combination writes a `report.qmd` and leaves it with no
+    # chapters in it (GH #119). Quarto renders that file without complaint,
+    # into a document whose entire body is the title, which is why it reads as
+    # "the report setup does not work" rather than as an error.
+    #
+    # Reported rather than corrected: flipping either default would change the
+    # generated output of every existing caller. Raised before anything is
+    # written, so it arrives with the run rather than after it.
+    #
+    # `cli_inform()` rather than `cli_warn()` deliberately. This fires on the
+    # *default* pairing, so a warning would fire on essentially every call --
+    # 55 times across this package's own suite -- which is the shape that
+    # trains people to ignore warnings. A message is also what draft_report()
+    # already uses to report a defaulted argument ("`chunk_templates` is NULL.
+    # Using global defaults."), so this arrives in the console the same way.
+    if (isTRUE(args$combined_report) && !isTRUE(args$report_includes_files)) {
+      cli::cli_inform(c(
+        "!" = "{.arg combined_report} is {.code TRUE} but {.arg report_includes_files} is {.code FALSE}, so {.file {paste0(args$report_filename, '.qmd')}} will contain no chapters.",
+        i = "Set {.code report_includes_files = TRUE} to include them, or {.code combined_report = FALSE} to stop writing the file."
+      ))
+    }
 
 
     data <- ungroup_data(data)

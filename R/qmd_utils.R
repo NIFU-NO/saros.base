@@ -1,3 +1,33 @@
+# The setup chunk every generated chapter opens with (GH #119).
+#
+# The default chunk templates are namespace-qualified as of this change, so
+# they no longer need this. It is here for the templates saros.base does not
+# control: a project supplying its own `chunk_templates` writes `makeme(...)`
+# and `gt(...)` the way the defaults used to, and until now nothing attached
+# either package -- not the generated qmd, not this package, not the project
+# templates in `inst/`. Such a chapter failed in a *chunk header*
+# (`fig.height=fig_height_h_barchart(...)`), which knitr evaluates before the
+# chunk body, so it died before running a line of its own code.
+#
+# Emitted unconditionally rather than alongside the dataset import, which is
+# skipped entirely when `attach_chapter_dataset = FALSE`; the packages are
+# needed either way.
+#
+# `include: false` keeps the startup messages out of the rendered chapter,
+# which is what the dataset chunk beside it does by way of `echo: false` in
+# the YAML.
+chapter_setup_chunk <- function(chapter_foldername_clean,
+                                packages = c("saros", "gt")) {
+  stringi::stri_c(
+    "```{r}\n",
+    "#| label: 'Setup for ", chapter_foldername_clean, "'\n",
+    "#| include: false\n",
+    stringi::stri_c("library(", packages, ")", collapse = "\n"),
+    "\n```",
+    ignore_null = TRUE
+  )
+}
+
 # Helper: Process template section file with optional glue templating
 process_template_section <- function(filepath, chapter_structure = NULL, arg_name) {
   if (is.null(filepath) || !rlang::is_string(filepath)) {

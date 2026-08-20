@@ -55,6 +55,12 @@
       ---
       # Bakgrunn
       ```{r}
+      #| label: 'Setup for 1_Bakgrunn'
+      #| include: false
+      library(saros)
+      library(gt)
+      ```
+      ```{r}
       #| label: 'Import data for 1_Bakgrunn'
       data_1_Bakgrunn <- readRDS('1_Bakgrunn/data_1_Bakgrunn.rds')
       ```
@@ -64,18 +70,18 @@
       
       ::: {#fig-x1-sex-cat-plot-html}
       
-      ```{r, fig.height=fig_height_h_barchart(n_y=1, n_cats_y=2, max_chars_labels_y=6, max_chars_cats_y=7)}
+      ```{r, fig.height=saros::fig_height_h_barchart(n_y=1, n_cats_y=2, max_chars_labels_y=6, max_chars_cats_y=7)}
       x1_sex_cat_plot_html <- 
       	data_1_Bakgrunn |>
-      		makeme(dep = c(x1_sex), 
+      		saros::makeme(dep = c(x1_sex), 
       		type = 'cat_plot_html')
-      nrange <- stringi::stri_c('N = ', n_range2(x1_sex_cat_plot_html))
-      link <- make_link(data = x1_sex_cat_plot_html$data)
-      link_plot <- make_link(data = x1_sex_cat_plot_html, 
+      nrange <- stringi::stri_c('N = ', saros::n_range2(x1_sex_cat_plot_html))
+      link <- saros::make_link(data = x1_sex_cat_plot_html$data)
+      link_plot <- saros::make_link(data = x1_sex_cat_plot_html, 
       		file_suffix = '.png', link_prefix='[PNG](', 
-      		save_fn = ggsaver)
+      		save_fn = saros::ggsaver)
       x <- I(paste0(c(nrange, link, link_plot), collapse=', '))
-      girafe(ggobj = x1_sex_cat_plot_html)
+      saros::girafe(ggobj = x1_sex_cat_plot_html)
       ```
       
       _Gender_. `{r} x`.
@@ -88,13 +94,13 @@
       ```{r}
       x1_sex_cat_table_html <- 
       	data_1_Bakgrunn |>
-      		makeme(dep = c(x1_sex), 
+      		saros::makeme(dep = c(x1_sex), 
       		type = 'cat_table_html')
-      nrange <- stringi::stri_c('N = ', n_range(data = data_1_Bakgrunn, 
+      nrange <- stringi::stri_c('N = ', saros::n_range(data = data_1_Bakgrunn, 
       		dep = c(x1_sex)))
-      link <- make_link(data=x1_sex_cat_table_html)
+      link <- saros::make_link(data=x1_sex_cat_table_html)
       x <- I(paste0(c(nrange, link), collapse=', '))
-      gt(x1_sex_cat_table_html)
+      gt::gt(x1_sex_cat_table_html)
       ```
       
       _Gender_. N=`{r} x`.
@@ -165,6 +171,12 @@
       ---
       # Bakgrunn
       ```{r}
+      #| label: 'Setup for 1_Bakgrunn'
+      #| include: false
+      library(saros)
+      library(gt)
+      ```
+      ```{r}
       #| label: 'Import data for 1_Bakgrunn'
       data_1_Bakgrunn <- readRDS('1_Bakgrunn/data_1_Bakgrunn.rds')
       ```
@@ -196,18 +208,18 @@
             '',
             '```{r}',
             'library(saros)',
-            'knitr::opts_template$set(fig = list(fig.height = fig_height_h_barchart2(plots[[.x]])))',
+            'knitr::opts_template$set(fig = list(fig.height = saros::fig_height_h_barchart2(plots[[.x]])))',
             '',
             '```',
             '',
             '```{r, opts.label=\'fig\'}',
             'library(ggplot2)',
             'library(ggiraph)',
-            'nrange <- stringi::stri_c(\'N = \', n_range2(plots[[.x]]))',
-            'link <- make_link(data = plots[[.x]]$data)',
-            'link_plot <- make_link(data = plots[[.x]], link_prefix=\'[PNG](\', file_suffix = \'.png\', save_fn = ggsaver)',
+            'nrange <- stringi::stri_c(\'N = \', saros::n_range2(plots[[.x]]))',
+            'link <- saros::make_link(data = plots[[.x]]$data)',
+            'link_plot <- saros::make_link(data = plots[[.x]], link_prefix=\'[PNG](\', file_suffix = \'.png\', save_fn = saros::ggsaver)',
             'x <- I(paste0(c(nrange, link, link_plot), collapse=\', \'))',
-            'girafe(ggobj = plots[[.x]])',
+            'saros::girafe(ggobj = plots[[.x]])',
             '```',
             '',
             '`r x`'
@@ -244,11 +256,11 @@
           '```{r}',
           'library(gt)',
           'library(saros)',
-          'nrange <- stringi::stri_c(\'N = \', n_range(data = data_1_Bakgrunn, 
+          'nrange <- stringi::stri_c(\'N = \', saros::n_range(data = data_1_Bakgrunn, 
       		dep = c(x1_sex)))',
-          'link <- make_link(data = tbls[[.x]])',
+          'link <- saros::make_link(data = tbls[[.x]])',
           'x <- I(paste0(c(nrange, link), collapse=\', \')',
-          'gt(tbls[[.x]])',
+          'gt::gt(tbls[[.x]])',
           '```',
           '',
           '`r x`',
@@ -348,6 +360,12 @@
       ---
       # Num
       ```{r}
+      #| label: 'Setup for 1_Num'
+      #| include: false
+      library(saros)
+      library(gt)
+      ```
+      ```{r}
       #| label: 'Import data for 1_Num'
       data_1_Num <- readRDS('1_Num/data_1_Num.rds')
       ```
@@ -360,11 +378,11 @@
       ```{r}
       c_int_table_html <- 
       	data_1_Num |>
-      		makeme(dep = c(c_1,c_2), 
+      		saros::makeme(dep = c(c_1,c_2), 
       		type = 'int_table_html')
-      link <- make_link(data = c_int_table_html)
+      link <- saros::make_link(data = c_int_table_html)
       x <- I(link)
-      gt(c_int_table_html)
+      gt::gt(c_int_table_html)
       ```
       
       _How many years of experience do you have in_. `{r} x`.
@@ -390,6 +408,12 @@
       ---
       # Num
       ```{r}
+      #| label: 'Setup for 1_Num'
+      #| include: false
+      library(saros)
+      library(gt)
+      ```
+      ```{r}
       #| label: 'Import data for 1_Num'
       data_1_Num <- readRDS('1_Num/data_1_Num.rds')
       ```
@@ -402,10 +426,10 @@
       ```{r}
       plot <- 
       	data_1_Num |>
-      		makeme(dep = c(c_1,c_2), 
+      		saros::makeme(dep = c(c_1,c_2), 
       		type = 'int_plot_html')
-      x <- get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
-      girafe(ggobj = plot)
+      x <- saros::get_fig_title_suffix_from_ggplot(plot, save = parameters$save)
+      saros::girafe(ggobj = plot)
       ```
       
       _How many years of experience do you have in_. `{r} x`.

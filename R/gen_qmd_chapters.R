@@ -150,6 +150,7 @@ gen_qmd_chapters <-
           out <- c(
             yaml_section,
             stringi::stri_c("# ", chapter), # Should use generalized function to get also reference, prefix and suffix
+            chapter_setup_chunk(chapter_foldername_clean),
             load_dataset,
             qmd_start_section,
             chapter_contents,

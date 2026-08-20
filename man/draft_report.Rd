@@ -107,7 +107,20 @@ Path to file used to insert header YAML, in each chapter.}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.}
+Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.
+
+\strong{The contents are processed as a \code{\link[glue:glue]{glue::glue()}} template}, with the
+chapter's own metadata available as \code{{.chapter}}, \code{{.variable_name_dep}}
+and so on. Braces that are meant to survive into the generated file must
+therefore be doubled: an R chunk has to open with \verb{```\{\{r\}\}}, not
+\verb{```\{r\}}, or the run aborts with \verb{object 'r' not found}.
+
+Note that a start section is no longer needed merely to make a chapter
+render. The default \code{chunk_templates} are namespace-qualified, and every
+generated chapter opens with a setup chunk attaching \code{saros} and \code{gt}, so
+a chapter renders as generated. A snippet is still the place for anything
+project-specific, including further \code{library()} calls if your own
+\code{chunk_templates} reach for other packages.}
 
 \item{index_filename}{\emph{Index filename}
 
