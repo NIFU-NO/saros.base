@@ -69,12 +69,23 @@ Rscript.exe -e "devtools::document()"
 
 ### Running Tests (follow Testing Workflow above)
 ```powershell
+$env:NOT_CRAN = "true"
+
 # Quick testing (preferred for development)
 Rscript.exe -e "devtools::load_all(); devtools::test()"
 
 # Full check (use before PR, includes tests)
 Rscript.exe -e "devtools::check()"
 ```
+
+`$env:NOT_CRAN` must be set here for the same reason as in the Testing Workflow
+section above: without it the snapshot tests are skipped and the run reports
+green without having exercised them. Check the reported skip count is 0.
+
+These `-e` forms are one-liners, which is the case that works. A **multi-line**
+`-e` argument produces no output and no error on Windows — the failure is
+silent — so put anything longer than one line in a script file and run
+`Rscript.exe <file>`.
 
 ## File Patterns to Ignore
 

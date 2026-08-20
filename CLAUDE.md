@@ -19,7 +19,11 @@ point at the case that established the rule.
   wrong is invisible: `.libPaths()` is identical either way and every package
   still loads, but `R_LIBS_USER`, the locale settings and the project's API
   credentials are all silently absent.
-- Prefer **script files over `Rscript -e`** — inline quoting fails on Windows.
+- **`Rscript -e` is fine for a one-liner, but not for a multi-line argument.**
+  On Windows a multi-line `-e` string produces **no output and no error** — the
+  failure is silent, so it reads as "the command printed nothing" rather than
+  as a mistake. Nested quotes in a one-liner are fine. Put anything spanning
+  more than one line in a script file and run `Rscript <file>`.
 - **Regenerate `man/` with the roxygen2 version `DESCRIPTION` pins** whenever
   roxygen comments change (plain `#` comments do not require it). The
   `roxygen-drift` workflow catches a stale `man/`, and aborts up front if the
