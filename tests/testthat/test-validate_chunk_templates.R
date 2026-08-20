@@ -193,3 +193,118 @@ testthat::test_that("the templates are returned unchanged", {
   returned <- suppressWarnings(saros.base:::validate_chunk_templates(doubled))
   testthat::expect_identical(returned, doubled)
 })
+
+# Required core columns (GH #242) -----------------------------------------------
+
+# `core_columns` was checked with `for (col in core_columns) if (!col %in%
+# core_columns)`, comparing the list to itself, so the condition was FALSE on
+# every iteration and `chunk_templates` was never inspected at all.
+#
+# The obvious repair -- `!col %in% names(chunk_templates)` -- would have made
+# the package reject its own defaults, because the set named
+# `.variable_type_dep`, which is a *chapter_structure* column (see
+# `?refine_chapter_overview` and `validate_chapter_structure()`) and has never
+# existed in `chunk_templates`. It is dropped rather than renamed.
+#
+# Every one of the four columns below already fails somewhere downstream when
+# absent; what was missing is a failure that names `chunk_templates`. Two of
+# them are actively misleading: a missing `.template` passes
+# `refine_chapter_overview()` and is reported much later against
+# `chapter_structure`, and the two type columns surface as
+# `Must select at least one item` from a tidyselect call the caller never made.
+
+required_core_columns <- c(
+  ".template_name", ".template",
+  ".template_variable_type_dep", ".template_variable_type_indep"
+)
+
+testthat::test_that("a chunk_templates missing a required column is rejected", {
+  full <- one_template("cat_plot_html", "body")
+  testthat::expect_true(all(required_core_columns %in% names(full)))
+
+  for (col in required_core_columns) {
+    without <- full[, setdiff(names(full), col), drop = FALSE]
+    cnd <- testthat::expect_error(
+      saros.base:::validate_chunk_templates(without),
+      class = "rlang_error"
+    )
+    # Naming the argument the caller actually got wrong is the whole point of
+    # the fix; every pre-existing failure named something else.
+    testthat::expect_match(conditionMessage(cnd), "chunk_templates", fixed = TRUE)
+    testthat::expect_match(conditionMessage(cnd), col, fixed = TRUE)
+  }
+})
+
+testthat::test_that("every missing required column is named in one message", {
+  # Dropped in the order `core_columns` lists them, so an implementation that
+  # aborted on the *first* missing column would report `.template_name` and
+  # stop. Asserting the later one appears too is what distinguishes one
+  # message from four sequential aborts. Neither name is a substring of the
+  # other, unlike `.template` and `.template_variable_type_indep`.
+  full <- one_template("cat_plot_html", "body")
+  without_two <- full[
+    , setdiff(names(full), c(".template_name", ".template_variable_type_dep")),
+    drop = FALSE
+  ]
+
+  cnd <- testthat::expect_error(
+    saros.base:::validate_chunk_templates(without_two),
+    class = "rlang_error"
+  )
+  testthat::expect_match(conditionMessage(cnd), ".template_name", fixed = TRUE)
+  testthat::expect_match(
+    conditionMessage(cnd), ".template_variable_type_dep",
+    fixed = TRUE
+  )
+})
+
+testthat::test_that("every default variant satisfies the required columns", {
+  # The half of #242 that would have caught the bug. This cannot fail against
+  # the unfixed code -- nothing rejected anything then -- so it guards the
+  # *repair* rather than the defect: it is what fails if the required set ever
+  # names a column the package's own templates do not carry, which is exactly
+  # what `.variable_type_dep` did.
+  variants <- grep(
+    "^default_chunk_templates_",
+    names(saros.base:::.saros.env),
+    value = TRUE
+  )
+  testthat::expect_gte(length(variants), 5)
+
+  for (variant in variants) {
+    number <- as.integer(sub("^default_chunk_templates_", "", variant))
+    testthat::expect_no_error(
+      saros.base:::validate_chunk_templates(
+        saros.base::get_chunk_template_defaults(number)
+      )
+    )
+  }
+})
+
+testthat::test_that("a chunk_templates without .template no longer blames chapter_structure", {
+  # The worst of the four. Missing `.template` passed validation, passed
+  # `refine_chapter_overview()` entirely, and only surfaced inside
+  # `draft_report()` as "`chapter_structure` is missing `.template`" -- naming
+  # an object the caller may never have touched, in a different function, one
+  # call later.
+  ct <- data.frame(
+    .template_name = "t",
+    .template_variable_type_dep = "fct;ord",
+    .template_variable_type_indep = NA_character_,
+    stringsAsFactors = FALSE
+  )
+
+  cnd <- testthat::expect_error(
+    suppressMessages(suppressWarnings(
+      saros.base::refine_chapter_overview(
+        chapter_overview = data.frame(chapter = "Ch", dep = "a_1", indep = ""),
+        data = saros.base::ex_survey,
+        chunk_templates = ct,
+        progress = FALSE
+      )
+    )),
+    class = "rlang_error"
+  )
+  testthat::expect_match(conditionMessage(cnd), "chunk_templates", fixed = TRUE)
+  testthat::expect_no_match(conditionMessage(cnd), "chapter_structure", fixed = TRUE)
+})

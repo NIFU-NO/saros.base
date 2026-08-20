@@ -7,11 +7,37 @@ validate_chunk_templates <-
     if(!inherits(chunk_templates, "data.frame")) {
       cli::cli_abort("{.arg chunk_templates} must be a data.frame, not {.obj_type_friendly {chunk_templates}}.")
     }
-    core_columns <- c(".template_name", ".template", ".variable_type_dep")
-    for(col in core_columns) {
-      if(!col %in% core_columns) {
-        cli::cli_abort("{.arg chunk_templates} must contain {.var {col}}.")
-      }
+    # This compared `core_columns` to itself -- `for (col in core_columns) if
+    # (!col %in% core_columns)` -- so the condition was FALSE on every
+    # iteration and `chunk_templates` was never inspected (GH #242).
+    #
+    # `.variable_type_dep` is dropped rather than renamed. It is a
+    # *chapter_structure* column (documented on `refine_chapter_overview()`,
+    # consumed by `validate_chapter_structure()`, and named in
+    # `draft_report(ignore_heading_for_group = )`); no chunk_templates has ever
+    # had it, in any of the five default variants or at any point since the
+    # first commit. Repairing the condition without also fixing the set would
+    # have made the package reject `get_chunk_template_defaults()` -- its own
+    # defaults, and the default value of the argument.
+    #
+    # All four columns below are required because all four already fail when
+    # absent; the check exists to name `chunk_templates` while doing it. The
+    # two type columns otherwise surface as `Must select at least one item`
+    # from a tidyselect call in remove_from_chapter_structure_if_no_type_match(),
+    # and a missing `.template` passes refine_chapter_overview() outright and is
+    # reported one function later against `chapter_structure`. So this aborts
+    # rather than warning for a cycle: no caller can be relying on an omission
+    # that has never worked.
+    core_columns <- c(
+      ".template_name", ".template",
+      ".template_variable_type_dep", ".template_variable_type_indep"
+    )
+    missing_columns <- setdiff(core_columns, names(chunk_templates))
+    if (length(missing_columns) > 0) {
+      # Reported together rather than one abort per column: a hand-built
+      # template set typically misses more than one, and fixing them one
+      # error at a time is needless.
+      cli::cli_abort("{.arg chunk_templates} must contain {.var {missing_columns}}.")
     }
     if(nrow(chunk_templates)==0) {
       cli::cli_abort("{.arg chunk_templates} must contain at least one template.")
