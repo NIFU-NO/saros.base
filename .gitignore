@@ -18,3 +18,9 @@ settings.local.json
 # msys/Git Bash crash dumps. These regenerate constantly on this machine
 # and are never package content.
 *.stackdump
+
+# Per-session handoff notes: volatile state and machine-specific paths,
+# deliberately never committed. The durable rules that used to live in it are
+# in the tracked CLAUDE.md instead. Ignored so that an entry in `git status`
+# keeps meaning something, which is the point of the two rules above.
+HANDOFF.md

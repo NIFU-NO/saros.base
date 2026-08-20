@@ -7,11 +7,22 @@ Immediately alert the user if there exist no tests for the given functions they 
 ### Quick Testing (Preferred)
 Use this for faster iteration during development:
 ```r
+Sys.setenv(NOT_CRAN = "true")
 devtools::load_all(); devtools::test()
 ```
 - **Faster** than full check
 - Runs all tests
 - Good for verifying code changes quickly
+
+**`NOT_CRAN=true` is not optional.** Without it the snapshot tests in
+`test-qmd_snapshots.R` call `skip_on_cran()` and are silently skipped, so a run
+can report all-green having never exercised the tests that prove the generated
+`.qmd` did not change. **Check that the reported skip count is 0** before
+treating a run as evidence.
+
+If the suite dies with `testthat subprocess failed to start` before any test
+runs, set `TESTTHAT_PARALLEL=false` as well — `DESCRIPTION` sets
+`Config/testthat/parallel: true`, which does not work on every machine.
 
 ### Full Package Check
 Only use when necessary (e.g., before PR):
@@ -58,12 +69,23 @@ Rscript.exe -e "devtools::document()"
 
 ### Running Tests (follow Testing Workflow above)
 ```powershell
+$env:NOT_CRAN = "true"
+
 # Quick testing (preferred for development)
 Rscript.exe -e "devtools::load_all(); devtools::test()"
 
 # Full check (use before PR, includes tests)
 Rscript.exe -e "devtools::check()"
 ```
+
+`$env:NOT_CRAN` must be set here for the same reason as in the Testing Workflow
+section above: without it the snapshot tests are skipped and the run reports
+green without having exercised them. Check the reported skip count is 0.
+
+These `-e` forms are one-liners, which is the case that works. A **multi-line**
+`-e` argument produces no output and no error on Windows — the failure is
+silent — so put anything longer than one line in a script file and run
+`Rscript.exe <file>`.
 
 ## File Patterns to Ignore
 
