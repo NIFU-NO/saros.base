@@ -26,3 +26,5 @@ air\.toml
 copilot-analysis-.*\.md$
 coverage-report\.html$
 ^lib$
+^CLAUDE\.md$
+^HANDOFF\.md$
