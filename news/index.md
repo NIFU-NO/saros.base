@@ -133,6 +133,58 @@
 
 ### Bug fixes
 
+- `validate_chunk_templates()` now checks its input
+  ([\#242](https://github.com/NIFU-NO/saros.base/issues/242)). Its
+  core-column loop was
+  `for (col in core_columns) if (!col %in% core_columns)` — the list
+  compared against itself, so the condition was `FALSE` on every
+  iteration and `chunk_templates` was never inspected at all. The
+  function has never rejected a malformed template set in any version of
+  this package; the string dates to the first commit. **The naive repair
+  would have been worse than the bug**: `core_columns` named
+  `.variable_type_dep`, which no `chunk_templates` has ever had, so
+  changing the condition to `!col %in% names(chunk_templates)` would
+  have made
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  abort on
+  [`get_chunk_template_defaults()`](https://nifu-no.github.io/saros.base/reference/get_chunk_template_defaults.md)
+  — the package’s own defaults, and the default value of the argument.
+  That name is **dropped rather than renamed**, which is the third
+  possibility the issue did not list: `.variable_type_dep` is a
+  *`chapter_structure`* column, documented on
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md),
+  consumed by `validate_chapter_structure()` and
+  `remove_from_chapter_structure_if_no_type_match()`, and named in
+  `draft_report(ignore_heading_for_group = )`. It was a column from the
+  neighbouring schema sitting in the wrong validator, not a stale
+  spelling of `.template_variable_type_dep`. The required set is now the
+  four columns the defaults actually carry: `.template_name`,
+  `.template`, `.template_variable_type_dep` and
+  `.template_variable_type_indep`. **All four are required because all
+  four already failed when absent** — the check adds no new restriction,
+  it only moves an existing failure to the point where `chunk_templates`
+  can be named. Dropping `.template_name` gave a
+  [`tidyselect::all_of()`](https://tidyselect.r-lib.org/reference/all_of.html)
+  error from inside
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md);
+  either type column gave `Must select at least one item`, from a
+  tidyselect call in `remove_from_chapter_structure_if_no_type_match()`
+  that the caller never made. The worst was `.template`, which passed
+  [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
+  outright and surfaced one function later, inside
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md),
+  as `chapter_structure is missing .template` — blaming an object the
+  caller may never have touched. Not one of the four mentioned
+  `chunk_templates`. This also settles the issue’s second question,
+  abort versus warn for a cycle: it aborts, because no caller can be
+  relying on an omission that has never worked. Missing columns are
+  reported together in one message rather than one abort per column,
+  since a hand-built template set typically misses more than one. The
+  half of the test that would have caught the original bug — every
+  default variant must pass — enumerates the variants from `.saros.env`
+  rather than hardcoding, as there are five; it was verified by
+  reintroducing `.variable_type_dep` into the required set, which breaks
+  15 tests.
 - `draft_report(log_file = )` now writes the log it documents, and both
   functions’ documented default for `log_file` has been corrected from
   `"_log.txt"` to `NULL`
@@ -772,17 +824,18 @@
 - The roxygen2 pin moved from 7.3.3 to 8.0.0, in `DESCRIPTION` and in
   the `roxygen-drift` workflow, which must agree or the job aborts
   before it checks anything. **No generated documentation changed**:
-  `roxygen2::roxygenise()` under 8.0.0 reproduces the checked-in `man/`
-  and `NAMESPACE` byte for byte, so the entire upgrade is the pin plus a
-  field rename — 8.0.0 records its version as `Config/roxygen2/version`
-  where 7.x used `RoxygenNote`, and appends it at the end of the file
-  rather than writing it in place. The workflow needed nothing beyond
-  the pin, because it already read whichever of the two fields is
-  present and already excluded `DESCRIPTION` from its diff. The pin
-  remains deliberately not `latest`: 8.1.0 reflows multiple
-  `importFrom()` entries from one package into a multi-line call, so it
-  would disagree with the checked-in `NAMESPACE` without either version
-  being wrong, which is the reason the job pins at all
+  [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
+  under 8.0.0 reproduces the checked-in `man/` and `NAMESPACE` byte for
+  byte, so the entire upgrade is the pin plus a field rename — 8.0.0
+  records its version as `Config/roxygen2/version` where 7.x used
+  `RoxygenNote`, and appends it at the end of the file rather than
+  writing it in place. The workflow needed nothing beyond the pin,
+  because it already read whichever of the two fields is present and
+  already excluded `DESCRIPTION` from its diff. The pin remains
+  deliberately not `latest`: 8.1.0 reflows multiple `importFrom()`
+  entries from one package into a multi-line call, so it would disagree
+  with the checked-in `NAMESPACE` without either version being wrong,
+  which is the reason the job pins at all
   ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This
   retires the last of the recurring working-tree artifacts
   [\#257](https://github.com/NIFU-NO/saros.base/issues/257) addressed —
@@ -800,7 +853,8 @@
   `forcats` — all already in `Imports` — so it has always been installed
   alongside saros.base, and no installation could have lacked it.
 - CI now fails when `man/` or `NAMESPACE` differ from what
-  `roxygen2::roxygenise()` produces from the roxygen comments in `R/`
+  [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
+  produces from the roxygen comments in `R/`
   ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This is
   the drift that hid
   [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md):
