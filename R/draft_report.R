@@ -417,8 +417,18 @@ draft_report <-
     # already uses to report a defaulted argument ("`chunk_templates` is NULL.
     # Using global defaults."), so this arrives in the console the same way.
     if (isTRUE(args$combined_report) && !isTRUE(args$report_includes_files)) {
+      # `report_filename` is documented and validated as accepting NULL, in
+      # which case gen_qmd_file() names the file from the title instead. Naming
+      # a file here would then mean pasting onto nothing -- `paste0(NULL,
+      # ".qmd")` is `".qmd"`, a plausible-looking filename that is not the one
+      # written -- so the message describes the file rather than naming it.
+      combined_file <- if (rlang::is_string(args$report_filename)) {
+        cli::format_inline("{.file {paste0(args$report_filename, '.qmd')}}")
+      } else {
+        "the combined report file"
+      }
       cli::cli_inform(c(
-        "!" = "{.arg combined_report} is {.code TRUE} but {.arg report_includes_files} is {.code FALSE}, so {.file {paste0(args$report_filename, '.qmd')}} will contain no chapters.",
+        "!" = "{.arg combined_report} is {.code TRUE} but {.arg report_includes_files} is {.code FALSE}, so {combined_file} will contain no chapters.",
         i = "Set {.code report_includes_files = TRUE} to include them, or {.code combined_report = FALSE} to stop writing the file."
       ))
     }

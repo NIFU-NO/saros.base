@@ -121,3 +121,31 @@ testthat::test_that("nothing reported when no combined report is requested", {
   path <- withr::local_tempdir()
   testthat::expect_no_message(draft_for_message(path, combined_report = FALSE))
 })
+
+testthat::test_that("the message does not invent a filename when report_filename is NULL", {
+  # `report_filename = NULL` is documented and validated as acceptable, and
+  # gen_qmd_file() names the file from the title in that case. Pasting a
+  # suffix onto it yields `".qmd"` -- a plausible-looking filename that is not
+  # the one written -- so the message must describe the file instead.
+  #
+  # The call aborts further downstream on this input for reasons that predate
+  # this message and are filed separately; the message is emitted before that,
+  # so both are caught here.
+  path <- withr::local_tempdir()
+  msgs <- character()
+  tryCatch(
+    withCallingHandlers(
+      draft_for_message(path, title = "My Report", report_filename = NULL),
+      message = function(m) {
+        msgs <<- c(msgs, conditionMessage(m))
+        invokeRestart("muffleMessage")
+      }
+    ),
+    error = function(e) NULL
+  )
+
+  hit <- grep("contain no chapters", msgs, value = TRUE)
+  testthat::expect_length(hit, 1L)
+  testthat::expect_no_match(hit, ".qmd", fixed = TRUE)
+  testthat::expect_match(hit, "the combined report file", fixed = TRUE)
+})
