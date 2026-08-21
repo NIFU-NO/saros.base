@@ -133,6 +133,31 @@
 
 ### Bug fixes
 
+- Six default chunk template rows emitted code that could not run
+  ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)). Four of
+  them — the univariate and bivariate `cat_table_html` of variants 2 and
+  4 — emitted `x <- I(paste0(c(nrange, link), collapse=', '` with the
+  closing parenthesis missing, which is a **parse error** in the
+  generated document. The other two, variant 3’s univariate and
+  bivariate `cat_table_html`, computed `table` and `nrange` and then
+  referenced `link` in `paste0(c(nrange, link), ...)` without ever
+  assigning it, giving `object 'link' not found` at render. Both are
+  `cat_table_html`, the most-used table template, and between them they
+  affect three of the five variants. The missing assignment is restored
+  in the sibling form the other variants already use — variant 1 writes
+  `link <- saros::make_link(data={.obj_name})` and variant 2
+  `link <- saros::make_link(data = tbls[[.x]])`, so this one is
+  `link <- saros::make_link(data = table)`; per the repo’s own rule, the
+  neighbours settle it rather than it being an open design question.
+  Note *where* the parse error sat, and why it survived: in variants 2
+  and 4 the broken line is a string inside
+  `knitr::knit_child(text = c(...))`, so the parent chunk parses
+  perfectly well and the fault only exists once knitr assembles the
+  child document at render time.
+  **`tests/testthat/_snaps/qmd_snapshots.md` had been pinning the broken
+  line as correct output** since the snapshots were introduced, which is
+  worth recording: a snapshot proves output has not changed, never that
+  it was right to begin with.
 - `draft_report(format = )` now sets the Quarto output format of every
   generated file
   ([\#264](https://github.com/NIFU-NO/saros.base/issues/264)).
@@ -889,6 +914,34 @@
 
 ### Testing
 
+- Added `tests/testthat/test-generated_code_parses.R`, which parses
+  every R chunk of a chapter generated from each of the five default
+  variants ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)).
+  This is the cheap half of the guard
+  [\#263](https://github.com/NIFU-NO/saros.base/issues/263) was missing:
+  it needs no Quarto, no `saros` and no `gt`, and covers all five
+  variants in seconds, where the render tests are slow enough that their
+  fixture reaches only variant 1. It descends into
+  `knitr::knit_child(text = c(...))` rather than stopping at the parent
+  chunk, which is essential rather than thorough — the parse error it
+  was written for lives inside child text, so a guard that stopped at
+  the parent would have reported all-clear on exactly the case that
+  motivated it. The child’s string literals are read off the parse tree
+  rather than evaluated, so nothing in a template is executed. Two
+  anti-vacuity controls sit alongside: one asserting chunks were found
+  at all, one asserting child text was found, since every other
+  assertion in the file would pass trivially on an empty set.
+- A companion static check that no template references `link` or
+  `link_plot` without assigning it
+  ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)).
+  Deliberately static rather than a render test, and not for speed:
+  **variants 2, 3 and 4 are the mesos variants**, carrying 14 to 19
+  `params$` references each, 7 to 9 of them `params$mesos_var`, so they
+  cannot render standalone without a mesos fixture — and variant 3 is
+  precisely where the unassigned `link` lived. A render test would not
+  have covered it at any price. Verified by mutation, by removing the
+  four restored assignments and confirming the check names variant 3
+  rows 3 and 4.
 - Added `tests/testthat/test-generated_qmd_renders.R`, which actually
   renders a generated chapter with Quarto
   ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). **Nothing
@@ -1020,9 +1073,21 @@
   in `R/` names a real argument.
 - Improved code formatting and readability in `.onLoad()` function for
   better maintainability.
-- Updated template references in `default_chunk_templates_4` for better
-  consistency (using `data` instead of `data_{.chapter_foldername}`,
-  added `save = parameters$save` parameter).
+- Updated template references in `default_chunk_templates_4`, adding
+  `save = parameters$save`. **The other half of this change was a
+  regression and is corrected below.** Switching
+  `data_{.chapter_foldername}` to a bare `data` was described here as
+  consistency; it is not. A generated chapter binds `data_<chapter>` and
+  never binds `data`, so a bare `data` resolves to
+  [`utils::data`](https://rdrr.io/r/utils/data.html) — the function —
+  and the chunk dies with `` `x` must be a vector, not a function. ``
+  Nine sites across variants 4 and 5 are affected; tracked in
+  [\#269](https://github.com/NIFU-NO/saros.base/issues/269) and not
+  fixed here. The `save = parameters$save` half is correct and stays:
+  `parameters` is supplied by an external formatting file sourced into
+  every generated qmd, which is how one location controls settings
+  across all of them — Quarto’s `params` cannot, since it resolves to
+  each file’s own YAML.
 - Better structured code blocks with consistent indentation and spacing.
 
 ## saros.base 1.2.1
