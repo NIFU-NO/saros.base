@@ -133,6 +133,42 @@
 
 ### Bug fixes
 
+- An eleventh template site, found by review of the fix above: variant
+  4’s `chr_table` emitted an inline `` `r x` `` while assigning no `x`
+  ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). It is
+  that variant’s `cat_table_html` with the `nrange`/`link`/`x` lines
+  removed and the inline expression left behind; variants 2 and 5’s
+  `chr_table` emit no `` `r x` `` at all, which settles the fix as
+  removing the orphan rather than restoring the computation. In a shared
+  knitr environment this is not merely `object 'x' not found`: an
+  earlier chunk may still have `x` bound, in which case the table
+  renders another section’s caption. Neither existing guard reached it —
+  `r_chunks()` matches only fenced blocks, and an inline use is not a
+  subscript — so a third check now parses inline `` `r ...` `` and
+  `` `{r} ...` `` expressions and reports any variable the template
+  never assigns.
+- Ten more default chunk template sites emitted code that could not run
+  ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). Nine
+  passed a bare `data` where the chapter’s own dataset was meant — seven
+  as `saros::makeme(data = data, ...)` in variant 4, two as
+  `data |> saros::makeme(...)` in variant 5. A generated chapter binds
+  `data_<chapter>` and never binds `data`, so `data` resolved to
+  [`utils::data`](https://rdrr.io/r/utils/data.html), **the function**,
+  and the chunk died with `` `x` must be a vector, not a function. ``
+  The tenth is variant 4’s `chr_table`, which assigned `tbl` and then
+  read `tbls` — `vapply(tbls, ...)`, `names(tbls)`, `tbls[[.x]]` —
+  giving `object 'tbls' not found`; the correct spelling is the plural,
+  as its own `cat_table_html` siblings use at four other sites, because
+  `makeme()` returns a list of tables there. That one is worse than a
+  plain error in a mixed chapter: an earlier chunk does assign `tbls`,
+  and knitr shares one environment across chunks, so the chr table would
+  have silently rendered the **previous, unrelated table** rather than
+  failing. Found by adversarial review of
+  [\#267](https://github.com/NIFU-NO/saros.base/issues/267) rather than
+  by the guards that PR added, which is the point of the two below. **A
+  variant 5 chapter now renders end-to-end**; before this it aborted in
+  its first table chunk, which is why render coverage had never extended
+  past variant 1.
 - Six default chunk template rows emitted code that could not run
   ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)). Four of
   them — the univariate and bivariate `cat_table_html` of variants 2 and
@@ -914,6 +950,47 @@
 
 ### Testing
 
+- Two broader guards in `tests/testthat/test-generated_code_parses.R`,
+  alongside the narrow one added in
+  [\#267](https://github.com/NIFU-NO/saros.base/issues/267) rather than
+  replacing it
+  ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). That
+  check stays because it is not subsumed: it looks for a variable used
+  as a bare value, as `link` is in `paste0(c(nrange, link), ...)`, where
+  the new check below looks for subscripted variables. The first rejects
+  any template that uses a bare `data`, walking the parsed chunk for
+  `data` as a *value* — argument names come free, since in `f(data = x)`
+  the string `"data"` is a name of the call rather than an element of
+  it, and `$`/`@`/`::` right-hand sides are skipped so that
+  `make_link(data = plot$data)` is not misread as a bare `data`. The
+  second is the variable-agnostic form of
+  [\#267](https://github.com/NIFU-NO/saros.base/issues/267)’s
+  used-but-never-assigned check, which was hard-coded to `link` and
+  `link_plot` — the reason it did not see `tbls`. It now flags any
+  subscripted variable a template never assigns. Both were written
+  before the fix and both reported exactly the defects above and nothing
+  else, after two false positives in the checks themselves were removed.
+- `parameters` and `params` are on an explicit allowlist in that second
+  check, because they are legitimately supplied from outside the
+  template: `params` by Quarto from each file’s YAML, `parameters` by an
+  external formatting file sourced into every generated qmd, which
+  aggregates the `_metadata.yml` inheritance chain. Two independent
+  reviews have now misread `parameters$save` as an undefined symbol, so
+  the allowlist carries the explanation and an anti-vacuity test asserts
+  `parameters` really does appear in the templates — otherwise the
+  allowlist would be inert and its coverage untested. See
+  [\#270](https://github.com/NIFU-NO/saros.base/issues/270), which
+  proposes moving that aggregation into this package; the allowlist
+  entry for `parameters` goes when it does.
+- The render tests now cover variant 5 as well as variant 1
+  ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). Variant 5
+  could not render before this fix, so the test is new coverage rather
+  than a gap being filled. Variants 2, 3 and 4 remain out of reach: they
+  are the mesos variants and need a fixture supplying both `params` and
+  `parameters`
+  ([\#270](https://github.com/NIFU-NO/saros.base/issues/270)). Verified
+  by reverting `R/zzz.R` to its previous state, against which the new
+  test fails on all three of its assertions.
 - Added `tests/testthat/test-generated_code_parses.R`, which parses
   every R chunk of a chapter generated from each of the five default
   variants ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)).
