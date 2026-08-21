@@ -127,12 +127,34 @@ default_variants <- function() {
 
 ################################################################################
 
-testthat::test_that("the parse guard sees the chunks it is meant to see", {
-  # Anti-vacuity control. If r_chunks() returned nothing, every assertion below
-  # would pass on an empty set.
+# Chunks that come from a chunk template, as opposed to the setup and dataset
+# import chunks `draft_report()` emits for every chapter regardless.
+template_chunks <- function(lines) {
+  chunks <- r_chunks(lines)
+  boilerplate <- vapply(chunks, function(ch) {
+    any(grepl("#| label: 'Setup for ", ch, fixed = TRUE)) ||
+      any(grepl("#| label: 'Import data for ", ch, fixed = TRUE))
+  }, logical(1))
+  chunks[!boilerplate]
+}
+
+testthat::test_that("the parse guard sees the template chunks, not just boilerplate", {
+  # Anti-vacuity control: without it, every assertion below would pass on an
+  # empty set.
+  #
+  # It counts *template* chunks specifically. An earlier version asserted
+  # `length(r_chunks(lines)) > 3`, which this two-chapter fixture cleared on
+  # boilerplate alone -- `draft_report()` emits a setup chunk and an import
+  # chunk per chapter unconditionally, so four exist before any template
+  # contributes anything. The control would have passed with zero template
+  # chunks extracted, which is precisely the degradation it exists to catch.
   path <- withr::local_tempdir()
   lines <- draft_variant(path, 1)
-  testthat::expect_gt(length(r_chunks(lines)), 3L)
+
+  testthat::expect_gt(length(template_chunks(lines)), 3L)
+  # And the boilerplate really is being excluded rather than the filter being
+  # a no-op, which would put us straight back to counting the wrong thing.
+  testthat::expect_lt(length(template_chunks(lines)), length(r_chunks(lines)))
 })
 
 testthat::test_that("the parse guard descends into knit_child text", {
@@ -146,7 +168,9 @@ testthat::test_that("the parse guard descends into knit_child text", {
     }), recursive = FALSE),
     function(e) knit_child_texts(e)
   ), recursive = FALSE)
-  testthat::expect_gt(length(children), 0L)
+  # More than one: this fixture yields several child texts, so `> 0` would pass
+  # on a single surviving one while extraction had silently degraded.
+  testthat::expect_gt(length(children), 3L)
 })
 
 testthat::test_that("every R chunk of every default variant parses", {
