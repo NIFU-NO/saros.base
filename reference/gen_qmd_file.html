@@ -65,6 +65,7 @@
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  filename <span class="op">=</span> <span class="st">"report"</span>,</span>
 <span>  yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"html"</span>,</span>
 <span>  qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_structure <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -94,6 +95,19 @@ generates a sanitized version of the title. If both filename and title are NULL,
 
 <dt id="arg-yaml-file">yaml_file<a class="anchor" aria-label="anchor" href="#arg-yaml-file"></a></dt>
 <dd><p>A string containing the filepath to a yaml-file to be inserted at top of qmd-file.</p></dd>
+
+
+<dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
+<dd><p><em>Quarto output format written into the YAML</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"html"</code> (<code>optional</code>)</p>
+<p>Written as the <code>format:</code> field of this file's YAML front matter, and
+passed through verbatim, so any value Quarto accepts works. Documented
+here rather than inherited from <code><a href="draft_report.html">draft_report()</a></code>, whose description covers
+chapters, <code>index.qmd</code> and the combined report and names three separate
+<code>*_yaml_file</code> arguments — this function writes one file and takes one
+<code>yaml_file</code>.</p>
+<p>Ignored when <code>yaml_file</code> is supplied, since that file then provides the
+whole front matter, <code>format:</code> included.</p></dd>
 
 
 <dt id="arg-qmd-start-section-filepath-qmd-end-section-filepath">qmd_start_section_filepath, qmd_end_section_filepath<a class="anchor" aria-label="anchor" href="#arg-qmd-start-section-filepath-qmd-end-section-filepath"></a></dt>

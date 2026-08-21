@@ -11,6 +11,7 @@ gen_qmd_file(
   path = NULL,
   filename = "report",
   yaml_file = NULL,
+  format = "html",
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
   chapter_structure = NULL,
@@ -41,6 +42,23 @@ gen_qmd_file(
 
   A string containing the filepath to a yaml-file to be inserted at top
   of qmd-file.
+
+- format:
+
+  *Quarto output format written into the YAML*
+
+  `scalar<character>` // *default:* `"html"` (`optional`)
+
+  Written as the `format:` field of this file's YAML front matter, and
+  passed through verbatim, so any value Quarto accepts works. Documented
+  here rather than inherited from
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md),
+  whose description covers chapters, `index.qmd` and the combined report
+  and names three separate `*_yaml_file` arguments — this function
+  writes one file and takes one `yaml_file`.
+
+  Ignored when `yaml_file` is supplied, since that file then provides
+  the whole front matter, `format:` included.
 
 - qmd_start_section_filepath, qmd_end_section_filepath:
 

@@ -133,6 +133,59 @@
 
 ### Bug fixes
 
+- `draft_report(format = )` now sets the Quarto output format of every
+  generated file
+  ([\#264](https://github.com/NIFU-NO/saros.base/issues/264)).
+  `process_yaml()` has always taken a `format` argument, defaulting to
+  `"html"`, and neither of its two call sites — `gen_qmd_chapters.R` and
+  `gen_qmd_file.R` — ever passed it. So every chapter, `index.qmd` and
+  the combined report declared `format: html`, and no argument anywhere
+  on
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  could change it; the only escape was to hand-write a complete YAML
+  file. That matters more than it sounds, because non-HTML output is
+  plainly in scope for the project:
+  [`gen_qmd_file()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_file.md)
+  takes `output_formats` to build download links, and
+  `inst/templates/PowerShell/` ships
+  `Convert_docx_to_pdf_with_msword.ps1`. The default remains `"html"`,
+  so no existing caller’s output moves. A supplied
+  `chapter_yaml_file`/`index_yaml_file`/`report_yaml_file` still wins,
+  since that path takes the whole front matter from the file — the
+  argument does not merge into it. Note that `fig-dpi` sits in the same
+  hardcoded list in `process_yaml()` and remains unreachable at `800`,
+  roughly eight times Quarto’s default of 96; that is left alone here
+  deliberately rather than overlooked.
+- `draft_report(report_filename = NULL)` no longer aborts before writing
+  anything ([\#265](https://github.com/NIFU-NO/saros.base/issues/265)).
+  The behaviour is documented — “If NULL, will generate a filename based
+  on the report title, prefixed with `0_`” — and the validator accepts
+  `NULL`, and
+  [`gen_qmd_file()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_file.md)
+  implements it correctly. The run never reached it: `output_filename`
+  for the index was built with
+  `stringi::stri_replace_first_regex(str = args$report_filename, ...)`,
+  which returns `character(0)` for `NULL`, and
+  `check_string(null.ok = TRUE)` rejects an empty character vector as
+  distinct from `NULL`. So a documented, validated input was converted
+  into an invalid one on the way to the check, and the abort named
+  `output_filename` — an internal argument of an internal function —
+  rather than the argument the caller actually set. The index’s link
+  target is now taken from the file
+  [`gen_qmd_file()`](https://nifu-no.github.io/saros.base/reference/gen_qmd_file.md)
+  wrote, rather than re-derived from the argument. That is deliberate
+  rather than merely keeping `NULL` as `NULL`: when the name is
+  title-derived the argument does not carry it, so the index would
+  otherwise have no way to name the report that exists. The string case
+  is byte-identical to before. **This is the fourth argument in this
+  package found declared, documented and inert** — after the four fixed
+  in [\#232](https://github.com/NIFU-NO/saros.base/issues/232),
+  `log_file` in
+  [\#245](https://github.com/NIFU-NO/saros.base/issues/245), and
+  `process_yaml(format=)` in the entry above — which is frequent enough
+  that a systematic sweep of every formal, asking whether it is read and
+  whether it is reachable, would now be worth more than continuing to
+  find them one at a time.
 - Generated chapters now render
   ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). The five
   default `chunk_templates` variants called `saros` and `gt` functions

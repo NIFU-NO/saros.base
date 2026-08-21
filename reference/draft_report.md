@@ -39,6 +39,7 @@ draft_report(
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
   chapter_setup_packages = c("saros", "gt"),
+  format = "html",
   require_common_categories = TRUE,
   combined_report = TRUE,
   write_qmd = TRUE,
@@ -305,6 +306,23 @@ draft_report(
   dependency of this package: if your own `chunk_templates` need
   neither, attaching them would fail every chapter of a project that has
   not installed them.
+
+- format:
+
+  *Quarto output format written into each file's YAML*
+
+  `scalar<character>` // *default:* `"html"` (`optional`)
+
+  Written as the `format:` field of the YAML front matter of every
+  generated chapter, plus `index.qmd` and the combined report. Passed
+  through verbatim, so any value Quarto accepts works — `"html"`,
+  `"pdf"`, `"docx"`, or a format with options such as `"html: default"`.
+
+  Ignored for any file whose YAML comes from a file instead: when
+  `chapter_yaml_file`, `index_yaml_file` or `report_yaml_file` is
+  supplied, that file provides the whole front matter, `format:`
+  included. Supplying a YAML file remains the way to set anything beyond
+  the format itself.
 
 - require_common_categories:
 

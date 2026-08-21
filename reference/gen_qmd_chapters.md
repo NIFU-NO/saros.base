@@ -17,6 +17,7 @@ gen_qmd_chapters(
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
   chapter_setup_packages = c("saros", "gt"),
+  format = "html",
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
@@ -186,6 +187,23 @@ gen_qmd_chapters(
   dependency of this package: if your own `chunk_templates` need
   neither, attaching them would fail every chapter of a project that has
   not installed them.
+
+- format:
+
+  *Quarto output format written into each chapter's YAML*
+
+  `scalar<character>` // *default:* `"html"` (`optional`)
+
+  Written as the `format:` field of the YAML front matter of every
+  chapter this function writes, and passed through verbatim. Documented
+  here rather than inherited from
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md),
+  whose description also covers `index.qmd` and the combined report and
+  names `index_yaml_file` and `report_yaml_file` — this function writes
+  chapters only, and its sole YAML argument is `chapter_yaml_file`.
+
+  Ignored when `chapter_yaml_file` is supplied, since that file then
+  provides the whole front matter, `format:` included.
 
 - chapter_yaml_file:
 
