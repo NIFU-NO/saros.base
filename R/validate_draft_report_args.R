@@ -58,6 +58,7 @@ get_draft_report_validation_rules <- function(params, env, core_chapter_structur
     log_file = list(fun = function(x) is.null(x) || (is_string(x) && nzchar(x))),
 
     # Boolean
+    chapter_setup_parameters = list(fun = is_bool),
     write_qmd = list(fun = is_bool),
     attach_chapter_dataset = list(fun = is_bool),
     require_common_categories = list(fun = is_bool),

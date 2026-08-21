@@ -36,6 +36,48 @@ chapter_setup_chunk <- function(chapter_foldername_clean,
   )
 }
 
+# The chunk that establishes `parameters` for the chapter (GH #270).
+#
+# The mesos chunk templates read `parameters$save`, and `parameters` was
+# assigned nowhere in this package -- it came from an organization's
+# `general_formatting.R`, sourced in by a start section the caller had to
+# supply. A chapter generated without one referenced a symbol nothing bound,
+# which is why variants 2, 3 and 4 have never had render coverage.
+#
+# Separate from the packages chunk on purpose: `chapter_setup_packages = NULL`
+# is the documented escape hatch for a project needing neither `saros` nor
+# `gt`, and it must not silently take `parameters` with it.
+#
+# The `exists()` guard makes this a floor, not an override. A project whose
+# `general_formatting.R` runs first -- in `report.qmd`, ahead of the chapter
+# includes -- keeps its own object; one that runs afterwards overwrites this
+# unconditionally, exactly as it did before. `inherits = FALSE` restricts the
+# question to the document's own environment, so an unrelated `parameters`
+# exported by an attached package cannot suppress the assignment.
+#
+# `save` is floored rather than assigned, which is the half of #270 the
+# external file gets wrong: it assigns `parameters$save <- TRUE`
+# unconditionally *after* aggregating, so `save` is the one key its own
+# inheritance chain cannot carry. Here `_metadata.yml` wins and the default
+# only applies when nothing in the chain set it.
+chapter_parameters_chunk <- function(chapter_foldername_clean,
+                                     enabled = TRUE) {
+  if (!isTRUE(enabled)) {
+    return(NULL)
+  }
+  stringi::stri_c(
+    "```{r}\n",
+    "#| label: 'Parameters for ", chapter_foldername_clean, "'\n",
+    "#| include: false\n",
+    'if (!exists("parameters", inherits = FALSE)) {\n',
+    '  parameters <- saros.base::aggregate_metadata_yml()[["params"]]\n',
+    "  if (is.null(parameters$save)) parameters$save <- TRUE\n",
+    "}\n",
+    "```",
+    ignore_null = TRUE
+  )
+}
+
 # Helper: Process template section file with optional glue templating
 process_template_section <- function(filepath, chapter_structure = NULL, arg_name) {
   if (is.null(filepath) || !rlang::is_string(filepath)) {

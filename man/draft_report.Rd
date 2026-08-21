@@ -32,6 +32,7 @@ draft_report(
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
   chapter_setup_packages = c("saros", "gt"),
+  chapter_setup_parameters = TRUE,
   format = "html",
   require_common_categories = TRUE,
   combined_report = TRUE,
@@ -241,6 +242,26 @@ Set to \code{NULL} or \code{character()} to emit no setup chunk at all. That mat
 because neither \code{saros} nor \code{gt} is a dependency of this package: if your
 own \code{chunk_templates} need neither, attaching them would fail every
 chapter of a project that has not installed them.}
+
+\item{chapter_setup_parameters}{\emph{Build \code{parameters} at the top of each chapter}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Every generated chapter opens with a chunk that builds \code{parameters} from
+the \verb{_metadata.yml} inheritance chain, using \code{\link[=aggregate_metadata_yml]{aggregate_metadata_yml()}},
+and falls back to \code{parameters$save = TRUE} when nothing in the chain sets
+it. The mesos \code{chunk_templates} read \code{parameters$save}, so without this a
+chapter generated without a \code{chapter_qmd_start_section_filepath} refers to
+an object nothing assigns.
+
+The chunk leaves an existing \code{parameters} untouched, so a project that
+establishes its own — typically by sourcing a \code{general_formatting.R}
+earlier in the render — keeps it. A \verb{save:} set anywhere in the
+\verb{_metadata.yml} chain likewise wins over the fallback.
+
+Independent of \code{chapter_setup_packages}: suppressing the attached packages
+does not suppress this chunk. Set to \code{FALSE} if your project supplies
+\code{parameters} some other way.}
 
 \item{format}{\emph{Quarto output format written into each file's YAML}
 

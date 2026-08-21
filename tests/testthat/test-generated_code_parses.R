@@ -295,11 +295,19 @@ testthat::test_that("no template subscripts a variable it never assigns", {
   # That one was scoped to two literal names, which is why it did not see
   # variant 4's `chr_table` assigning `tbl` and then reading `tbls[[.x]]`.
   #
-  # `parameters` and `params` are allowlisted because they are legitimately
-  # supplied from outside the template: `params` by Quarto from the qmd's YAML,
-  # and `parameters` by an external formatting file sourced into every
-  # generated qmd, which aggregates the `_metadata.yml` inheritance chain. See
-  # #270 -- if `parameters` ever becomes package-supplied, this entry goes.
+  # `parameters` and `params` are allowlisted because neither is a template's
+  # to assign. `params` comes from Quarto, out of the qmd's own YAML.
+  # `parameters` is assigned by the setup chunk `draft_report()` emits (#270),
+  # above every template in the file -- the same reason the `data_` names below
+  # are allowlisted.
+  #
+  # #270 predicted this entry could be removed once the package supplied
+  # `parameters` itself. It cannot: this check asks whether *a template*
+  # assigns what *that template* subscripts, and the assignment lives in the
+  # chapter, not in any template. What changed is the justification, not the
+  # entry. The property the entry gives up on -- that the assignment really
+  # does precede the first use -- is pinned end-to-end in
+  # test-chapter_parameters_chunk.R instead.
   #
   # `data_` names are allowlisted because the chapter's dataset is assigned by
   # the import chunk `draft_report()` emits, not by any template.

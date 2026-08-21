@@ -61,6 +61,14 @@
       library(gt)
       ```
       ```{r}
+      #| label: 'Parameters for 1_Bakgrunn'
+      #| include: false
+      if (!exists("parameters", inherits = FALSE)) {
+        parameters <- saros.base::aggregate_metadata_yml()[["params"]]
+        if (is.null(parameters$save)) parameters$save <- TRUE
+      }
+      ```
+      ```{r}
       #| label: 'Import data for 1_Bakgrunn'
       data_1_Bakgrunn <- readRDS('1_Bakgrunn/data_1_Bakgrunn.rds')
       ```
@@ -175,6 +183,14 @@
       #| include: false
       library(saros)
       library(gt)
+      ```
+      ```{r}
+      #| label: 'Parameters for 1_Bakgrunn'
+      #| include: false
+      if (!exists("parameters", inherits = FALSE)) {
+        parameters <- saros.base::aggregate_metadata_yml()[["params"]]
+        if (is.null(parameters$save)) parameters$save <- TRUE
+      }
       ```
       ```{r}
       #| label: 'Import data for 1_Bakgrunn'
@@ -366,6 +382,14 @@
       library(gt)
       ```
       ```{r}
+      #| label: 'Parameters for 1_Num'
+      #| include: false
+      if (!exists("parameters", inherits = FALSE)) {
+        parameters <- saros.base::aggregate_metadata_yml()[["params"]]
+        if (is.null(parameters$save)) parameters$save <- TRUE
+      }
+      ```
+      ```{r}
       #| label: 'Import data for 1_Num'
       data_1_Num <- readRDS('1_Num/data_1_Num.rds')
       ```
@@ -412,6 +436,14 @@
       #| include: false
       library(saros)
       library(gt)
+      ```
+      ```{r}
+      #| label: 'Parameters for 1_Num'
+      #| include: false
+      if (!exists("parameters", inherits = FALSE)) {
+        parameters <- saros.base::aggregate_metadata_yml()[["params"]]
+        if (is.null(parameters$save)) parameters$save <- TRUE
+      }
       ```
       ```{r}
       #| label: 'Import data for 1_Num'
