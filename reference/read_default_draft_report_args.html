@@ -83,7 +83,7 @@ e.g. the one given to <code><a href="write_default_draft_report_args.html">write
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tmpfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".yaml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="write_default_draft_report_args.html">write_default_draft_report_args</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmpfile</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpRU9UL6/file1cf326375df9.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpe7YOaS/file1c45f327062.yaml"</span>
 <span class="r-in"><span><span class="fu">read_default_draft_report_args</span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmpfile</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
@@ -148,6 +148,9 @@ e.g. the one given to <code><a href="write_default_draft_report_args.html">write
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $glue_heading_for_group</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $chapter_setup_packages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "saros" "gt"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $require_common_categories</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>

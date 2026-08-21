@@ -133,6 +133,71 @@
 
 ### Bug fixes
 
+- Generated chapters now render
+  ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). The five
+  default `chunk_templates` variants called `saros` and `gt` functions
+  unqualified — `makeme()`, `make_link()`, `n_range()`/`n_range2()`,
+  `girafe()`, `ggsaver`,
+  `fig_height_h_barchart()`/`fig_height_h_barchart2()`,
+  `get_fig_title_suffix_from_ggplot()` and `gt()` — and **nothing
+  attached either package**: not the generated `.qmd`, not this package,
+  not the project templates in `inst/`. A chapter produced with the
+  documented defaults therefore aborted at render with
+  `could not find function "fig_height_h_barchart"`. Note *where* it
+  aborted: that call sits in a chunk header (`fig.height=`), which knitr
+  evaluates before the chunk body, so the chapter died before executing
+  a line of its own code — the reason the failure looked unrelated to
+  the template that caused it. All 130 such references are now
+  namespace-qualified, and every generated chapter additionally opens
+  with a setup chunk attaching `saros` and `gt`. Both, deliberately:
+  qualifying fixes the defaults, while the setup chunk also covers a
+  project supplying its own `chunk_templates` written the way the
+  defaults used to be. That chunk is controlled by the new
+  `draft_report(chapter_setup_packages = )`, defaulting to
+  `c("saros", "gt")`; `NULL` or
+  [`character()`](https://rdrr.io/r/base/character.html) emits no setup
+  chunk at all. It is configurable rather than fixed because neither
+  package is in this package’s `Imports` or `Suggests` — attaching them
+  unconditionally would not merely add a dependency, it would widen the
+  blast radius, taking a project whose own templates never touch `gt`
+  from “chapters using a gt template fail” to “every chapter fails”.
+  Note that empty means no chunk rather than an empty one: knitr
+  executes an empty `r` block and renders a cell for it, so the absence
+  has to be total. The setup chunk is emitted unconditionally rather
+  than beside the dataset import, which `attach_chapter_dataset = FALSE`
+  skips entirely. Note that `saros` and `gt` are deliberately **not**
+  added to `Suggests`: this package never calls them — the references
+  are text inside template strings, executed by Quarto in a separate
+  process — and declaring them would oblige `R/` to guard `pkg::` uses
+  with `check_installed()`, which is impossible for a string.
+- [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  now reports that a combined report will be empty
+  ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)).
+  `combined_report` defaults to `TRUE` and `report_includes_files` to
+  `FALSE`, so out of the box the function always wrote a `report.qmd`
+  and always left it with no chapters in it; `index.qmd` likewise. This
+  is not a render failure — Quarto renders that file happily, into an
+  HTML document whose entire body is the title — which is exactly why it
+  went unnoticed for so long. **Neither default is changed**, since
+  flipping either would alter the generated output of every existing
+  caller; only the silence is fixed. It is a `cli_inform()` rather than
+  a warning on purpose: the pairing that triggers it is the *default*
+  pairing, so a warning would fire on essentially every call — 55 times
+  across this package’s own test suite — which is the shape that trains
+  people to ignore warnings. A message is also how
+  [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
+  already reports a defaulted argument.
+- Documented that `*_qmd_start_section_filepath` and
+  `*_qmd_end_section_filepath` files are processed as `glue` templates
+  ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). This was
+  not stated anywhere, and it is not a detail a caller can afford to
+  discover by accident: braces must be doubled, so an R chunk in a
+  snippet has to open with ```` ```{{r}} ````. A perfectly ordinary
+  ```` ```{r} ```` fence aborts the run with `Template is invalid` /
+  `object 'r' not found`, naming glue rather than the snippet. Since
+  these snippets were the only mechanism by which a caller could attach
+  the packages the templates needed, the two defects compounded: the fix
+  for the first bug was booby-trapped by the second.
 - `validate_chunk_templates()` now checks its input
   ([\#242](https://github.com/NIFU-NO/saros.base/issues/242)). Its
   core-column loop was
@@ -771,6 +836,23 @@
 
 ### Testing
 
+- Added `tests/testthat/test-generated_qmd_renders.R`, which actually
+  renders a generated chapter with Quarto
+  ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). **Nothing
+  in this package had ever done so.** The suite’s only `quarto_render()`
+  call, in `test-draft_report.R`, was guarded by `if (FALSE && ...)` —
+  dead from commit `72d9487`, the first commit, in July 2024.
+  [\#119](https://github.com/NIFU-NO/saros.base/issues/119) was filed
+  four months into that gap and stayed unreproduced for the twenty-one
+  months after it. The dead block is removed and replaced by tests that
+  run: a chapter generated with **no** start section must render, and
+  the rendered HTML must contain the section heading and a figure div,
+  the latter as a positive control so that templates silently emitting
+  nothing cannot pass. The file is necessarily heavy — it shells out to
+  Quarto, which executes R calling `saros` and `gt` — so it guards on
+  `skip_on_cran()` plus `skip_if_not_installed()` for `quarto`, `saros`
+  and `gt`, and on the Quarto CLI being present. Contributing nothing on
+  CRAN is the intent rather than a defect.
 - Added `tests/testthat/test-documented_defaults.R`, which reads the
   `*default:*` value out of every documented argument and compares it
   against [`formals()`](https://rdrr.io/r/base/formals.html)

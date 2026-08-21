@@ -103,6 +103,7 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 <span>  prefix_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  suffix_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  glue_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chapter_setup_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"saros"</span>, <span class="st">"gt"</span><span class="op">)</span>,</span>
 <span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  combined_report <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  write_qmd <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -181,7 +182,18 @@ If multiple authors per chapter, separate with semicolon. Ensure consistency.</p
 <dt id="arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath">chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath<a class="anchor" aria-label="anchor" href="#arg-chapter-qmd-start-section-filepath-chapter-qmd-end-section-filepath-index-qmd-start-section-filepath-index-qmd-end-section-filepath-report-qmd-start-section-filepath-report-qmd-end-section-filepath"></a></dt>
 <dd><p><em>Path to qmd-bit for start/end of each qmd</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.</p></dd>
+<p>Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.</p>
+<p><strong>The contents are processed as a <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> template</strong>, with the
+chapter's own metadata available as <code>{.chapter}</code>, <code>{.variable_name_dep}</code>
+and so on. Braces that are meant to survive into the generated file must
+therefore be doubled: an R chunk has to open with <code>```{{r}}</code>, not
+<code>```{r}</code>, or the run aborts with <code>object 'r' not found</code>.</p>
+<p>Note that a start section is no longer needed merely to make a chapter
+render. The default <code>chunk_templates</code> are namespace-qualified, and every
+generated chapter opens with a setup chunk attaching <code>saros</code> and <code>gt</code>, so
+a chapter renders as generated. A snippet is still the place for anything
+project-specific, including further <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> calls if your own
+<code>chunk_templates</code> reach for other packages.</p></dd>
 
 
 <dt id="arg-index-filename">index_filename<a class="anchor" aria-label="anchor" href="#arg-index-filename"></a></dt>
@@ -276,6 +288,20 @@ heading is wanted.</p>
 heading text, so changing a template moves no cross-reference and
 invalidates no Quarto <code>freeze</code> cache. A group listed in
 <code>ignore_heading_for_group</code> emits no heading and so is unaffected.</p></dd>
+
+
+<dt id="arg-chapter-setup-packages">chapter_setup_packages<a class="anchor" aria-label="anchor" href="#arg-chapter-setup-packages"></a></dt>
+<dd><p><em>Packages attached at the top of each chapter</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>c("saros", "gt")</code> (<code>optional</code>)</p>
+<p>Every generated chapter opens with a setup chunk attaching these, so that
+a chunk template calling <code>makeme(...)</code> or <code>gt(...)</code> unqualified still
+works. The default <code>chunk_templates</code> do not rely on this — they are
+namespace-qualified — but a project supplying its own templates written
+the older way does.</p>
+<p>Set to <code>NULL</code> or <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> to emit no setup chunk at all. That matters
+because neither <code>saros</code> nor <code>gt</code> is a dependency of this package: if your
+own <code>chunk_templates</code> need neither, attaching them would fail every
+chapter of a project that has not installed them.</p></dd>
 
 
 <dt id="arg-require-common-categories">require_common_categories<a class="anchor" aria-label="anchor" href="#arg-require-common-categories"></a></dt>
@@ -421,6 +447,10 @@ factor/ordinal and character are implemented.</p>
 <span class="r-in"><span>    data <span class="op">=</span> <span class="va">ex_survey</span>,</span></span>
 <span class="r-in"><span>    path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `combined_report` is `TRUE` but `report_includes_files` is `FALSE`, so</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">report.qmd</span> will contain no chapters.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Set `report_includes_files = TRUE` to include them, or `combined_report =</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   FALSE` to stop writing the file.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Recording which columns of `data` went unused. Write the log to a</span></span></span>
 <span class="r-in"><span><span class="co"># tempfile(), not to a bare filename -- a relative path would land in the</span></span></span>
@@ -434,6 +464,10 @@ factor/ordinal and character are implemented.</p>
 <span class="r-in"><span>    auxiliary_variables <span class="op">=</span> <span class="st">"resp_status"</span>,</span></span>
 <span class="r-in"><span>    log_file <span class="op">=</span> <span class="va">log_file</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `combined_report` is `TRUE` but `report_includes_files` is `FALSE`, so</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">report.qmd</span> will contain no chapters.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Set `report_includes_files = TRUE` to include them, or `combined_report =</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   FALSE` to stop writing the file.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Not using the following variables in `data`: `x2_human, a_7, a_8, and f_uni`.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

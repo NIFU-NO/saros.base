@@ -16,6 +16,7 @@ gen_qmd_chapters(
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
+  chapter_setup_packages = c("saros", "gt"),
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
@@ -166,6 +167,25 @@ gen_qmd_chapters(
   from the heading text, so changing a template moves no cross-reference
   and invalidates no Quarto `freeze` cache. A group listed in
   `ignore_heading_for_group` emits no heading and so is unaffected.
+
+- chapter_setup_packages:
+
+  *Packages attached at the top of each chapter*
+
+  `vector<character>` // *default:* `c("saros", "gt")` (`optional`)
+
+  Every generated chapter opens with a setup chunk attaching these, so
+  that a chunk template calling `makeme(...)` or `gt(...)` unqualified
+  still works. The default `chunk_templates` do not rely on this — they
+  are namespace-qualified — but a project supplying its own templates
+  written the older way does.
+
+  Set to `NULL` or
+  [`character()`](https://rdrr.io/r/base/character.html) to emit no
+  setup chunk at all. That matters because neither `saros` nor `gt` is a
+  dependency of this package: if your own `chunk_templates` need
+  neither, attaching them would fail every chapter of a project that has
+  not installed them.
 
 - chapter_yaml_file:
 

@@ -38,6 +38,7 @@ draft_report(
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
+  chapter_setup_packages = c("saros", "gt"),
   require_common_categories = TRUE,
   combined_report = TRUE,
   write_qmd = TRUE,
@@ -143,6 +144,22 @@ draft_report(
 
   Path to qmd-snippet placed before/after body of all
   chapter/index/report qmd-files.
+
+  **The contents are processed as a
+  [`glue::glue()`](https://glue.tidyverse.org/reference/glue.html)
+  template**, with the chapter's own metadata available as `{.chapter}`,
+  `{.variable_name_dep}` and so on. Braces that are meant to survive
+  into the generated file must therefore be doubled: an R chunk has to
+  open with ```` ```{{r}} ````, not ```` ```{r} ````, or the run aborts
+  with `object 'r' not found`.
+
+  Note that a start section is no longer needed merely to make a chapter
+  render. The default `chunk_templates` are namespace-qualified, and
+  every generated chapter opens with a setup chunk attaching `saros` and
+  `gt`, so a chapter renders as generated. A snippet is still the place
+  for anything project-specific, including further
+  [`library()`](https://rdrr.io/r/base/library.html) calls if your own
+  `chunk_templates` reach for other packages.
 
 - index_filename:
 
@@ -269,6 +286,25 @@ draft_report(
   from the heading text, so changing a template moves no cross-reference
   and invalidates no Quarto `freeze` cache. A group listed in
   `ignore_heading_for_group` emits no heading and so is unaffected.
+
+- chapter_setup_packages:
+
+  *Packages attached at the top of each chapter*
+
+  `vector<character>` // *default:* `c("saros", "gt")` (`optional`)
+
+  Every generated chapter opens with a setup chunk attaching these, so
+  that a chunk template calling `makeme(...)` or `gt(...)` unqualified
+  still works. The default `chunk_templates` do not rely on this — they
+  are namespace-qualified — but a project supplying its own templates
+  written the older way does.
+
+  Set to `NULL` or
+  [`character()`](https://rdrr.io/r/base/character.html) to emit no
+  setup chunk at all. That matters because neither `saros` nor `gt` is a
+  dependency of this package: if your own `chunk_templates` need
+  neither, attaching them would fail every chapter of a project that has
+  not installed them.
 
 - require_common_categories:
 
@@ -448,6 +484,10 @@ index_filepath <-
     data = ex_survey,
     path = tempdir()
   )
+#> ! `combined_report` is `TRUE` but `report_includes_files` is `FALSE`, so
+#>   report.qmd will contain no chapters.
+#> ℹ Set `report_includes_files = TRUE` to include them, or `combined_report =
+#>   FALSE` to stop writing the file.
 
 # Recording which columns of `data` went unused. Write the log to a
 # tempfile(), not to a bare filename -- a relative path would land in the
@@ -461,6 +501,10 @@ index_filepath_logged <-
     auxiliary_variables = "resp_status",
     log_file = log_file
   )
+#> ! `combined_report` is `TRUE` but `report_includes_files` is `FALSE`, so
+#>   report.qmd will contain no chapters.
+#> ℹ Set `report_includes_files = TRUE` to include them, or `combined_report =
+#>   FALSE` to stop writing the file.
 #> Not using the following variables in `data`: `x2_human, a_7, a_8, and f_uni`.
 cat(readLines(log_file), sep = "\n")
 #> 

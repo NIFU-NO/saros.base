@@ -71,6 +71,7 @@
 <span>  prefix_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  suffix_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  glue_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chapter_setup_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"saros"</span>, <span class="st">"gt"</span><span class="op">)</span>,</span>
 <span>  chapter_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -184,6 +185,20 @@ heading is wanted.</p>
 heading text, so changing a template moves no cross-reference and
 invalidates no Quarto <code>freeze</code> cache. A group listed in
 <code>ignore_heading_for_group</code> emits no heading and so is unaffected.</p></dd>
+
+
+<dt id="arg-chapter-setup-packages">chapter_setup_packages<a class="anchor" aria-label="anchor" href="#arg-chapter-setup-packages"></a></dt>
+<dd><p><em>Packages attached at the top of each chapter</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>c("saros", "gt")</code> (<code>optional</code>)</p>
+<p>Every generated chapter opens with a setup chunk attaching these, so that
+a chunk template calling <code>makeme(...)</code> or <code>gt(...)</code> unqualified still
+works. The default <code>chunk_templates</code> do not rely on this — they are
+namespace-qualified — but a project supplying its own templates written
+the older way does.</p>
+<p>Set to <code>NULL</code> or <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> to emit no setup chunk at all. That matters
+because neither <code>saros</code> nor <code>gt</code> is a dependency of this package: if your
+own <code>chunk_templates</code> need neither, attaching them would fail every
+chapter of a project that has not installed them.</p></dd>
 
 
 <dt id="arg-chapter-yaml-file">chapter_yaml_file<a class="anchor" aria-label="anchor" href="#arg-chapter-yaml-file"></a></dt>
