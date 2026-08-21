@@ -30,19 +30,19 @@ generates a sanitized version of the title. If both filename and title are NULL,
 
 \item{yaml_file}{A string containing the filepath to a yaml-file to be inserted at top of qmd-file.}
 
-\item{format}{\emph{Quarto output format written into each file's YAML}
+\item{format}{\emph{Quarto output format written into the YAML}
 
 \verb{scalar<character>} // \emph{default:} \code{"html"} (\code{optional})
 
-Written as the \verb{format:} field of the YAML front matter of every generated
-chapter, plus \code{index.qmd} and the combined report. Passed through verbatim,
-so any value Quarto accepts works — \code{"html"}, \code{"pdf"}, \code{"docx"}, or a
-format with options such as \code{"html: default"}.
+Written as the \verb{format:} field of this file's YAML front matter, and
+passed through verbatim, so any value Quarto accepts works. Documented
+here rather than inherited from \code{\link[=draft_report]{draft_report()}}, whose description covers
+chapters, \code{index.qmd} and the combined report and names three separate
+\verb{*_yaml_file} arguments — this function writes one file and takes one
+\code{yaml_file}.
 
-Ignored for any file whose YAML comes from a file instead: when
-\code{chapter_yaml_file}, \code{index_yaml_file} or \code{report_yaml_file} is supplied,
-that file provides the whole front matter, \verb{format:} included. Supplying a
-YAML file remains the way to set anything beyond the format itself.}
+Ignored when \code{yaml_file} is supplied, since that file then provides the
+whole front matter, \verb{format:} included.}
 
 \item{qmd_start_section_filepath, qmd_end_section_filepath}{String, filepath
 to a qmd-file inserted at start and end of file.}

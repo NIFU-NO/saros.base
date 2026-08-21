@@ -34,6 +34,20 @@
 #'   value for the original. [draft_report()] always supplies this explicitly,
 #'   so the default only applies to a direct call.
 #'
+#' @param format *Quarto output format written into each chapter's YAML*
+#'
+#'   `scalar<character>` // *default:* `"html"` (`optional`)
+#'
+#'   Written as the `format:` field of the YAML front matter of every chapter
+#'   this function writes, and passed through verbatim. Documented here rather
+#'   than inherited from [draft_report()], whose description also covers
+#'   `index.qmd` and the combined report and names `index_yaml_file` and
+#'   `report_yaml_file` — this function writes chapters only, and its sole
+#'   YAML argument is `chapter_yaml_file`.
+#'
+#'   Ignored when `chapter_yaml_file` is supplied, since that file then
+#'   provides the whole front matter, `format:` included.
+#'
 #' @return Side-effects: qmd-files generated in the specified working directory.
 #' @keywords internal
 #'

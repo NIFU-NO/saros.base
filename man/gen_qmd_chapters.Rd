@@ -151,19 +151,19 @@ because neither \code{saros} nor \code{gt} is a dependency of this package: if y
 own \code{chunk_templates} need neither, attaching them would fail every
 chapter of a project that has not installed them.}
 
-\item{format}{\emph{Quarto output format written into each file's YAML}
+\item{format}{\emph{Quarto output format written into each chapter's YAML}
 
 \verb{scalar<character>} // \emph{default:} \code{"html"} (\code{optional})
 
-Written as the \verb{format:} field of the YAML front matter of every generated
-chapter, plus \code{index.qmd} and the combined report. Passed through verbatim,
-so any value Quarto accepts works — \code{"html"}, \code{"pdf"}, \code{"docx"}, or a
-format with options such as \code{"html: default"}.
+Written as the \verb{format:} field of the YAML front matter of every chapter
+this function writes, and passed through verbatim. Documented here rather
+than inherited from \code{\link[=draft_report]{draft_report()}}, whose description also covers
+\code{index.qmd} and the combined report and names \code{index_yaml_file} and
+\code{report_yaml_file} — this function writes chapters only, and its sole
+YAML argument is \code{chapter_yaml_file}.
 
-Ignored for any file whose YAML comes from a file instead: when
-\code{chapter_yaml_file}, \code{index_yaml_file} or \code{report_yaml_file} is supplied,
-that file provides the whole front matter, \verb{format:} included. Supplying a
-YAML file remains the way to set anything beyond the format itself.}
+Ignored when \code{chapter_yaml_file} is supplied, since that file then
+provides the whole front matter, \verb{format:} included.}
 
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 
