@@ -19,6 +19,7 @@ gen_qmd_file <-
   function(path = NULL,
            filename = "report",
            yaml_file = NULL,
+           format = "html",
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            chapter_structure = NULL,
@@ -46,6 +47,7 @@ gen_qmd_file <-
     yaml_section <-
       process_yaml(
         yaml_file = yaml_file,
+        format = format,
         title = title,
         authors = authors[!is.na(authors)]
       )

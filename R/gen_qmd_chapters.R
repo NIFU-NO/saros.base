@@ -48,6 +48,7 @@ gen_qmd_chapters <-
            suffix_heading_for_group = NULL,
            glue_heading_for_group = NULL,
            chapter_setup_packages = c("saros", "gt"),
+           format = "html",
            chapter_yaml_file = NULL,
            chapter_qmd_start_section_filepath = NULL,
            chapter_qmd_end_section_filepath = NULL,
@@ -100,6 +101,7 @@ gen_qmd_chapters <-
           authors <- get_authors(data = chapter_structure_chapter, col = authors_col)
           yaml_section <- process_yaml(
             yaml_file = chapter_yaml_file,
+            format = format,
             title = chapter,
             authors = authors,
             chapter_number = chapter_number
