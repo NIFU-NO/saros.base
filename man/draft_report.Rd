@@ -31,6 +31,7 @@ draft_report(
   prefix_heading_for_group = NULL,
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
+  chapter_setup_packages = c("saros", "gt"),
   require_common_categories = TRUE,
   combined_report = TRUE,
   write_qmd = TRUE,
@@ -107,7 +108,20 @@ Path to file used to insert header YAML, in each chapter.}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.}
+Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.
+
+\strong{The contents are processed as a \code{\link[glue:glue]{glue::glue()}} template}, with the
+chapter's own metadata available as \code{{.chapter}}, \code{{.variable_name_dep}}
+and so on. Braces that are meant to survive into the generated file must
+therefore be doubled: an R chunk has to open with \verb{```\{\{r\}\}}, not
+\verb{```\{r\}}, or the run aborts with \verb{object 'r' not found}.
+
+Note that a start section is no longer needed merely to make a chapter
+render. The default \code{chunk_templates} are namespace-qualified, and every
+generated chapter opens with a setup chunk attaching \code{saros} and \code{gt}, so
+a chapter renders as generated. A snippet is still the place for anything
+project-specific, including further \code{library()} calls if your own
+\code{chunk_templates} reach for other packages.}
 
 \item{index_filename}{\emph{Index filename}
 
@@ -211,6 +225,21 @@ The \verb{\{#sec-\}} anchor is derived from the group's value rather than from t
 heading text, so changing a template moves no cross-reference and
 invalidates no Quarto \code{freeze} cache. A group listed in
 \code{ignore_heading_for_group} emits no heading and so is unaffected.}
+
+\item{chapter_setup_packages}{\emph{Packages attached at the top of each chapter}
+
+\verb{vector<character>} // \emph{default:} \code{c("saros", "gt")} (\code{optional})
+
+Every generated chapter opens with a setup chunk attaching these, so that
+a chunk template calling \code{makeme(...)} or \code{gt(...)} unqualified still
+works. The default \code{chunk_templates} do not rely on this — they are
+namespace-qualified — but a project supplying its own templates written
+the older way does.
+
+Set to \code{NULL} or \code{character()} to emit no setup chunk at all. That matters
+because neither \code{saros} nor \code{gt} is a dependency of this package: if your
+own \code{chunk_templates} need neither, attaching them would fail every
+chapter of a project that has not installed them.}
 
 \item{require_common_categories}{\emph{Check common categories}
 

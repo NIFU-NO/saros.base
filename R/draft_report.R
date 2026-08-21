@@ -113,6 +113,34 @@
 #'
 #'   Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.
 #'
+#'   **The contents are processed as a [glue::glue()] template**, with the
+#'   chapter's own metadata available as `{.chapter}`, `{.variable_name_dep}`
+#'   and so on. Braces that are meant to survive into the generated file must
+#'   therefore be doubled: an R chunk has to open with ```` ```{{r}} ````, not
+#'   ```` ```{r} ````, or the run aborts with `object 'r' not found`.
+#'
+#'   Note that a start section is no longer needed merely to make a chapter
+#'   render. The default `chunk_templates` are namespace-qualified, and every
+#'   generated chapter opens with a setup chunk attaching `saros` and `gt`, so
+#'   a chapter renders as generated. A snippet is still the place for anything
+#'   project-specific, including further `library()` calls if your own
+#'   `chunk_templates` reach for other packages.
+#'
+#' @param chapter_setup_packages *Packages attached at the top of each chapter*
+#'
+#'   `vector<character>` // *default:* `c("saros", "gt")` (`optional`)
+#'
+#'   Every generated chapter opens with a setup chunk attaching these, so that
+#'   a chunk template calling `makeme(...)` or `gt(...)` unqualified still
+#'   works. The default `chunk_templates` do not rely on this — they are
+#'   namespace-qualified — but a project supplying its own templates written
+#'   the older way does.
+#'
+#'   Set to `NULL` or `character()` to emit no setup chunk at all. That matters
+#'   because neither `saros` nor `gt` is a dependency of this package: if your
+#'   own `chunk_templates` need neither, attaching them would fail every
+#'   chapter of a project that has not installed them.
+#'
 #' @param path *Output path*
 #'
 #'   `scalar<character>` // *default:* `tempdir()` (`optional`)
@@ -365,6 +393,7 @@ draft_report <-
            prefix_heading_for_group = NULL,
            suffix_heading_for_group = NULL,
            glue_heading_for_group = NULL,
+           chapter_setup_packages = c("saros", "gt"),
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
            # Formats and attachments
            combined_report = TRUE,
@@ -385,6 +414,40 @@ draft_report <-
 
 
     args <- validate_draft_report_args(params = args)
+
+
+    # `combined_report` defaults to TRUE and `report_includes_files` to FALSE,
+    # so the shipped combination writes a `report.qmd` and leaves it with no
+    # chapters in it (GH #119). Quarto renders that file without complaint,
+    # into a document whose entire body is the title, which is why it reads as
+    # "the report setup does not work" rather than as an error.
+    #
+    # Reported rather than corrected: flipping either default would change the
+    # generated output of every existing caller. Raised before anything is
+    # written, so it arrives with the run rather than after it.
+    #
+    # `cli_inform()` rather than `cli_warn()` deliberately. This fires on the
+    # *default* pairing, so a warning would fire on essentially every call --
+    # 55 times across this package's own suite -- which is the shape that
+    # trains people to ignore warnings. A message is also what draft_report()
+    # already uses to report a defaulted argument ("`chunk_templates` is NULL.
+    # Using global defaults."), so this arrives in the console the same way.
+    if (isTRUE(args$combined_report) && !isTRUE(args$report_includes_files)) {
+      # `report_filename` is documented and validated as accepting NULL, in
+      # which case gen_qmd_file() names the file from the title instead. Naming
+      # a file here would then mean pasting onto nothing -- `paste0(NULL,
+      # ".qmd")` is `".qmd"`, a plausible-looking filename that is not the one
+      # written -- so the message describes the file rather than naming it.
+      combined_file <- if (rlang::is_string(args$report_filename)) {
+        cli::format_inline("{.file {paste0(args$report_filename, '.qmd')}}")
+      } else {
+        "the combined report file"
+      }
+      cli::cli_inform(c(
+        "!" = "{.arg combined_report} is {.code TRUE} but {.arg report_includes_files} is {.code FALSE}, so {combined_file} will contain no chapters.",
+        i = "Set {.code report_includes_files = TRUE} to include them, or {.code combined_report = FALSE} to stop writing the file."
+      ))
+    }
 
 
     data <- ungroup_data(data)
@@ -418,6 +481,7 @@ draft_report <-
         prefix_heading_for_group = args$prefix_heading_for_group,
         suffix_heading_for_group = args$suffix_heading_for_group,
         glue_heading_for_group = args$glue_heading_for_group,
+        chapter_setup_packages = args$chapter_setup_packages,
         chapter_yaml_file = args$chapter_yaml_file,
         chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
         chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,
