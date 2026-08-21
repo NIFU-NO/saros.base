@@ -821,7 +821,7 @@ _{.variable_label_prefix_dep}_ for `{{r}} params$mesos_group`.
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd = c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd = c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 txts <- saros::txt_from_cat_mesos_plots(plots)
 saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html', save = parameters$save)
 ```
@@ -844,7 +844,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='cat_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 txts <- saros::txt_from_cat_mesos_plots(plots)
 saros::crowd_plots_as_tabset(plots, plot_type = 'cat_plot_html', save = parameters$save)
 ```
@@ -867,7 +867,7 @@ _{.variable_label_prefix_dep}_.
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\tindep = c({.variable_name_indep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 
 saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html', save = parameters$save)
 ```
@@ -889,7 +889,7 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_.
 ```{{r}}
 #| output: asis
 #| panel: tabset
-plots <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
+plots <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype='int_plot_html', \n\t\tcrowd=c('target', 'others'), \n\t\tmesos_var = params$mesos_var, \n\t\tmesos_group = params$mesos_group)
 saros::crowd_plots_as_tabset(plots, plot_type = 'int_plot_html', save = parameters$save)
 ```
 
@@ -993,7 +993,7 @@ _{.variable_label_prefix_dep}_.
 
 ```{{r}}
 #| output: asis
-tbl <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'),\n\thide_for_crowd_if_valid_n_below = 0,\n\thide_for_crowd_if_category_n_below = 0,\n\thide_for_crowd_if_cell_n_below = 0,\n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
+tbls <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\ttype = 'chr_table_html', \n\tcrowd=c('target'),\n\thide_for_crowd_if_valid_n_below = 0,\n\thide_for_crowd_if_category_n_below = 0,\n\thide_for_crowd_if_cell_n_below = 0,\n\tmesos_var = params$mesos_var, \n\tmesos_group = params$mesos_group)
 if(!all(vapply(tbls, is.null, logical(1)))) {{
 
   lapply(names(tbls), function(.x) {{
@@ -1006,8 +1006,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
       'library(gt)',
       'gt::gt(tbls[[.x]])',
       '```',
-      '',
-      '`r x`',
       ''
       ), envir = environment(), quiet = TRUE)
   }}) |> unlist() |> cat(sep = '\\n')
@@ -1118,8 +1116,8 @@ _{.variable_label_prefix_dep}_. `{{r}} x`.
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-tbl <- \n\tdata |>\n\t\tsaros::makeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_table_html')
-nrange <- stringi::stri_c('N = ', saros::n_range(data = data, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))
+tbl <- \n\tdata_{.chapter_foldername} |>\n\t\tsaros::makeme(dep = c({.variable_name_dep}),  \n\t\tindep = c({.variable_name_indep}), \n\t\ttype = 'cat_table_html')
+nrange <- stringi::stri_c('N = ', saros::n_range(data = data_{.chapter_foldername}, \n\tdep = c({.variable_name_dep}), \n\tindep = c({.variable_name_indep})))
 link <- saros::make_link(data=tbl)
 x <- I(paste0(c(nrange, link), collapse=', '))
 gt::gt(tbl)
@@ -1140,8 +1138,8 @@ _{.variable_label_prefix_dep}_ by _{tolower(.variable_label_prefix_indep)}_. `{{
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-tbl <- \n\tdata |>\n\t\tsaros::makeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_table_html')
-nrange <- stringi::stri_c('N = ', saros::n_range(data = data, \n\t\tdep = c({.variable_name_dep})))
+tbl <- \n\tdata_{.chapter_foldername} |>\n\t\tsaros::makeme(dep = c({.variable_name_dep}), \n\t\ttype = 'cat_table_html')
+nrange <- stringi::stri_c('N = ', saros::n_range(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep})))
 link <- saros::make_link(data=tbl)
 x <- I(paste0(c(nrange, link), collapse=', '))
 gt::gt(tbl)
@@ -1162,7 +1160,7 @@ _{.variable_label_prefix_dep}_. N=`{{r}} x`.
 ::: {{#tbl-{.chunk_name}}}
 
 ```{{r}}
-tbl <- \n\tsaros::makeme(data = data, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html')
+tbl <- \n\tsaros::makeme(data = data_{.chapter_foldername}, \n\t\tdep = c({.variable_name_dep}), \n\t\ttype = 'chr_table_html')
 gt::gt(tbl)
 ```
 

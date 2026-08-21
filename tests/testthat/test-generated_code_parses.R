@@ -220,3 +220,198 @@ testthat::test_that("no template uses a link variable it never assigns", {
   }
   testthat::expect_identical(offenders, character())
 })
+
+# Two further classes of unrunnable generated code (GH #269).
+#
+# Both were found by review of #267, whose guards did not reach them: the parse
+# check only proves syntax, and the used-but-never-assigned check was hard-coded
+# to `link`/`link_plot`.
+
+# Symbols used as *values* in an expression. Argument names are excluded for
+# free: in `f(data = x)` the string "data" is a name of the call, not an
+# element of it, so only `x` is collected. The function position is skipped
+# when it is a plain name, so `data.frame(...)` does not count as using `data`.
+value_symbols <- function(expr, found = character()) {
+  if (is.name(expr)) {
+    return(c(found, as.character(expr)))
+  }
+  if (is.call(expr)) {
+    head <- expr[[1]]
+    op <- if (is.name(head)) as.character(head) else ""
+    # `a$data` and `a@data` are field accesses: the right side is a label, not
+    # a symbol lookup. Walking it would report `link <- make_link(data =
+    # plot$data)` as a use of a bare `data`, which it is not.
+    if (op %in% c("$", "@")) {
+      return(value_symbols(expr[[2]], found))
+    }
+    # `pkg::name` likewise: `name` is resolved inside the namespace.
+    if (op %in% c("::", ":::")) {
+      return(found)
+    }
+    parts <- as.list(expr)
+    if (is.name(head)) parts <- parts[-1]
+    for (p in parts) found <- value_symbols(p, found)
+  }
+  found
+}
+
+################################################################################
+
+testthat::test_that("no template uses a bare `data`", {
+  # A generated chapter binds `data_<chapter>` and never binds `data`, so a
+  # bare `data` resolves to `utils::data` -- the function -- and the chunk dies
+  # with "`x` must be a vector, not a function". Nine sites had it: seven
+  # spelled `makeme(data = data, ...)` in variant 4, two `data |> makeme(...)`
+  # in variant 5.
+  # `template_chunks()` rather than `r_chunks()`: the subject is what the
+  # templates emit, not the setup and dataset-import chunks `draft_report()`
+  # writes for every chapter. Those are package-controlled and covered
+  # elsewhere, and including them would invite a false positive the day one of
+  # them legitimately mentions `data`.
+  offenders <- character()
+  for (variant in default_variants()) {
+    path <- withr::local_tempdir()
+    lines <- draft_variant(path, variant)
+    for (chunk in template_chunks(lines)) {
+      code <- tryCatch(parse(text = paste(chunk, collapse = "\n")),
+        error = function(e) NULL
+      )
+      if (is.null(code)) next
+      for (expr in as.list(code)) {
+        if ("data" %in% value_symbols(expr)) {
+          offenders <- c(offenders, sprintf(
+            "variant %d: %s", variant,
+            trimws(substr(paste(deparse(expr), collapse = " "), 1, 70))
+          ))
+        }
+      }
+    }
+  }
+  testthat::expect_identical(unique(offenders), character())
+})
+
+testthat::test_that("no template subscripts a variable it never assigns", {
+  # The variable-agnostic form of the `link`/`link_plot` check added in #267.
+  # That one was scoped to two literal names, which is why it did not see
+  # variant 4's `chr_table` assigning `tbl` and then reading `tbls[[.x]]`.
+  #
+  # `parameters` and `params` are allowlisted because they are legitimately
+  # supplied from outside the template: `params` by Quarto from the qmd's YAML,
+  # and `parameters` by an external formatting file sourced into every
+  # generated qmd, which aggregates the `_metadata.yml` inheritance chain. See
+  # #270 -- if `parameters` ever becomes package-supplied, this entry goes.
+  #
+  # `data_` names are allowlisted because the chapter's dataset is assigned by
+  # the import chunk `draft_report()` emits, not by any template.
+  supplied_externally <- c("parameters", "params")
+
+  offenders <- character()
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    for (i in seq_len(nrow(templates))) {
+      tpl <- as.character(templates$.template[i])
+      if (is.na(tpl)) next
+      # The lookbehind excludes `pkg::name$...`, where the object belongs to a
+      # namespace rather than to the template -- `knitr::opts_template$set()`
+      # is the case in point.
+      subscripted <- unique(unlist(regmatches(
+        tpl,
+        gregexpr(
+          "(?<!:)(?<![A-Za-z0-9._])[A-Za-z._][A-Za-z0-9._]*(?=\\[\\[|\\$)",
+          tpl,
+          perl = TRUE
+        )
+      )))
+      for (var in subscripted) {
+        if (var %in% supplied_externally) next
+        if (grepl("^data_", var)) next
+        assigned <- grepl(
+          paste0("(?<![A-Za-z0-9._])", var, "\\s*<-"), tpl,
+          perl = TRUE
+        )
+        if (!assigned) {
+          offenders <- c(offenders, sprintf(
+            "variant %d row %d (%s): subscripts `%s` without assigning it",
+            variant, i, templates$.template_name[i], var
+          ))
+        }
+      }
+    }
+  }
+  testthat::expect_identical(offenders, character())
+})
+
+testthat::test_that("the allowlist is doing work, not hiding an empty check", {
+  # Anti-vacuity: `parameters` must actually be present in the templates, or
+  # the allowlist above is inert and the check's coverage is untested.
+  found <- FALSE
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    tpl <- paste(stats::na.omit(as.character(templates$.template)), collapse = "\n")
+    if (grepl("parameters$", tpl, fixed = TRUE)) found <- TRUE
+  }
+  testthat::expect_true(found)
+})
+
+testthat::test_that("no template uses an inline `r ...` variable it never assigns", {
+  # Inline expressions are code too, and neither existing check sees them:
+  # `r_chunks()` matches only fenced blocks, and an inline use is not a
+  # subscript. Variant 4's `chr_table` emitted `` `r x` `` while assigning no
+  # `x` -- it is its `cat_table_html` sibling with the `nrange`/`link`/`x`
+  # lines removed and that one line left behind. Variants 2 and 5's
+  # `chr_table` emit no `` `r x` `` at all, which is what settles the fix.
+  #
+  # In a shared knitr environment this is not merely an error: `x` may still be
+  # bound by an earlier chunk, in which case the table renders another
+  # section's caption.
+  supplied_externally <- c("parameters", "params", ".x")
+
+  offenders <- character()
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    for (i in seq_len(nrow(templates))) {
+      tpl <- as.character(templates$.template[i])
+      if (is.na(tpl)) next
+
+      # Both spellings a template can carry: `r expr` inside child text, and
+      # `{{r}} expr` in the body, which glue renders to `{r} expr`.
+      pattern <- "`(?:r|[{][{]r[}][}]|[{]r[}])\\s+[^`]+`"
+      inline <- unlist(regmatches(tpl, gregexpr(pattern, tpl, perl = TRUE)))
+
+      for (one in inline) {
+        expr_text <- sub("`$", "", sub("^`(?:r|[{][{]r[}][}]|[{]r[}])\\s+", "", one))
+        parsed <- tryCatch(parse(text = expr_text), error = function(e) NULL)
+        if (is.null(parsed)) next
+        used <- unique(unlist(lapply(as.list(parsed), value_symbols)))
+        for (var in used) {
+          if (var %in% supplied_externally) next
+          if (grepl("^data_", var)) next
+          assigned <- grepl(
+            paste0("(?<![A-Za-z0-9._])", var, "\\s*<-"), tpl,
+            perl = TRUE
+          )
+          if (!assigned) {
+            offenders <- c(offenders, sprintf(
+              "variant %d row %d (%s): inline `%s` uses `%s` unassigned",
+              variant, i, templates$.template_name[i], expr_text, var
+            ))
+          }
+        }
+      }
+    }
+  }
+  testthat::expect_identical(offenders, character())
+})
+
+testthat::test_that("the inline check actually finds inline expressions", {
+  # Anti-vacuity: if the pattern matched nothing, the check above would pass on
+  # an empty set for every variant.
+  total <- 0L
+  pattern <- "`(?:r|[{][{]r[}][}]|[{]r[}])\\s+[^`]+`"
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    tpl <- paste(stats::na.omit(as.character(templates$.template)), collapse = "\n")
+    total <- total + length(unlist(regmatches(tpl, gregexpr(pattern, tpl, perl = TRUE))))
+  }
+  testthat::expect_gt(total, 5L)
+})

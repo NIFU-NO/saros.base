@@ -31,7 +31,7 @@ skip_unless_renderable <- function() {
 # One chapter, one bivariate battery: enough to reach a plot template, the
 # `fig.height=` chunk header and a `make_link()`/`ggsaver` call, without paying
 # for the whole example report on every run.
-draft_minimal <- function(path, ...) {
+draft_minimal <- function(path, variant = NULL, ...) {
   chapter_structure <- suppressMessages(suppressWarnings(
     saros.base::refine_chapter_overview(
       chapter_overview = data.frame(
@@ -39,7 +39,10 @@ draft_minimal <- function(path, ...) {
       ),
       data = saros.base::ex_survey,
       label_separator = " - ",
-      progress = FALSE
+      progress = FALSE,
+      chunk_templates = if (!is.null(variant)) {
+        saros.base::get_chunk_template_defaults(variant)
+      }
     )
   ))
   suppressMessages(suppressWarnings(saros.base::draft_report(
@@ -100,4 +103,43 @@ testthat::test_that("report.qmd gains the chapter includes when asked for them",
   report <- readLines(fs::path(path, "report.qmd"), warn = FALSE)
   testthat::expect_true(any(grepl("{{< include", report, fixed = TRUE)))
   testthat::expect_true(any(grepl("1_Ch1.qmd", report, fixed = TRUE)))
+})
+
+testthat::test_that("a variant 5 chapter renders", {
+  # Until #269 this could not render at all: variant 5's table templates piped
+  # a bare `data` into `saros::makeme()`, and a generated chapter binds
+  # `data_<chapter>`, never `data` -- so it resolved to `utils::data`, the
+  # function, and the chunk died with "`x` must be a vector, not a function".
+  #
+  # Variant 5 is the only variant besides 1 that can be render-tested at all.
+  # Variants 2, 3 and 4 are the mesos variants and need a fixture supplying
+  # `params` and `parameters` (see #270).
+  skip_unless_renderable()
+
+  path <- withr::local_tempdir()
+  draft_minimal(path, variant = 5)
+
+  # Positive control on the fixture itself, not just on the render. Without it,
+  # a regression in the `variant` plumbing would silently fall back to
+  # `get_chunk_template_defaults()`'s default of variant 1 -- which also
+  # renders and also produces tables, so every assertion below would still
+  # pass while testing the wrong variant entirely.
+  #
+  # `tbl <- ` is the marker: variant 5 names its table object that, where
+  # variant 1 uses the generated `{.obj_name}`. Verified absent from variant
+  # 1's templates and present in variant 5's.
+  qmd <- readLines(fs::path(path, "1_Ch1.qmd"), warn = FALSE)
+  testthat::expect_true(any(grepl("tbl <- ", qmd, fixed = TRUE)))
+
+  testthat::expect_no_error(
+    withr::with_dir(path, quarto::quarto_render(
+      input = "1_Ch1.qmd", quiet = TRUE
+    ))
+  )
+  testthat::expect_true(fs::file_exists(fs::path(path, "1_Ch1.html")))
+
+  # Positive control: rendering proves the file parsed and ran, not that any
+  # template produced output.
+  html <- paste(readLines(fs::path(path, "1_Ch1.html"), warn = FALSE), collapse = "\n")
+  testthat::expect_match(html, "tbl-", fixed = TRUE)
 })
