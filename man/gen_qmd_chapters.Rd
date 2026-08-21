@@ -15,6 +15,7 @@ gen_qmd_chapters(
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
   chapter_setup_packages = c("saros", "gt"),
+  format = "html",
   chapter_yaml_file = NULL,
   chapter_qmd_start_section_filepath = NULL,
   chapter_qmd_end_section_filepath = NULL,
@@ -149,6 +150,20 @@ Set to \code{NULL} or \code{character()} to emit no setup chunk at all. That mat
 because neither \code{saros} nor \code{gt} is a dependency of this package: if your
 own \code{chunk_templates} need neither, attaching them would fail every
 chapter of a project that has not installed them.}
+
+\item{format}{\emph{Quarto output format written into each chapter's YAML}
+
+\verb{scalar<character>} // \emph{default:} \code{"html"} (\code{optional})
+
+Written as the \verb{format:} field of the YAML front matter of every chapter
+this function writes, and passed through verbatim. Documented here rather
+than inherited from \code{\link[=draft_report]{draft_report()}}, whose description also covers
+\code{index.qmd} and the combined report and names \code{index_yaml_file} and
+\code{report_yaml_file} — this function writes chapters only, and its sole
+YAML argument is \code{chapter_yaml_file}.
+
+Ignored when \code{chapter_yaml_file} is supplied, since that file then
+provides the whole front matter, \verb{format:} included.}
 
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 

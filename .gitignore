@@ -19,6 +19,12 @@ settings.local.json
 # and are never package content.
 *.stackdump
 
+# Claude Code's working directory. Nothing in it has ever been tracked, and
+# `.claude/worktrees/` is where isolated agent worktrees land -- inside the
+# repo, as whole nested git repositories. Without this line a `git add -A`
+# commits one as an embedded repo (mode 160000), which is how it got in once.
+.claude/
+
 # Per-session handoff notes: volatile state and machine-specific paths,
 # deliberately never committed. The durable rules that used to live in it are
 # in the tracked CLAUDE.md instead. Ignored so that an entry in `git status`

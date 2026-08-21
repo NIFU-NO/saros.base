@@ -8,6 +8,7 @@ gen_qmd_file(
   path = NULL,
   filename = "report",
   yaml_file = NULL,
+  format = "html",
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
   chapter_structure = NULL,
@@ -28,6 +29,20 @@ gen_qmd_file(
 generates a sanitized version of the title. If both filename and title are NULL, errors.}
 
 \item{yaml_file}{A string containing the filepath to a yaml-file to be inserted at top of qmd-file.}
+
+\item{format}{\emph{Quarto output format written into the YAML}
+
+\verb{scalar<character>} // \emph{default:} \code{"html"} (\code{optional})
+
+Written as the \verb{format:} field of this file's YAML front matter, and
+passed through verbatim, so any value Quarto accepts works. Documented
+here rather than inherited from \code{\link[=draft_report]{draft_report()}}, whose description covers
+chapters, \code{index.qmd} and the combined report and names three separate
+\verb{*_yaml_file} arguments — this function writes one file and takes one
+\code{yaml_file}.
+
+Ignored when \code{yaml_file} is supplied, since that file then provides the
+whole front matter, \verb{format:} included.}
 
 \item{qmd_start_section_filepath, qmd_end_section_filepath}{String, filepath
 to a qmd-file inserted at start and end of file.}

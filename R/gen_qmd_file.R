@@ -7,6 +7,19 @@
 #' @param filename String, bare name of qmd-file. Default: "report". If NULL,
 #' generates a sanitized version of the title. If both filename and title are NULL, errors.
 #' @param yaml_file A string containing the filepath to a yaml-file to be inserted at top of qmd-file.
+#' @param format *Quarto output format written into the YAML*
+#'
+#'   `scalar<character>` // *default:* `"html"` (`optional`)
+#'
+#'   Written as the `format:` field of this file's YAML front matter, and
+#'   passed through verbatim, so any value Quarto accepts works. Documented
+#'   here rather than inherited from [draft_report()], whose description covers
+#'   chapters, `index.qmd` and the combined report and names three separate
+#'   `*_yaml_file` arguments — this function writes one file and takes one
+#'   `yaml_file`.
+#'
+#'   Ignored when `yaml_file` is supplied, since that file then provides the
+#'   whole front matter, `format:` included.
 #' @param qmd_start_section_filepath,qmd_end_section_filepath String, filepath
 #' to a qmd-file inserted at start and end of file.
 #' @param output_filename,output_formats Character. If applied, will construct
@@ -19,6 +32,7 @@ gen_qmd_file <-
   function(path = NULL,
            filename = "report",
            yaml_file = NULL,
+           format = "html",
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            chapter_structure = NULL,
@@ -33,6 +47,12 @@ gen_qmd_file <-
     check_string(path, n = 1, null.ok = TRUE, call = call)
     check_string(filename, n = 1, null.ok = TRUE, call = call)
     check_string(yaml_file, n = 1, null.ok = TRUE, call = call)
+    # Not `null.ok`: this goes straight into the YAML front matter, and
+    # process_yaml() drops NULL entries from that list, so a NULL would
+    # silently produce a document with no `format:` field at all rather than
+    # an error. draft_report()'s validator requires a string for the same
+    # reason.
+    check_string(format, n = 1, call = call)
     check_string(qmd_start_section_filepath, n = 1, null.ok = TRUE, call = call)
     check_string(qmd_end_section_filepath, n = 1, null.ok = TRUE, call = call)
     check_string(title, n = 1, null.ok = TRUE, call = call)
@@ -46,6 +66,7 @@ gen_qmd_file <-
     yaml_section <-
       process_yaml(
         yaml_file = yaml_file,
+        format = format,
         title = title,
         authors = authors[!is.na(authors)]
       )

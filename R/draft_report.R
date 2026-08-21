@@ -141,6 +141,20 @@
 #'   own `chunk_templates` need neither, attaching them would fail every
 #'   chapter of a project that has not installed them.
 #'
+#' @param format *Quarto output format written into each file's YAML*
+#'
+#'   `scalar<character>` // *default:* `"html"` (`optional`)
+#'
+#'   Written as the `format:` field of the YAML front matter of every generated
+#'   chapter, plus `index.qmd` and the combined report. Passed through verbatim,
+#'   so any value Quarto accepts works — `"html"`, `"pdf"`, `"docx"`, or a
+#'   format with options such as `"html: default"`.
+#'
+#'   Ignored for any file whose YAML comes from a file instead: when
+#'   `chapter_yaml_file`, `index_yaml_file` or `report_yaml_file` is supplied,
+#'   that file provides the whole front matter, `format:` included. Supplying a
+#'   YAML file remains the way to set anything beyond the format itself.
+#'
 #' @param path *Output path*
 #'
 #'   `scalar<character>` // *default:* `tempdir()` (`optional`)
@@ -394,6 +408,7 @@ draft_report <-
            suffix_heading_for_group = NULL,
            glue_heading_for_group = NULL,
            chapter_setup_packages = c("saros", "gt"),
+           format = "html",
            require_common_categories = TRUE, # Not in use, should be merged with chunk_templates?
            # Formats and attachments
            combined_report = TRUE,
@@ -482,6 +497,7 @@ draft_report <-
         suffix_heading_for_group = args$suffix_heading_for_group,
         glue_heading_for_group = args$glue_heading_for_group,
         chapter_setup_packages = args$chapter_setup_packages,
+        format = args$format,
         chapter_yaml_file = args$chapter_yaml_file,
         chapter_qmd_start_section_filepath = args$chapter_qmd_start_section_filepath,
         chapter_qmd_end_section_filepath = args$chapter_qmd_end_section_filepath,
@@ -502,6 +518,7 @@ draft_report <-
           path = args$path,
           filename = args$report_filename,
           yaml_file = args$report_yaml_file,
+          format = args$format,
           qmd_start_section_filepath = args$report_qmd_start_section_filepath,
           qmd_end_section_filepath = args$report_qmd_end_section_filepath,
           chapter_structure = args$chapter_structure,
@@ -522,13 +539,20 @@ draft_report <-
         path = args$path,
         filename = args$index_filename,
         yaml_file = args$index_yaml_file,
+        format = args$format,
         qmd_start_section_filepath = args$index_qmd_start_section_filepath,
         qmd_end_section_filepath = args$index_qmd_end_section_filepath,
         chapter_structure = args$chapter_structure,
         title = args$title,
         authors = all_authors,
         output_formats = if (!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
-        output_filename = stringi::stri_replace_first_regex(str = args$report_filename, pattern = "^_", replacement = ""),
+        output_filename = if (rlang::is_string(args$report_filename)) {
+          stringi::stri_replace_first_regex(str = args$report_filename, pattern = "^_", replacement = "")
+        } else if (isTRUE(args$combined_report)) {
+          # report_filename = NULL: gen_qmd_file() named the report from the
+          # title, so take the name it wrote rather than re-deriving one.
+          stringi::stri_replace_first_regex(basename(report_filepath), "[.]qmd$", "")
+        },
         call = rlang::caller_env()
       )
     processed_files <- c(processed_files, index_filepath)

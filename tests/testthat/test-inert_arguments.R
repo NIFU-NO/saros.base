@@ -350,3 +350,133 @@ testthat::test_that("the documented default for log_file matches the formal", {
 
   testthat::expect_equal(documented, actual)
 })
+
+# Two more arguments that were declared but did not work (#264, #265).
+#
+# Same family as #232 and the `log_file` tests above: present in a signature,
+# documented, validated, and unreachable. Four instances now, which is why the
+# handoff notes suggest a systematic sweep rather than continued one-at-a-time
+# discovery.
+
+drafted <- function(path, ...) {
+  chapter_structure <- suppressMessages(suppressWarnings(
+    saros.base::refine_chapter_overview(
+      chapter_overview = data.frame(chapter = "Ch1", dep = "a_1", indep = ""),
+      data = saros.base::ex_survey,
+      label_separator = " - ",
+      progress = FALSE
+    )
+  ))
+  suppressMessages(suppressWarnings(saros.base::draft_report(
+    data = saros.base::ex_survey,
+    chapter_structure = chapter_structure,
+    path = path,
+    ...
+  )))
+}
+
+# The `format:` line of a generated file's YAML front matter.
+yaml_format <- function(path, file) {
+  lines <- readLines(fs::path(path, file), warn = FALSE)
+  trimws(sub("^format:\\s*", "", grep("^format:", lines, value = TRUE)))
+}
+
+################################################################################
+
+testthat::test_that("draft_report(format=) reaches every generated file", {
+  # `process_yaml()` has always had a `format` argument, and neither of its two
+  # call sites ever passed it -- so every generated file said `format: html`
+  # with no way to change it short of hand-writing a whole YAML file (#264).
+  path <- withr::local_tempdir()
+  drafted(path, title = "My Report", format = "pdf")
+
+  testthat::expect_identical(yaml_format(path, "1_Ch1.qmd"), "pdf")
+  testthat::expect_identical(yaml_format(path, "index.qmd"), "pdf")
+  testthat::expect_identical(yaml_format(path, "report.qmd"), "pdf")
+})
+
+testthat::test_that("the format default is unchanged", {
+  # The point of the default is that no existing caller's output moves.
+  path <- withr::local_tempdir()
+  drafted(path, title = "My Report")
+
+  testthat::expect_identical(yaml_format(path, "1_Ch1.qmd"), "html")
+  testthat::expect_identical(yaml_format(path, "index.qmd"), "html")
+})
+
+testthat::test_that("a supplied yaml_file still wins over format", {
+  # `process_yaml()` takes the whole front matter from `yaml_file` when given
+  # one, and that stays the higher-precedence route rather than being merged
+  # with or overridden by the argument.
+  yaml_file <- withr::local_tempfile(fileext = ".yaml")
+  writeLines(c("format: docx", "toc: true"), yaml_file)
+
+  path <- withr::local_tempdir()
+  drafted(path, title = "My Report", format = "pdf", chapter_yaml_file = yaml_file)
+
+  testthat::expect_identical(yaml_format(path, "1_Ch1.qmd"), "docx")
+})
+
+testthat::test_that("an invalid format is rejected", {
+  path <- withr::local_tempdir()
+  testthat::expect_warning(
+    suppressMessages(saros.base::draft_report(
+      data = saros.base::ex_survey,
+      chapter_structure = suppressMessages(suppressWarnings(
+        saros.base::refine_chapter_overview(
+          chapter_overview = data.frame(chapter = "Ch1", dep = "a_1", indep = ""),
+          data = saros.base::ex_survey, label_separator = " - ", progress = FALSE
+        )
+      )),
+      path = path,
+      format = 42
+    )),
+    regexp = "format"
+  )
+})
+
+################################################################################
+
+testthat::test_that("draft_report(report_filename = NULL) writes a title-named report", {
+  # Documented ("If NULL, will generate a filename based on the report title,
+  # prefixed with '0_'") and accepted by the validator, but the run aborted
+  # before writing anything: `stri_replace_first_regex(NULL, ...)` returns
+  # `character(0)`, and `check_string(null.ok = TRUE)` rejects an empty
+  # character vector as distinct from NULL (#265).
+  path <- withr::local_tempdir()
+  testthat::expect_no_error(drafted(path, title = "My Report", report_filename = NULL))
+
+  written <- basename(fs::dir_ls(path, glob = "*.qmd"))
+  testthat::expect_true(any(grepl("^0_", written)))
+  testthat::expect_false(any(written == "report.qmd"))
+})
+
+testthat::test_that("report_filename = NULL still lets the index link to the report", {
+  # The reason the fix takes the name from the file gen_qmd_file() actually
+  # wrote rather than merely keeping NULL as NULL: the index's link target has
+  # to be the title-derived name, which the argument does not carry.
+  yaml_file <- withr::local_tempfile(fileext = ".yaml")
+  writeLines(c("format:", "  html: default"), yaml_file)
+
+  path <- withr::local_tempdir()
+  drafted(
+    path,
+    title = "My Report", report_filename = NULL,
+    report_yaml_file = yaml_file
+  )
+
+  index <- readLines(fs::path(path, "index.qmd"), warn = FALSE)
+  report <- grep("^0_", basename(fs::dir_ls(path, glob = "*.qmd")), value = TRUE)
+  testthat::expect_length(report, 1L)
+  # The link names the file that exists, not a fabricated one.
+  testthat::expect_false(any(grepl("](.qmd", index, fixed = TRUE)))
+})
+
+testthat::test_that("a string report_filename is unaffected", {
+  path <- withr::local_tempdir()
+  drafted(path, title = "My Report", report_filename = "report")
+
+  written <- basename(fs::dir_ls(path, glob = "*.qmd"))
+  testthat::expect_true(any(written == "report.qmd"))
+  testthat::expect_false(any(grepl("^0_", written)))
+})
