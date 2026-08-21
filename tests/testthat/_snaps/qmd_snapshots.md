@@ -259,7 +259,7 @@
           'nrange <- stringi::stri_c(\'N = \', saros::n_range(data = data_1_Bakgrunn, 
       		dep = c(x1_sex)))',
           'link <- saros::make_link(data = tbls[[.x]])',
-          'x <- I(paste0(c(nrange, link), collapse=\', \')',
+          'x <- I(paste0(c(nrange, link), collapse=\', \'))',
           'gt::gt(tbls[[.x]])',
           '```',
           '',
