@@ -1006,8 +1006,6 @@ if(!all(vapply(tbls, is.null, logical(1)))) {{
       'library(gt)',
       'gt::gt(tbls[[.x]])',
       '```',
-      '',
-      '`r x`',
       ''
       ), envir = environment(), quiet = TRUE)
   }}) |> unlist() |> cat(sep = '\\n')

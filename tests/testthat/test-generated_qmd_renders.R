@@ -119,6 +119,18 @@ testthat::test_that("a variant 5 chapter renders", {
   path <- withr::local_tempdir()
   draft_minimal(path, variant = 5)
 
+  # Positive control on the fixture itself, not just on the render. Without it,
+  # a regression in the `variant` plumbing would silently fall back to
+  # `get_chunk_template_defaults()`'s default of variant 1 -- which also
+  # renders and also produces tables, so every assertion below would still
+  # pass while testing the wrong variant entirely.
+  #
+  # `tbl <- ` is the marker: variant 5 names its table object that, where
+  # variant 1 uses the generated `{.obj_name}`. Verified absent from variant
+  # 1's templates and present in variant 5's.
+  qmd <- readLines(fs::path(path, "1_Ch1.qmd"), warn = FALSE)
+  testthat::expect_true(any(grepl("tbl <- ", qmd, fixed = TRUE)))
+
   testthat::expect_no_error(
     withr::with_dir(path, quarto::quarto_render(
       input = "1_Ch1.qmd", quiet = TRUE

@@ -263,11 +263,16 @@ testthat::test_that("no template uses a bare `data`", {
   # with "`x` must be a vector, not a function". Nine sites had it: seven
   # spelled `makeme(data = data, ...)` in variant 4, two `data |> makeme(...)`
   # in variant 5.
+  # `template_chunks()` rather than `r_chunks()`: the subject is what the
+  # templates emit, not the setup and dataset-import chunks `draft_report()`
+  # writes for every chapter. Those are package-controlled and covered
+  # elsewhere, and including them would invite a false positive the day one of
+  # them legitimately mentions `data`.
   offenders <- character()
   for (variant in default_variants()) {
     path <- withr::local_tempdir()
     lines <- draft_variant(path, variant)
-    for (chunk in r_chunks(lines)) {
+    for (chunk in template_chunks(lines)) {
       code <- tryCatch(parse(text = paste(chunk, collapse = "\n")),
         error = function(e) NULL
       )
@@ -346,4 +351,67 @@ testthat::test_that("the allowlist is doing work, not hiding an empty check", {
     if (grepl("parameters$", tpl, fixed = TRUE)) found <- TRUE
   }
   testthat::expect_true(found)
+})
+
+testthat::test_that("no template uses an inline `r ...` variable it never assigns", {
+  # Inline expressions are code too, and neither existing check sees them:
+  # `r_chunks()` matches only fenced blocks, and an inline use is not a
+  # subscript. Variant 4's `chr_table` emitted `` `r x` `` while assigning no
+  # `x` -- it is its `cat_table_html` sibling with the `nrange`/`link`/`x`
+  # lines removed and that one line left behind. Variants 2 and 5's
+  # `chr_table` emit no `` `r x` `` at all, which is what settles the fix.
+  #
+  # In a shared knitr environment this is not merely an error: `x` may still be
+  # bound by an earlier chunk, in which case the table renders another
+  # section's caption.
+  supplied_externally <- c("parameters", "params", ".x")
+
+  offenders <- character()
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    for (i in seq_len(nrow(templates))) {
+      tpl <- as.character(templates$.template[i])
+      if (is.na(tpl)) next
+
+      # Both spellings a template can carry: `r expr` inside child text, and
+      # `{{r}} expr` in the body, which glue renders to `{r} expr`.
+      pattern <- "`(?:r|[{][{]r[}][}]|[{]r[}])\\s+[^`]+`"
+      inline <- unlist(regmatches(tpl, gregexpr(pattern, tpl, perl = TRUE)))
+
+      for (one in inline) {
+        expr_text <- sub("`$", "", sub("^`(?:r|[{][{]r[}][}]|[{]r[}])\\s+", "", one))
+        parsed <- tryCatch(parse(text = expr_text), error = function(e) NULL)
+        if (is.null(parsed)) next
+        used <- unique(unlist(lapply(as.list(parsed), value_symbols)))
+        for (var in used) {
+          if (var %in% supplied_externally) next
+          if (grepl("^data_", var)) next
+          assigned <- grepl(
+            paste0("(?<![A-Za-z0-9._])", var, "\\s*<-"), tpl,
+            perl = TRUE
+          )
+          if (!assigned) {
+            offenders <- c(offenders, sprintf(
+              "variant %d row %d (%s): inline `%s` uses `%s` unassigned",
+              variant, i, templates$.template_name[i], expr_text, var
+            ))
+          }
+        }
+      }
+    }
+  }
+  testthat::expect_identical(offenders, character())
+})
+
+testthat::test_that("the inline check actually finds inline expressions", {
+  # Anti-vacuity: if the pattern matched nothing, the check above would pass on
+  # an empty set for every variant.
+  total <- 0L
+  pattern <- "`(?:r|[{][{]r[}][}]|[{]r[}])\\s+[^`]+`"
+  for (variant in default_variants()) {
+    templates <- saros.base::get_chunk_template_defaults(variant)
+    tpl <- paste(stats::na.omit(as.character(templates$.template)), collapse = "\n")
+    total <- total + length(unlist(regmatches(tpl, gregexpr(pattern, tpl, perl = TRUE))))
+  }
+  testthat::expect_gt(total, 5L)
 })
