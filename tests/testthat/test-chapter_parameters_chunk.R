@@ -1,10 +1,18 @@
 # The chunk that establishes `parameters` in every generated chapter (GH #270).
 #
-# `parameters` is what the mesos chunk templates read `save` from. Until now it
-# came only from an organization's `general_formatting.R`, sourced into the qmd
-# by a start section the caller had to supply -- so a chapter generated with no
-# start section referenced a symbol nothing assigned, and variants 4 and 5
-# could not render standalone.
+# `parameters` is what variants 4 and 5 read `save` from -- four sites each,
+# counted; variants 2 and 3 read only Quarto's `params`, so this is not a
+# mesos-only concern. Until now it came only from an organization's
+# `general_formatting.R`, sourced into the qmd by a start section the caller
+# had to supply, so a chapter generated with no start section referenced a
+# symbol nothing assigned.
+#
+# That did not stop variant 5 rendering: `save = parameters$save` is a promise
+# R never forced, so it behaved as "do not save". The visible effect of fixing
+# it is that `save` now carries a real value. Variant 4 still does not render
+# standalone, before or after, and not because of `parameters` -- it dies in
+# `saros::makeme()` on `mesos_var`/`mesos_group`, which come from Quarto's
+# `params`.
 #
 # The chunk is emitted separately from the `library()` one rather than folded
 # into it, because `chapter_setup_packages = NULL` is the documented escape

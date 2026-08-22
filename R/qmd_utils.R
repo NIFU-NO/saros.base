@@ -38,11 +38,17 @@ chapter_setup_chunk <- function(chapter_foldername_clean,
 
 # The chunk that establishes `parameters` for the chapter (GH #270).
 #
-# The mesos chunk templates read `parameters$save`, and `parameters` was
-# assigned nowhere in this package -- it came from an organization's
-# `general_formatting.R`, sourced in by a start section the caller had to
-# supply. A chapter generated without one referenced a symbol nothing bound,
-# which is why variants 2, 3 and 4 have never had render coverage.
+# `parameters` was assigned nowhere in this package -- it came from an
+# organization's `general_formatting.R`, sourced in by a start section the
+# caller had to supply, so a chapter generated without one referenced a symbol
+# nothing bound.
+#
+# Which templates that reaches, counted rather than assumed: variants 4 and 5
+# read `parameters$` at four sites each, variants 2 and 3 read only Quarto's
+# `params`, and variant 1 reads neither. So this is not a mesos-only concern
+# -- variant 5 is the non-mesos variant and reads it, while the mesos variants
+# 2 and 3 do not. What blocks 2 and 3 from rendering standalone is `params`,
+# which is Quarto's and comes from the qmd's own YAML, not this.
 #
 # Separate from the packages chunk on purpose: `chapter_setup_packages = NULL`
 # is the documented escape hatch for a project needing neither `saros` nor
