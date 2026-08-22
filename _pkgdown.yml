@@ -24,6 +24,7 @@ reference:
   contents: 
   - get_chunk_template_defaults
   - get_organize_by_opts
+  - aggregate_metadata_yml
 - title: Example data and metadata
   desc: You would need to create these two types of data frames.
   contents: starts_with("ex_survey")
