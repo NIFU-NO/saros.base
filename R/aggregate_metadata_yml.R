@@ -68,7 +68,7 @@ read_metadata_file <- function(file) {
   # what makes this reachable from the package's own output. Note that Quarto
   # rejects such a file outright ("Directory metadata validation failed ... YAML
   # value is missing"), so tolerating them here is necessary but not sufficient
-  # -- see the follow-up filed against that writer.
+  # -- see #272.
   if (!is.list(contents)) NULL else contents
 }
 
