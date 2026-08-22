@@ -133,12 +133,51 @@
 
 ### Bug fixes
 
+- Reports using `setup_mesos_structure(mesos_var_subfolder = )` could
+  not be rendered at all, and now can
+  ([\#272](https://github.com/NIFU-NO/saros.base/issues/272)).
+  `write_subfolder_metadata()` created a `_metadata.yml` at every
+  intermediate subfolder level with `cat(file = f, append = TRUE)` — a
+  **zero-byte** file. Quarto validates directory metadata for the whole
+  project before executing anything, and rejects a zero-byte
+  `_metadata.yml` with
+  `Directory metadata validation failed ... (line 1, column 1) YAML value is missing`.
+  The render therefore died at project level, whichever document was
+  asked for, before a line of R ran. Confirmed by rendering two
+  otherwise identical website projects differing only in whether that
+  helper was called: without it the project renders, with it the render
+  fails.
+
+  The intermediate files now hold a literal
+  [`{}`](https://rdrr.io/r/base/Paren.html) under a comment saying why.
+  Which content works is not obvious and was measured rather than
+  reasoned about: no file at all is accepted, a zero-byte file is
+  rejected, [`{}`](https://rdrr.io/r/base/Paren.html) is accepted, a
+  comment on its own is rejected, and — the trap —
+  **`yaml::write_yaml(list(), f)` emits `[]`**, a sequence rather than a
+  mapping, which Quarto also rejects. The obvious one-line fix does not
+  work, so the placeholder is written literally rather than serialised.
+
+  Two behaviours are preserved deliberately. A `_metadata.yml` a project
+  has filled in at an intermediate level is still left untouched, which
+  is what the previous `append = TRUE` bought. A **zero-byte** one, by
+  contrast, is now overwritten: it is the artifact of this bug and
+  leaves the project unrenderable, so re-running
+  [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
+  repairs an existing project rather than preserving the breakage. The
+  reader added in
+  [\#270](https://github.com/NIFU-NO/saros.base/issues/270) goes on
+  tolerating zero-byte files regardless, since every project generated
+  before this fix has them on disk.
+
 - [`aggregate_metadata_yml()`](https://nifu-no.github.io/saros.base/reference/aggregate_metadata_yml.md),
   as it existed outside this package, aborted on the empty
-  `_metadata.yml` files this package itself writes
-  ([\#270](https://github.com/NIFU-NO/saros.base/issues/270)).
-  `write_subfolder_metadata()` creates a zero-byte `_metadata.yml` at
-  every intermediate level of
+  `_metadata.yml` files this package itself wrote at the time
+  ([\#270](https://github.com/NIFU-NO/saros.base/issues/270); the writer
+  was fixed in
+  [\#272](https://github.com/NIFU-NO/saros.base/issues/272)).
+  `write_subfolder_metadata()` then created a zero-byte `_metadata.yml`
+  at every intermediate level of
   `setup_mesos_structure(mesos_var_subfolder = )`.
   [`yaml::read_yaml()`](https://yaml.r-lib.org/reference/read_yaml.html)
   returns `NULL` for such a file and `utils::modifyList(x, NULL)` errors
@@ -157,6 +196,7 @@
   a project containing one fails before any R runs. That is a defect in
   the writer rather than the reader and is filed separately as
   [\#272](https://github.com/NIFU-NO/saros.base/issues/272).
+
 - `parameters$save` set in a `_metadata.yml` is now honoured rather than
   discarded ([\#270](https://github.com/NIFU-NO/saros.base/issues/270),
   finding 1). The external file assigns `parameters$save <- TRUE`
@@ -176,6 +216,7 @@
   the `[CSV]`/`[PNG]` download links that `save` exists to produce. Set
   `draft_report(chapter_setup_parameters = FALSE)`, or `save: false` in
   a `_metadata.yml`, to keep the old behaviour.
+
 - An eleventh template site, found by review of the fix above: variant
   4’s `chr_table` emitted an inline `` `r x` `` while assigning no `x`
   ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). It is
@@ -190,6 +231,7 @@
   subscript — so a third check now parses inline `` `r ...` `` and
   `` `{r} ...` `` expressions and reports any variable the template
   never assigns.
+
 - Ten more default chunk template sites emitted code that could not run
   ([\#269](https://github.com/NIFU-NO/saros.base/issues/269)). Nine
   passed a bare `data` where the chapter’s own dataset was meant — seven
@@ -212,6 +254,7 @@
   variant 5 chapter now renders end-to-end**; before this it aborted in
   its first table chunk, which is why render coverage had never extended
   past variant 1.
+
 - Six default chunk template rows emitted code that could not run
   ([\#266](https://github.com/NIFU-NO/saros.base/issues/266)). Four of
   them — the univariate and bivariate `cat_table_html` of variants 2 and
@@ -237,6 +280,7 @@
   line as correct output** since the snapshots were introduced, which is
   worth recording: a snapshot proves output has not changed, never that
   it was right to begin with.
+
 - `draft_report(format = )` now sets the Quarto output format of every
   generated file
   ([\#264](https://github.com/NIFU-NO/saros.base/issues/264)).
@@ -260,6 +304,7 @@
   hardcoded list in `process_yaml()` and remains unreachable at `800`,
   roughly eight times Quarto’s default of 96; that is left alone here
   deliberately rather than overlooked.
+
 - `draft_report(report_filename = NULL)` no longer aborts before writing
   anything ([\#265](https://github.com/NIFU-NO/saros.base/issues/265)).
   The behaviour is documented — “If NULL, will generate a filename based
@@ -290,6 +335,7 @@
   that a systematic sweep of every formal, asking whether it is read and
   whether it is reachable, would now be worth more than continuing to
   find them one at a time.
+
 - Generated chapters now render
   ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). The five
   default `chunk_templates` variants called `saros` and `gt` functions
@@ -327,6 +373,7 @@
   are text inside template strings, executed by Quarto in a separate
   process — and declaring them would oblige `R/` to guard `pkg::` uses
   with `check_installed()`, which is impossible for a string.
+
 - [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   now reports that a combined report will be empty
   ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)).
@@ -344,6 +391,7 @@
   people to ignore warnings. A message is also how
   [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   already reports a defaulted argument.
+
 - Documented that `*_qmd_start_section_filepath` and
   `*_qmd_end_section_filepath` files are processed as `glue` templates
   ([\#119](https://github.com/NIFU-NO/saros.base/issues/119)). This was
@@ -355,6 +403,7 @@
   these snippets were the only mechanism by which a caller could attach
   the packages the templates needed, the two defects compounded: the fix
   for the first bug was booby-trapped by the second.
+
 - `validate_chunk_templates()` now checks its input
   ([\#242](https://github.com/NIFU-NO/saros.base/issues/242)). Its
   core-column loop was
@@ -407,6 +456,7 @@
   rather than hardcoding, as there are five; it was verified by
   reintroducing `.variable_type_dep` into the required set, which breaks
   15 tests.
+
 - `draft_report(log_file = )` now writes the log it documents, and both
   functions’ documented default for `log_file` has been corrected from
   `"_log.txt"` to `NULL`
@@ -446,6 +496,7 @@
   [`tempfile()`](https://rdrr.io/r/base/tempfile.html) for the same
   reason — an example writing a relative path would write into the
   user’s filespace, which CRAN policy forbids.
+
 - `log_file = ""` is no longer accepted by either
   [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   or
@@ -468,6 +519,7 @@
   predates that fix and affected
   [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md),
   whose `log_file` already worked, just as much.
+
 - Two default chunk templates now open the div they close
   ([\#246](https://github.com/NIFU-NO/saros.base/issues/246)). Variant
   1’s univariate `int_table_html` and variant 5’s univariate
@@ -487,6 +539,7 @@
   had one, which is why nothing caught this;
   `tests/testthat/test-qmd_snapshots.R` now carries a numeric fixture
   and pins both bodies.
+
 - Variant 1’s univariate `int_table_html` now returns its summary table
   instead of calling `girafe()` on it
   ([\#246](https://github.com/NIFU-NO/saros.base/issues/246)). This is
@@ -514,6 +567,7 @@
   the only default template that called `girafe()` on a table, and there
   is no bivariate `int_table_html` anywhere — it exists once, in variant
   1, univariate.
+
 - A mesos group whose name sanitizes to an empty string no longer
   overwrites `<mesos_var>/_metadata.yml`
   ([\#244](https://github.com/NIFU-NO/saros.base/issues/244)).
@@ -556,6 +610,7 @@
   characters too long is harmless where an empty one is not. `NA` is
   still passed through as `NA`, which callers distinguish from a name
   that sanitized away.
+
 - [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   and
   [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
@@ -588,6 +643,7 @@
   still happens and nothing is written, which is what matters here; the
   fabrication itself, and that mis-wording with it, is fixed by the
   entry immediately below.
+
 - [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
   no longer copies one mesos group’s value onto another when a legacy
   `mesos_groups` data frame needs cleaning
@@ -637,6 +693,7 @@
   test, not [`trimws()`](https://rdrr.io/r/base/trimws.html), so `" "`
   remains a usable if odd group name, as
   [\#244](https://github.com/NIFU-NO/saros.base/issues/244) pinned.
+
 - [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   no longer pairs a mesos group with another group’s abbreviation
   ([\#253](https://github.com/NIFU-NO/saros.base/issues/253)). This is
@@ -681,6 +738,7 @@
   entry points disagreed; both now abort by naming the groups, and
   neither writes anything. Only an *absent* column still means “generate
   them”.
+
 - [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
   now keeps the label on a legacy `mesos_groups` column, so both entry
   points title the mesos variable the same way
@@ -724,6 +782,7 @@
   documents only that `NA` is ignored — closing it would renegotiate
   [\#244](https://github.com/NIFU-NO/saros.base/issues/244)’s pin that a
   whitespace-only group name stays usable.
+
 - [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
   now warns when a `.template` repeats the same `insert_text()` call
   ([\#210](https://github.com/NIFU-NO/saros.base/issues/210)). Projects
@@ -745,6 +804,7 @@
   calls differ in their arguments, whereas re-wrapping reproduces one
   verbatim. Whitespace is ignored when comparing, since the two copies
   of the wrap are separately authored and drift in spacing.
+
 - A section that matches no rows no longer emits the previous sibling’s
   chunk under its own heading
   ([\#239](https://github.com/NIFU-NO/saros.base/issues/239)). `new_out`
@@ -770,6 +830,7 @@
   variable and the loop engine’s stack frame.
   `tests/testthat/test-qmd_empty_section.R` constructs the empty section
   directly, since the integration path cannot produce one.
+
 - `draft_report(require_common_categories = TRUE)` now performs the
   check it documents
   ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The
@@ -780,6 +841,7 @@
   before any files are written. Only factor columns are compared, since
   a “common category” is not meaningful for numeric or free-text
   variables. Set `require_common_categories = FALSE` to skip.
+
 - `refine_chapter_overview(keep_dep_indep_if_no_overlap = FALSE)` now
   removes bivariate entries whose dependent and independent variables
   never co-occur
@@ -791,12 +853,14 @@
   explicit level, for which [`is.na()`](https://rdrr.io/r/base/NA.html)
   on the factor is `FALSE`, so such rows reached `data[[NA]]` and
   aborted. The comparison now runs on the character form.
+
 - `create_r_files(r_add_file_scope = FALSE)` now actually omits the
   `file_scope` column from the generated placeholder files
   ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)). The flag
   was accepted and ignored, so the scope was written either way. The
   placeholder file is still created in both cases, and the default
   (`TRUE`) is unchanged.
+
 - `create_email_credentials(ignore_missing_emails = FALSE)` now warns
   about usernames that exist in the password file but have no email
   address ([\#232](https://github.com/NIFU-NO/saros.base/issues/232)).
@@ -805,6 +869,7 @@
   accounts silently received no credentials. **This adds a warning to
   existing calls** where the password file contains accounts absent from
   `email_data_frame`; pass `ignore_missing_emails = TRUE` to silence it.
+
 - [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   no longer writes `.na.character` as the title of
   `<mesos_var>/index.qmd`
@@ -820,10 +885,12 @@
   agree on every generated file except the `_metadata.yml` subtitle,
   which legitimately includes the `main_directory` folder name only when
   one is supplied.
+
 - Generated mesos stub and `index.qmd` files now end with a newline.
   Their absence made
   [`readLines()`](https://rdrr.io/r/base/readLines.html) and other text
   tools warn about an incomplete final line.
+
 - [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   is now reproducible
   ([\#213](https://github.com/NIFU-NO/saros.base/issues/213)). Heading
@@ -837,6 +904,7 @@
   pairs).
   [`draft_report()`](https://nifu-no.github.io/saros.base/reference/draft_report.md)
   no longer draws from the session RNG at all.
+
 - Chapter files no longer contain two first-level headings
   ([\#207](https://github.com/NIFU-NO/saros.base/issues/207)).
   `.chapter_number` has been added to the `ignore_heading_for_group`
@@ -845,6 +913,7 @@
   emitted both directly and by the grouping machinery. Remove
   `.chapter_number` from the argument to restore the previous
   grouping-generated heading, which carries a `{#sec-}` anchor.
+
 - [`setup_mesos()`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   and
   [`setup_mesos_structure()`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md)
@@ -855,6 +924,7 @@
   include pointing outside `main_directory`. The failure was silent and
   repeated on every run, so restoring the files from version control was
   not sufficient.
+
 - Mesos `{{< include >}}` paths now resolve
   ([\#212](https://github.com/NIFU-NO/saros.base/issues/212)). The
   relative path scaled with the directory level
@@ -863,6 +933,7 @@
   directory and eventually escaped `main_directory`. Quarto does not
   error on an unresolvable include, so affected group pages rendered as
   empty documents with correct titles and `_metadata.yml`.
+
 - A multi-component `mesos_var_subfolder` such as `"Rapport/Del1"` now
   nests instead of erroring
   ([\#212](https://github.com/NIFU-NO/saros.base/issues/212)).
@@ -872,6 +943,7 @@
   been written. This affected the documented example in
   [`?setup_mesos_structure`](https://nifu-no.github.io/saros.base/reference/setup_mesos_structure.md),
   which used `mesos_var_subfolder = "reports/Q1"`.
+
 - Removed the stray `'#\newpage'` element from the tabset chunk
   templates ([\#214](https://github.com/NIFU-NO/saros.base/issues/214)).
   The single backslash was re-parsed by R as a newline escape when the
@@ -879,6 +951,7 @@
   tabset on every page. Affected 6 of 7 templates in
   `get_chunk_template_defaults(2)` and 3 of 7 in variant 4. A page break
   was meaningless in these HTML templates in any case.
+
 - [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
   is now actually exported
   ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). It was
@@ -886,12 +959,14 @@
   but `NAMESPACE` had not been regenerated, so
   [`saros.base::delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
   failed with “not an exported object”.
+
 - `draft_report(title = )` is no longer a silent no-op
   ([\#208](https://github.com/NIFU-NO/saros.base/issues/208),
   [\#184](https://github.com/NIFU-NO/saros.base/issues/184)).
   `process_yaml()` only assigned the title when an explicit `yaml_file`
   was supplied, so `index.qmd` and `report.qmd` were written without a
   `title` field in the default case.
+
 - Chapter qmd-files now receive their `chapter` name as the YAML `title`
   ([\#208](https://github.com/NIFU-NO/saros.base/issues/208),
   [\#184](https://github.com/NIFU-NO/saros.base/issues/184)). Previously
@@ -900,12 +975,14 @@
   first body heading — which is why titles varied across Quarto
   versions, and why projects post-processed the heading into the header
   with regexes that truncated at hyphens.
+
 - Mesos group `_metadata.yml` files now get the `title` field that
   [`?setup_mesos`](https://nifu-no.github.io/saros.base/reference/setup_mesos.md)
   documents for `subtitle_separator`
   ([\#184](https://github.com/NIFU-NO/saros.base/issues/184)). The
   assignment was commented out, and referred to an out-of-scope
   variable.
+
 - `.variable_label_suffix` is now whitespace-normalised like the prefix
   ([\#216](https://github.com/NIFU-NO/saros.base/issues/216)).
   [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)
@@ -915,6 +992,7 @@
   leading whitespace is significant in Markdown. Only visible with a
   `label_separator` that does not itself include surrounding spaces,
   e.g. `":"`.
+
 - [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md)
   no longer warns `no non-missing arguments to max` when a `_freeze`
   entry contains no files
@@ -922,6 +1000,7 @@
   entry is stale and is still deleted; only the spurious warning is
   gone. Staleness now also ignores directory mtimes, and `_freeze`
   itself is excluded when discovering `.qmd` files.
+
 - Suggested packages are now used conditionally, per R-exts
   ([\#215](https://github.com/NIFU-NO/saros.base/issues/215)). `srvyr`
   (in `ungroup_data()`) and `writexl`/`readr`/`haven` (in
@@ -1045,6 +1124,31 @@
 
 ### Testing
 
+- `tests/testthat/test-setup_mesos_subfolder_metadata.R`
+  ([\#272](https://github.com/NIFU-NO/saros.base/issues/272)), whose
+  central guard is a **Quarto render** rather than a file-existence
+  check. The previous coverage asserted only that the intermediate files
+  were written, which is exactly what the defect did — the files existed
+  and were fatal. The render needs only Quarto, not `saros` or `gt`,
+  because the failure is Quarto refusing the project’s directory
+  metadata before any R executes; that makes it substantially cheaper
+  than the render tests in `test-generated_qmd_renders.R`. Verified by
+  mutation: reverting to the zero-byte writer, and separately switching
+  to `yaml::write_yaml(list(), f)`, each break it. The second is worth
+  noting — that mutant still passes a “the file is not empty” assertion,
+  so without the render guard the failing implementation would have
+  looked correct.
+- The `_metadata.yml` coverage in `test-aggregate_metadata_yml.R` was
+  split in two rather than repointed
+  ([\#272](https://github.com/NIFU-NO/saros.base/issues/272)). One test
+  keeps the reader’s tolerance of a genuinely zero-byte file, now on a
+  hand-built fixture, because projects generated before this fix still
+  contain them and that tolerance is all that stands between such a
+  project and an abort. The other asserts the writer/reader agreement
+  against the package’s own writers, with a positive control that the
+  intermediate file exists and is non-empty. Splitting them avoids the
+  failure mode where fixing a writer quietly hollows out the test that
+  was covering the reader.
 - `tests/testthat/test-aggregate_metadata_yml.R` and
   `tests/testthat/test-chapter_parameters_chunk.R`
   ([\#270](https://github.com/NIFU-NO/saros.base/issues/270)). Every
