@@ -353,19 +353,42 @@ write_mesos_var_metadata <- function(main_directory, mesos_var, mesos_var_pretty
     )
 }
 
-# Helper: Write empty metadata files for subfolders
+# Helper: Write placeholder metadata files for subfolders
 #
 # `mesos_var_subfolders` holds one element per directory level, so the paths
 # must nest cumulatively. `fs::path()` vectorises over them instead, which for
 # c("Rapport", "Del1") yields the siblings <var>/Rapport and <var>/Del1 -- the
 # second does not exist, and writing to it errors.
+#
+# These files carry nothing the package has to say, but they cannot be *empty*
+# (GH #272): Quarto rejects a zero-byte `_metadata.yml` at project level with
+# "Directory metadata validation failed ... YAML value is missing", which takes
+# down the whole render before any R runs. Nor does the obvious fix work --
+# `yaml::write_yaml(list(), f)` emits `[]`, a sequence rather than a mapping,
+# which Quarto also rejects. Measured:
+#
+#   no file at all   accepted        "{}"           accepted
+#   zero bytes       REJECTED        "[]"           REJECTED
+#   a comment alone  REJECTED        "# ...\n{}"    accepted
+#
+# Hence a literal `{}`, written by hand rather than serialised.
 write_subfolder_metadata <- function(main_directory, mesos_var, mesos_var_subfolders) {
     base <- if (length(main_directory)) main_directory else "."
+    placeholder <- c(
+        "# Placeholder written by saros.base. Quarto rejects an empty _metadata.yml,",
+        "# so this is an empty mapping rather than an empty file. Add keys freely.",
+        "{}"
+    )
     for (depth in seq_along(mesos_var_subfolders)) {
         f <- fs::path_join(c(
             base, mesos_var, mesos_var_subfolders[seq_len(depth)], "_metadata.yml"
         ))
-        cat(file = f, append = TRUE)
+        # A file a project has filled in is left alone -- that is what the
+        # previous `cat(append = TRUE)` bought, and it must survive. A
+        # zero-byte one is overwritten rather than kept: it is the artifact of
+        # #272 and leaves the project unrenderable, so re-running repairs it.
+        if (fs::file_exists(f) && file.size(f) > 0) next
+        writeLines(placeholder, con = f)
     }
 }
 
