@@ -104,17 +104,50 @@ testthat::test_that("a folder without _metadata.yml does not stop the walk", {
   testthat::expect_identical(out$params$group, "Oslo")
 })
 
-testthat::test_that("an empty _metadata.yml contributes nothing rather than aborting", {
-  # The writer/reader disagreement #270 exists to end, reproduced against this
-  # package's own output rather than a hand-built fixture.
+testthat::test_that("a zero-byte _metadata.yml contributes nothing rather than aborting", {
+  # The writer/reader disagreement #270 exists to end. `yaml::read_yaml()`
+  # returns NULL for a zero-byte file, and `utils::modifyList(x, NULL)` errors
+  # with "is.list(val) is not TRUE" -- so the external reader aborted partway
+  # up, before ever reaching the group's own file. The group's `mesos_group`
+  # was therefore never merged either, which is the parameter the mesos
+  # templates exist to use.
   #
-  # `write_subfolder_metadata()` writes a zero-byte `_metadata.yml` at every
-  # intermediate level of `setup_mesos_structure(mesos_var_subfolder = )`.
-  # `yaml::read_yaml()` returns NULL for those, and `utils::modifyList(x, NULL)`
-  # errors with "is.list(val) is not TRUE" -- so the external reader aborted
-  # partway up, before ever reaching the group's own file. The group's
-  # `mesos_group` was therefore never merged either, which is the parameter the
-  # mesos templates exist to use.
+  # The fixture is hand-built as of #272. It used to come from
+  # `write_subfolder_metadata()`, which wrote exactly this shape -- but that
+  # writer now emits a valid empty mapping, because Quarto rejects a zero-byte
+  # `_metadata.yml` outright. The reader must go on tolerating them regardless:
+  # every project generated before #272 has them on disk, and this is the only
+  # thing standing between such a project and an abort.
+  root <- withr::local_tempdir()
+  mark_project_root(root)
+
+  write_meta(fs::path(root, "Skole"), list(params = list(mesos_var = "Skole")))
+  write_meta(fs::path(root, "Skole", "reports")) # zero bytes
+  write_meta(fs::path(root, "Skole", "reports", "Q1")) # zero bytes
+  write_meta(
+    fs::path(root, "Skole", "reports", "Q1", "oslo"),
+    list(params = list(mesos_group = "Oslo skole"))
+  )
+
+  # Positive control on the fixture: the zero-byte files the bug turns on must
+  # actually be there, or this test passes for the wrong reason.
+  testthat::expect_identical(
+    file.size(fs::path(root, "Skole", "reports", "_metadata.yml")), 0
+  )
+
+  out <- saros.base::aggregate_metadata_yml(
+    fs::path(root, "Skole", "reports", "Q1", "oslo")
+  )
+
+  testthat::expect_identical(out$params$mesos_var, "Skole")
+  testthat::expect_identical(out$params$mesos_group, "Oslo skole")
+})
+
+testthat::test_that("the chain this package writes reads back", {
+  # The same property against the package's own writers rather than a
+  # hand-built fixture, which is what makes it a writer/reader agreement test
+  # rather than a reader test. See test-setup_mesos_subfolder_metadata.R for
+  # what those intermediate files now contain, and why.
   root <- withr::local_tempdir()
   mark_project_root(root)
 
@@ -130,11 +163,11 @@ testthat::test_that("an empty _metadata.yml contributes nothing rather than abor
     mesos_groups_abbr = "oslo"
   ))
 
-  # Positive control on the fixture: the zero-byte files the bug turns on must
-  # actually be there, or this test passes for the wrong reason.
-  testthat::expect_identical(
-    file.size(fs::path(root, "Skole", "reports", "_metadata.yml")), 0
-  )
+  # Positive control: the intermediate files are present and are no longer
+  # empty, so the merge below really does traverse them.
+  intermediate <- fs::path(root, "Skole", "reports", "_metadata.yml")
+  testthat::expect_true(fs::file_exists(intermediate))
+  testthat::expect_gt(file.size(intermediate), 0)
 
   out <- saros.base::aggregate_metadata_yml(
     fs::path(root, "Skole", "reports", "Q1", "oslo")
