@@ -39,6 +39,7 @@ draft_report(
   suffix_heading_for_group = NULL,
   glue_heading_for_group = NULL,
   chapter_setup_packages = c("saros", "gt"),
+  chapter_setup_parameters = TRUE,
   format = "html",
   require_common_categories = TRUE,
   combined_report = TRUE,
@@ -306,6 +307,30 @@ draft_report(
   dependency of this package: if your own `chunk_templates` need
   neither, attaching them would fail every chapter of a project that has
   not installed them.
+
+- chapter_setup_parameters:
+
+  *Build `parameters` at the top of each chapter*
+
+  `scalar<logical>` // *default:* `TRUE` (`optional`)
+
+  Every generated chapter opens with a chunk that builds `parameters`
+  from the `_metadata.yml` inheritance chain, using
+  [`aggregate_metadata_yml()`](https://nifu-no.github.io/saros.base/reference/aggregate_metadata_yml.md),
+  and falls back to `parameters$save = TRUE` when nothing in the chain
+  sets it. The mesos `chunk_templates` read `parameters$save`, so
+  without this a chapter generated without a
+  `chapter_qmd_start_section_filepath` refers to an object nothing
+  assigns.
+
+  The chunk leaves an existing `parameters` untouched, so a project that
+  establishes its own — typically by sourcing a `general_formatting.R`
+  earlier in the render — keeps it. A `save:` set anywhere in the
+  `_metadata.yml` chain likewise wins over the fallback.
+
+  Independent of `chapter_setup_packages`: suppressing the attached
+  packages does not suppress this chunk. Set to `FALSE` if your project
+  supplies `parameters` some other way.
 
 - format:
 

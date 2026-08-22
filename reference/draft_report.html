@@ -104,6 +104,7 @@ ultimately publish these as usual with Quarto features in RStudio. See also
 <span>  suffix_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  glue_heading_for_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_setup_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"saros"</span>, <span class="st">"gt"</span><span class="op">)</span>,</span>
+<span>  chapter_setup_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"html"</span>,</span>
 <span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  combined_report <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -303,6 +304,24 @@ the older way does.</p>
 because neither <code>saros</code> nor <code>gt</code> is a dependency of this package: if your
 own <code>chunk_templates</code> need neither, attaching them would fail every
 chapter of a project that has not installed them.</p></dd>
+
+
+<dt id="arg-chapter-setup-parameters">chapter_setup_parameters<a class="anchor" aria-label="anchor" href="#arg-chapter-setup-parameters"></a></dt>
+<dd><p><em>Build <code>parameters</code> at the top of each chapter</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Every generated chapter opens with a chunk that builds <code>parameters</code> from
+the <code>_metadata.yml</code> inheritance chain, using <code><a href="aggregate_metadata_yml.html">aggregate_metadata_yml()</a></code>,
+and falls back to <code>parameters$save = TRUE</code> when nothing in the chain sets
+it. The mesos <code>chunk_templates</code> read <code>parameters$save</code>, so without this a
+chapter generated without a <code>chapter_qmd_start_section_filepath</code> refers to
+an object nothing assigns.</p>
+<p>The chunk leaves an existing <code>parameters</code> untouched, so a project that
+establishes its own — typically by sourcing a <code>general_formatting.R</code>
+earlier in the render — keeps it. A <code>save:</code> set anywhere in the
+<code>_metadata.yml</code> chain likewise wins over the fallback.</p>
+<p>Independent of <code>chapter_setup_packages</code>: suppressing the attached packages
+does not suppress this chunk. Set to <code>FALSE</code> if your project supplies
+<code>parameters</code> some other way.</p></dd>
 
 
 <dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>

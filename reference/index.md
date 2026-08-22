@@ -38,8 +38,14 @@ The only functions you will probably use, in the order listed
 
 - [`get_chunk_template_defaults()`](https://nifu-no.github.io/saros.base/reference/get_chunk_template_defaults.md)
   : Get Global Options for Chunk Templates
+
 - [`get_organize_by_opts()`](https://nifu-no.github.io/saros.base/reference/get_organize_by_opts.md)
   : Get Core Chapter Structure Column Names
+
+- [`aggregate_metadata_yml()`](https://nifu-no.github.io/saros.base/reference/aggregate_metadata_yml.md)
+  :
+
+  Aggregate the `_metadata.yml` Inheritance Chain
 
 ## Example data and metadata
 

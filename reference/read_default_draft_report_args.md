@@ -29,7 +29,7 @@ The defaults as a `yaml`-object.
 ``` r
 tmpfile <- tempfile(fileext = ".yaml")
 write_default_draft_report_args(path = tmpfile)
-#> [1] "/tmp/RtmpZkohGj/file1d1b3cb46bd.yaml"
+#> [1] "/tmp/RtmpFeA7dZ/file1d054fa1e2d1.yaml"
 read_default_draft_report_args(path = tmpfile)
 #> $title
 #> NULL
@@ -97,6 +97,9 @@ read_default_draft_report_args(path = tmpfile)
 #> 
 #> $chapter_setup_packages
 #> [1] "saros" "gt"   
+#> 
+#> $chapter_setup_parameters
+#> [1] TRUE
 #> 
 #> $format
 #> [1] "html"
