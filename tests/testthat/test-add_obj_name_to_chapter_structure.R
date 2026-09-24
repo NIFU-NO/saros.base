@@ -102,3 +102,20 @@ testthat::test_that("add_obj_name_to_chapter_structure handles make_unique", {
   testthat::expect_true(".obj_name" %in% colnames(result))
   testthat::expect_true(any(duplicated(result$.obj_name) == FALSE))
 })
+
+testthat::test_that("add_obj_name_to_chapter_structure keeps ignore_vars out of the name but still groups by them", {
+  chapter_structure <- dplyr::group_by(data.frame(
+    .variable_name_dep = c("var1", "var2"),
+    .variable_group_dep = c(7L, 8L),
+    .variable_group_id = c(1, 2)
+  ), .variable_name_dep, .variable_group_dep)
+
+  result <- saros.base:::add_obj_name_to_chapter_structure(chapter_structure,
+    ignore_vars = ".variable_group_dep"
+  )
+  testthat::expect_equal(result$.obj_name, c("var1", "var2"))
+  testthat::expect_equal(dplyr::group_vars(result), c(".variable_name_dep", ".variable_group_dep"))
+
+  result_default <- saros.base:::add_obj_name_to_chapter_structure(chapter_structure)
+  testthat::expect_equal(result_default$.obj_name, c("var1_7", "var2_8"))
+})

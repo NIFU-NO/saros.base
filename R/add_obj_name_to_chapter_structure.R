@@ -5,10 +5,13 @@ add_obj_name_to_chapter_structure <-
            max_width = 128,
            valid_obj = TRUE,
            make_unique = TRUE,
-           to_lower = TRUE) {
+           to_lower = TRUE,
+           ignore_vars = NULL) {
     grouping_structure_original <- dplyr::group_vars(chapter_structure)
     out <- replace_label_groups_with_name_groups(chapter_structure)
-    grouping_structure_reduced <- dplyr::group_vars(out)
+    # Grouping columns that carry no meaningful name (e.g. the integer
+    # `.variable_group_dep`) still separate groups, but stay out of the name.
+    grouping_structure_reduced <- setdiff(dplyr::group_vars(out), ignore_vars)
     grouping_structure_temporary <- ".variable_group_id"
 
     collapsed <-

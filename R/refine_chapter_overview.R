@@ -461,13 +461,9 @@ refine_chapter_overview <-
           chunk_template_names = chunk_templates$name
         )
 
-      out <-
-        add_group_id_to_chapter_structure(
-          chapter_structure = out,
-          grouping_vars = organize_by[organize_by %in% colnames(out)],
-          variable_group_prefix = NULL
-        )
-      out <-
+      # The split may add `variable_group_dep` to `organize_by`, so both come
+      # back: everything downstream must group by the extended vector.
+      split <-
         split_chapter_structure_groups_if_single_y_bivariates(
           chapter_structure = out,
           data = data,
@@ -475,6 +471,17 @@ refine_chapter_overview <-
           single_y_bivariates_if_deps_above = single_y_bivariates_if_deps_above,
           variable_group_dep = variable_group_dep,
           organize_by = organize_by
+        )
+      out <- split$chapter_structure
+      organize_by <- split$organize_by
+
+      # After the split, so each split group gets its own id (object, chunk
+      # and file names are derived per id).
+      out <-
+        add_group_id_to_chapter_structure(
+          chapter_structure = out,
+          grouping_vars = organize_by[organize_by %in% colnames(out)],
+          variable_group_prefix = NULL
         )
     }
 
@@ -563,6 +570,7 @@ refine_chapter_overview <-
         chapter_structure = out,
         variable_name = ".obj_name",
         sep = sep_obj,
+        ignore_vars = variable_group_dep,
         max_width = max_width_obj,
         make_unique = TRUE,
         to_lower = TRUE
@@ -573,6 +581,7 @@ refine_chapter_overview <-
         chapter_structure = out,
         variable_name = ".chunk_name",
         sep = sep_chunk,
+        ignore_vars = variable_group_dep,
         max_width = max_width_chunk,
         make_unique = TRUE,
         to_lower = TRUE
@@ -583,6 +592,7 @@ refine_chapter_overview <-
         chapter_structure = out,
         variable_name = ".file_name",
         sep = sep_file,
+        ignore_vars = variable_group_dep,
         max_width = max_width_file,
         make_unique = TRUE,
         to_lower = TRUE
