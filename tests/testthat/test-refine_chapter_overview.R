@@ -278,58 +278,155 @@ testthat::test_that("refine_chapter_overview handles keep_dep_indep_if_no_overla
   testthat::expect_true(nrow(result_remove) > 0)
 })
 
-testthat::test_that("refine_chapter_overview handles single_y_bivariates_if_indep_cats_above", {
+# Summarise each group of a refined chapter structure: whether it is a
+# bivariate group, and how many dependent variables it holds. Univariate rows
+# carry NA as a factor *level* of `.variable_name_indep`, which `is.na()` does
+# not see -- hence `as.character()`.
+summarise_single_y_groups <- function(chapter_structure) {
+  dplyr::summarise(
+    chapter_structure,
+    bivariate = any(!is.na(as.character(.data$.variable_name_indep))),
+    n_deps = dplyr::n_distinct(.data$.variable_name_dep),
+    .groups = "drop"
+  )
+}
+
+testthat::test_that("refine_chapter_overview splits bivariates when indep has more categories than single_y_bivariates_if_indep_cats_above", {
+  # p_1:p_4 is one battery (shared label prefix); x3_nationality has 7
+  # categories. Default templates yield a plot and a table per section.
   ch_overview <- data.frame(
-    chapter = c("Test", "Test"),
-    dep = c("p_1", "p_1"),
-    indep = c(NA, "f_uni"), # x11_health has many categories
+    chapter = "Test",
+    dep = "p_1:p_4",
+    indep = "x3_nationality",
     stringsAsFactors = FALSE
   )
 
   result_low <- saros.base::refine_chapter_overview(
     chapter_overview = ch_overview,
     data = saros.base::ex_survey,
-    single_y_bivariates_if_indep_cats_above = 2, # Low threshold
+    single_y_bivariates_if_indep_cats_above = 2, # 7 > 2: split
     progress = FALSE
   )
+  testthat::expect_true(".variable_group_dep" %in% dplyr::group_vars(result_low))
+  groups_low <- summarise_single_y_groups(result_low)
+  # Univariate: still one plot and one table holding the whole battery.
+  testthat::expect_equal(sum(!groups_low$bivariate), 2)
+  testthat::expect_true(all(groups_low$n_deps[!groups_low$bivariate] == 4))
+  # Bivariate: one plot and one table per dependent variable.
+  testthat::expect_equal(sum(groups_low$bivariate), 8)
+  testthat::expect_true(all(groups_low$n_deps[groups_low$bivariate] == 1))
+  testthat::expect_equal(dplyr::n_groups(result_low), 10)
 
   result_high <- saros.base::refine_chapter_overview(
     chapter_overview = ch_overview,
     data = saros.base::ex_survey,
-    single_y_bivariates_if_indep_cats_above = 100, # High threshold
+    single_y_bivariates_if_indep_cats_above = 100, # 7 <= 100: no split
     progress = FALSE
   )
+  groups_high <- summarise_single_y_groups(result_high)
+  testthat::expect_equal(dplyr::n_groups(result_high), 4)
+  testthat::expect_true(all(groups_high$n_deps == 4))
 
-  # Both should produce results
-  testthat::expect_true(nrow(result_low) > 0)
-  testthat::expect_true(nrow(result_high) > 0)
+  # Chunk names: a split chunk is named after its own dependent variable,
+  # and the integer `.variable_group_dep` never leaks into a name, so an
+  # unsplit chunk keeps the name it had before the split was honoured.
+  chunk_names <- function(result, bivariate) {
+    rows <- dplyr::ungroup(result)
+    rows <- rows[is.na(as.character(rows$.variable_name_indep)) != bivariate &
+      rows$.template_name == "cat_plot_html", ]
+    unique(rows$.chunk_name)
+  }
+  testthat::expect_setequal(
+    chunk_names(result_low, bivariate = TRUE),
+    paste0("p-", 1:4, "-x3-nationality-cat-plot-html")
+  )
+  testthat::expect_equal(chunk_names(result_low, bivariate = FALSE), "p-cat-plot-html")
+  testthat::expect_equal(chunk_names(result_high, bivariate = TRUE), "p-x3-nationality-cat-plot-html")
+  testthat::expect_equal(chunk_names(result_high, bivariate = FALSE), "p-cat-plot-html")
 })
 
-testthat::test_that("refine_chapter_overview handles single_y_bivariates_if_deps_above", {
+testthat::test_that("refine_chapter_overview splits bivariates when deps exceed single_y_bivariates_if_deps_above", {
+  # x1_sex has 2 categories, below the default indep-category threshold (3),
+  # so any split here comes from the number of dependent variables alone.
   ch_overview <- data.frame(
-    chapter = paste0("Test", 1:3),
-    dep = paste0("b_", 1:3), # Many dependent variables
-    indep = c(NA, rep("x1_sex", 2)),
+    chapter = "Test",
+    dep = "p_1:p_4",
+    indep = "x1_sex",
     stringsAsFactors = FALSE
   )
 
   result_low <- saros.base::refine_chapter_overview(
     chapter_overview = ch_overview,
     data = saros.base::ex_survey,
-    single_y_bivariates_if_deps_above = 5, # Low threshold
+    single_y_bivariates_if_deps_above = 3, # 4 deps > 3: split
     progress = FALSE
   )
+  groups_low <- summarise_single_y_groups(result_low)
+  testthat::expect_equal(sum(!groups_low$bivariate), 2)
+  testthat::expect_true(all(groups_low$n_deps[!groups_low$bivariate] == 4))
+  testthat::expect_equal(sum(groups_low$bivariate), 8)
+  testthat::expect_true(all(groups_low$n_deps[groups_low$bivariate] == 1))
 
   result_high <- saros.base::refine_chapter_overview(
     chapter_overview = ch_overview,
     data = saros.base::ex_survey,
-    single_y_bivariates_if_deps_above = 100, # High threshold
+    single_y_bivariates_if_deps_above = 100, # 4 deps <= 100: no split
     progress = FALSE
   )
+  groups_high <- summarise_single_y_groups(result_high)
+  testthat::expect_equal(dplyr::n_groups(result_high), 4)
+  testthat::expect_true(all(groups_high$n_deps == 4))
+})
 
-  # Both should produce results
-  testthat::expect_true(nrow(result_low) > 0)
-  testthat::expect_true(nrow(result_high) > 0)
+testthat::test_that("refine_chapter_overview leaves grouping alone when single_y_bivariates_if_indep_cats_above is NA", {
+  ch_overview <- data.frame(
+    chapter = "Test",
+    dep = "p_1:p_4",
+    indep = "x3_nationality",
+    stringsAsFactors = FALSE
+  )
+  result <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = saros.base::ex_survey,
+    single_y_bivariates_if_indep_cats_above = NA,
+    single_y_bivariates_if_deps_above = 1,
+    progress = FALSE
+  )
+  testthat::expect_false(".variable_group_dep" %in% dplyr::group_vars(result))
+  testthat::expect_equal(dplyr::n_groups(result), 4)
+
+  # `single_y_bivariates_if_deps_above = NA` switches that half off without
+  # leaving NA group keys behind.
+  result_deps_na <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = saros.base::ex_survey,
+    single_y_bivariates_if_indep_cats_above = 100,
+    single_y_bivariates_if_deps_above = NA,
+    progress = FALSE
+  )
+  testthat::expect_equal(dplyr::n_groups(result_deps_na), 4)
+  testthat::expect_false(anyNA(result_deps_na$.variable_group_dep))
+})
+
+testthat::test_that("the single-y split separates only the split rows, whatever organize_by is", {
+  # This organize_by deliberately leaves out `.variable_label_prefix_dep`, so
+  # the a_ and b_ batteries share a univariate section. Honouring the split
+  # must not start separating them.
+  ch_overview <- data.frame(
+    chapter = "Test",
+    dep = "a_1, a_2, b_1",
+    indep = "",
+    stringsAsFactors = FALSE
+  )
+  result <- saros.base::refine_chapter_overview(
+    chapter_overview = ch_overview,
+    data = saros.base::ex_survey,
+    organize_by = c(".chapter_number", ".variable_name_indep", ".template_name"),
+    single_y_bivariates_if_indep_cats_above = 2,
+    progress = FALSE
+  )
+  testthat::expect_equal(dplyr::n_groups(result), 2)
+  testthat::expect_true(all(summarise_single_y_groups(result)$n_deps == 3))
 })
 
 testthat::test_that("refine_chapter_overview creates proper column structure", {
