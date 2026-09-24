@@ -41,5 +41,5 @@ The defaults as a `yaml`-object.
 
 ``` r
 write_default_draft_report_args(path = tempfile(fileext = ".yaml"))
-#> [1] "/tmp/Rtmprow2hC/file1cf135ff7c0b.yaml"
+#> [1] "/tmp/RtmpEWpp6Y/file1c8c42bb89db.yaml"
 ```

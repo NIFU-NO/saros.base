@@ -133,6 +133,50 @@
 
 ### Bug fixes
 
+- [`refine_chapter_overview()`](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.md)’s
+  `single_y_bivariates_if_indep_cats_above` and
+  `single_y_bivariates_if_deps_above` now split bivariate sections into
+  one chunk per dependent variable, as documented
+  ([\#277](https://github.com/NIFU-NO/saros.base/issues/277)). Both
+  arguments had never had any effect.
+  `split_chapter_structure_groups_if_single_y_bivariates()` computed
+  `.variable_group_dep` correctly and appended it to its own local copy
+  of `organize_by`, but returned only the chapter structure, and the
+  caller then grouped by the original `organize_by` — so the split was
+  computed and thrown away. A battery of six items crossed with a
+  12-category indep came out as one chunk of 72 bars, exactly the case
+  the arguments exist to prevent, and passing `.variable_group_dep` in
+  `organize_by` by hand was rejected by the validator, so there was no
+  workaround. **Both arguments are on by default (`3` and `20`), so
+  existing reports will change**: any bivariate section whose indep has
+  more than three categories, or whose battery has more than twenty
+  items, now yields one chunk per dependent variable. Univariate
+  sections and bivariates at or below both thresholds are grouped
+  exactly as before, under any `organize_by`: rows that are not split
+  now share one `.variable_group_dep` value rather than one per label
+  prefix, which the default `organize_by` made no difference to but a
+  custom one without `.variable_label_prefix_dep` would have.
+  `single_y_bivariates_if_indep_cats_above = NA` turns the split off.
+
+  Three defects that the discarded split had kept invisible are fixed
+  with it. The `_deps_above` condition tested
+  `!is.na(.variable_name_indep)` to restrict itself to bivariates, but
+  that column is by then a factor with `NA` as an explicit level, for
+  which [`is.na()`](https://rdrr.io/r/base/NA.html) is `FALSE`; honoured
+  as-is it would also have split every *univariate* battery above twenty
+  items. And `.variable_group_id`, from which `.obj_name`, `.chunk_name`
+  and `.file_name` are derived, was assigned before the split, so the
+  split chunks shared one id and were named by collapsing the group’s
+  `.variable_group_dep` integers plus a counter
+  (`...-cat-plot-html-5-7-8-9-10-11-1`, `...-2`). The id is now assigned
+  after the split, and the integer `.variable_group_dep` is kept out of
+  names, so a split chunk is named after its own dependent variable
+  (`p-1-x3-nationality-cat-plot-html`) and an unsplit chunk keeps
+  exactly the name it had before. Finally,
+  `single_y_bivariates_if_deps_above = NA` made the split condition `NA`
+  rather than `FALSE`, leaving `NA` in `.variable_group_dep`; it is now
+  treated as off.
+
 - Reports using `setup_mesos_structure(mesos_var_subfolder = )` could
   not be rendered at all, and now can
   ([\#272](https://github.com/NIFU-NO/saros.base/issues/272)).
@@ -1319,18 +1363,17 @@
 - The roxygen2 pin moved from 7.3.3 to 8.0.0, in `DESCRIPTION` and in
   the `roxygen-drift` workflow, which must agree or the job aborts
   before it checks anything. **No generated documentation changed**:
-  [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
-  under 8.0.0 reproduces the checked-in `man/` and `NAMESPACE` byte for
-  byte, so the entire upgrade is the pin plus a field rename — 8.0.0
-  records its version as `Config/roxygen2/version` where 7.x used
-  `RoxygenNote`, and appends it at the end of the file rather than
-  writing it in place. The workflow needed nothing beyond the pin,
-  because it already read whichever of the two fields is present and
-  already excluded `DESCRIPTION` from its diff. The pin remains
-  deliberately not `latest`: 8.1.0 reflows multiple `importFrom()`
-  entries from one package into a multi-line call, so it would disagree
-  with the checked-in `NAMESPACE` without either version being wrong,
-  which is the reason the job pins at all
+  `roxygen2::roxygenise()` under 8.0.0 reproduces the checked-in `man/`
+  and `NAMESPACE` byte for byte, so the entire upgrade is the pin plus a
+  field rename — 8.0.0 records its version as `Config/roxygen2/version`
+  where 7.x used `RoxygenNote`, and appends it at the end of the file
+  rather than writing it in place. The workflow needed nothing beyond
+  the pin, because it already read whichever of the two fields is
+  present and already excluded `DESCRIPTION` from its diff. The pin
+  remains deliberately not `latest`: 8.1.0 reflows multiple
+  `importFrom()` entries from one package into a multi-line call, so it
+  would disagree with the checked-in `NAMESPACE` without either version
+  being wrong, which is the reason the job pins at all
   ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This
   retires the last of the recurring working-tree artifacts
   [\#257](https://github.com/NIFU-NO/saros.base/issues/257) addressed —
@@ -1348,8 +1391,7 @@
   `forcats` — all already in `Imports` — so it has always been installed
   alongside saros.base, and no installation could have lacked it.
 - CI now fails when `man/` or `NAMESPACE` differ from what
-  [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
-  produces from the roxygen comments in `R/`
+  `roxygen2::roxygenise()` produces from the roxygen comments in `R/`
   ([\#219](https://github.com/NIFU-NO/saros.base/issues/219)). This is
   the drift that hid
   [`delete_freeze()`](https://nifu-no.github.io/saros.base/reference/delete_freeze.md):
